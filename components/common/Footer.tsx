@@ -4,10 +4,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-            <h2 className="text-2xl font-bold text-indigo-600">Prefect Board</h2>
-            <p className="text-gray-700 text-base">Streamlining attendance tracking for school prefects.</p>
+            <h2 className="text-2xl font-bold text-indigo-600">Mahinda Rajapaksha College Attendance System</h2>
+            <p className="text-gray-700 text-base">Streamlining attendance tracking for MRCM prefects. Powerd by Rish Studio.</p>
             <div className="flex space-x-6">
-              <a href="#" className="text-gray-500 hover:text-indigo-600">
+              <a href="https://web.facebook.com/p/Board-of-prefects-MRCM-100057210318764/" className="text-gray-500 hover:text-indigo-600">
                 <span className="sr-only">Facebook</span>
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -17,7 +17,7 @@ export default function Footer() {
                   />
                 </svg>
               </a>
-              <a href="#" className="text-gray-500 hover:text-indigo-600">
+              <a href="https://www.instagram.com/mrcm_prefects/" className="text-gray-500 hover:text-indigo-600">
                 <span className="sr-only">Instagram</span>
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -27,32 +27,26 @@ export default function Footer() {
                   />
                 </svg>
               </a>
-              <a href="#" className="text-gray-500 hover:text-indigo-600">
-                <span className="sr-only">Twitter</span>
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                </svg>
-              </a>
             </div>
           </div>
           <div className="mt-12 xl:mt-0 xl:col-span-2 text-gray-700">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">Company</h3>
+                <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">Rish Studio</h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <a href="#" className="text-base hover:text-indigo-600">
+                    <a href="https://imrishmika.site/#about/" className="text-base hover:text-indigo-600">
                       About
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-base hover:text-indigo-600">
-                      Blog
+                    <a href="https://imrishmika.site/#projects" className="text-base hover:text-indigo-600">
+                      Projects
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-base hover:text-indigo-600">
-                      Careers
+                    <a href="https://imrishmika.site/#pricing" className="text-base hover:text-indigo-600">
+                      Hire Me
                     </a>
                   </li>
                 </ul>
@@ -61,12 +55,12 @@ export default function Footer() {
                 <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">Legal</h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <a href="#" className="text-base hover:text-indigo-600">
+                    <a href="/terms" className="text-base hover:text-indigo-600">
                       Privacy Policy
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-base hover:text-indigo-600">
+                    <a href="/terms" className="text-base hover:text-indigo-600">
                       Terms of Service
                     </a>
                   </li>
@@ -76,7 +70,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-gray-300 pt-8 text-center">
-          <p className="text-base text-gray-600">&copy; 2023 Prefect Board. All rights reserved.</p>
+          <p className="text-base text-gray-600">&copy; 2023 MRCM Prefect Board. All rights reserved.</p>
           <p className="text-sm text-gray-500">Developed by Rishmika Sandanu</p>
         </div>
       </div>
