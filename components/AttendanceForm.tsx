@@ -11,12 +11,12 @@ import { saveAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 
 const roles = [
-  "Head Prefect 🥇",
-  "Deputy Prefect 🥈",
-  "Senior Executive Prefect 🥉",
-  "Executive Prefect 🏅",
-  "Super Senior Prefect 🎖",
-  "Senior Prefect",
+  "Head Prefect ",
+  "Deputy Prefect ",
+  "Senior Executive Prefect ",
+  "Executive Prefect ",
+  "Super Senior Prefect ",
+  "Senior Prefect ",
   "Junior Prefect",
   "Sub Prefect",
   "Apprentice Prefect",
