@@ -5,9 +5,9 @@ export default function Footer() {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <h2 className="text-2xl font-bold text-indigo-600">Mahinda Rajapaksha College Attendance System</h2>
-            <p className="text-gray-700 text-base">Streamlining attendance tracking for MRCM prefects. Powerd by Rish Studio.</p>
+            <p className="text-gray-700 text-base">Streamlining attendance tracking for MRCM prefects. Powered by Rish Studio.</p>
             <div className="flex space-x-6">
-              <a href="https://web.facebook.com/p/Board-of-prefects-MRCM-100057210318764/" className="text-gray-500 hover:text-indigo-600">
+              <a href="https://web.facebook.com/p/Board-of-prefects-MRCM-100057210318764/" className="text-gray-500 hover:text-gray-700">
                 <span className="sr-only">Facebook</span>
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -17,7 +17,7 @@ export default function Footer() {
                   />
                 </svg>
               </a>
-              <a href="https://www.instagram.com/mrcm_prefects/" className="text-gray-500 hover:text-indigo-600">
+              <a href="https://www.instagram.com/mrcm_prefects/" className="text-gray-500 hover:text-gray-700">
                 <span className="sr-only">Instagram</span>
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -35,17 +35,17 @@ export default function Footer() {
                 <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">Rish Studio</h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <a href="https://imrishmika.site/#about/" className="text-base hover:text-indigo-600">
+                    <a href="https://imrishmika.site/#about/" className="text-base hover:text-gray-700">
                       About
                     </a>
                   </li>
                   <li>
-                    <a href="https://imrishmika.site/#projects" className="text-base hover:text-indigo-600">
+                    <a href="https://imrishmika.site/#projects" className="text-base hover:text-gray-700">
                       Projects
                     </a>
                   </li>
                   <li>
-                    <a href="https://imrishmika.site/#pricing" className="text-base hover:text-indigo-600">
+                    <a href="https://imrishmika.site/#pricing" className="text-base hover:text-gray-700">
                       Hire Me
                     </a>
                   </li>
@@ -55,12 +55,12 @@ export default function Footer() {
                 <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">Legal</h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <a href="/policy" className="text-base hover:text-indigo-600">
+                    <a href="/policy" className="text-base hover:text-gray-700">
                       Privacy Policy
                     </a>
                   </li>
                   <li>
-                    <a href="/terms" className="text-base hover:text-indigo-600">
+                    <a href="/terms" className="text-base hover:text-gray-700">
                       Terms of Service
                     </a>
                   </li>
