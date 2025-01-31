@@ -1,0 +1,164 @@
+"use client"
+
+import type React from "react"
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { getAttendance, cleanupOldData, saveAttendance } from "@/lib/storage"
+import { useToast } from "@/hooks/use-toast"
+import { Download, Upload, Clock, BarChart2 } from "lucide-react"
+import { Label } from "./ui/label"
+
+export default function AdminPanel() {
+  const [lateArrivals, setLateArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
+  const [attendanceStats, setAttendanceStats] = useState<{ [key: string]: number }>({})
+  const { toast } = useToast()
+
+  useEffect(() => {
+    cleanupOldData()
+    updateAttendanceStats()
+  }, [])
+
+  const updateAttendanceStats = () => {
+    const attendance = getAttendance()
+    const stats: { [key: string]: number } = {}
+    attendance.forEach((a) => {
+      stats[a.role] = (stats[a.role] || 0) + 1
+    })
+    setAttendanceStats(stats)
+  }
+
+  const exportAttendance = () => {
+    const attendance = getAttendance()
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      "Role,Prefect Number,Timestamp\n" +
+      attendance.map((a) => `${a.role},${a.prefectNumber},${a.timestamp}`).join("\n")
+
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+
+    link.setAttribute("download", `attendance_${new Date().toISOString().split("T")[0]}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    toast({
+      title: "Attendance Exported",
+      description: "The attendance data has been exported successfully.",
+    })
+  }
+
+  const importAttendance = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const content = e.target?.result as string
+        const lines = content.split("\n")
+        lines.shift() // Remove header
+        const importedAttendance = lines.map((line) => {
+          const [role, prefectNumber, timestamp] = line.split(",")
+          return { role, prefectNumber, timestamp }
+        })
+        importedAttendance.forEach(saveAttendance)
+        updateAttendanceStats()
+        toast({
+          title: "Attendance Imported",
+          description: `${importedAttendance.length} records have been imported successfully.`,
+        })
+      }
+      reader.readAsText(file)
+    }
+  }
+
+  const showLateArrivals = () => {
+    const attendance = getAttendance()
+    const late = attendance.filter((a) => {
+      const arrivalTime = new Date(a.timestamp)
+      return arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
+    })
+    setLateArrivals(late)
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full max-w-4xl mx-auto"
+    >
+      <Card className="card">
+        <CardHeader className="bg-primary text-white rounded-t-lg">
+          <CardTitle className="text-2xl font-bold text-center">Admin Panel</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6 space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <Button onClick={exportAttendance} className="btn-primary flex items-center justify-center">
+              <Download className="mr-2 h-4 w-4" />
+              Export Attendance
+            </Button>
+            <Label htmlFor="import-attendance" className="flex-1">
+              <Button className="w-full btn-secondary flex items-center justify-center">
+                <Upload className="mr-2 h-4 w-4" />
+                Import Attendance
+              </Button>
+              <Input id="import-attendance" type="file" accept=".csv" className="hidden" onChange={importAttendance} />
+            </Label>
+          </div>
+          <Button onClick={showLateArrivals} className="w-full btn-primary flex items-center justify-center">
+            <Clock className="mr-2 h-4 w-4" />
+            Show Late Arrivals
+          </Button>
+          <div className="mt-4">
+            <h3 className="text-xl font-bold mb-2 text-primary flex items-center">
+              <BarChart2 className="mr-2 h-5 w-5" />
+              Attendance Statistics
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              {Object.entries(attendanceStats).map(([role, count]) => (
+                <div key={role} className="flex justify-between items-center p-2 bg-gray-100 rounded">
+                  <span className="text-gray-700">{role}:</span>
+                  <span className="text-primary font-bold">{count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <AnimatePresence>
+            {lateArrivals.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4"
+              >
+                <h3 className="text-xl font-bold mb-2 text-primary flex items-center">
+                  <Clock className="mr-2 h-5 w-5" />
+                  Late Arrivals
+                </h3>
+                <ul className="space-y-2">
+                  {lateArrivals.map((a, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-gray-100 p-2 rounded flex justify-between items-center"
+                    >
+                      <span className="text-gray-700">
+                        {a.role} - {a.prefectNumber}
+                      </span>
+                      <span className="text-accent">{new Date(a.timestamp).toLocaleString()}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )
+}
