@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 export default function AdminPanel() {
   const [lateArrivals, setLateArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
   const [earlyArrivals, setEarlyArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
-  const [attendanceStats, setAttendanceStats] = useState<{ [key: string]: number }>({})
+  const [attendanceStats, setAttendanceStats] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
   const { toast } = useToast()
 
   useEffect(() => {
@@ -24,11 +24,7 @@ export default function AdminPanel() {
 
   const updateAttendanceStats = () => {
     const attendance = getAttendance()
-    const stats: { [key: string]: number } = {}
-    attendance.forEach((a) => {
-      stats[a.role] = (stats[a.role] || 0) + 1
-    })
-    setAttendanceStats(stats)
+    setAttendanceStats(attendance)
   }
 
   const exportAttendance = () => {
@@ -147,18 +143,25 @@ export default function AdminPanel() {
               Attendance Statistics
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(attendanceStats).map(([role, count]) => (
-                <motion.div
-                  key={role}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex justify-between items-center p-2 bg-gray-100 rounded"
-                >
-                  <span className="text-gray-700">{role}:</span>
-                  <span className="text-primary font-bold">{count}</span>
-                </motion.div>
-              ))}
+              {attendanceStats.map((a, index) => {
+                const arrivalTime = new Date(a.timestamp);
+                const isLate = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0;
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex justify-between items-center p-2 bg-gray-100 rounded"
+                  >
+                    <div className="flex items-center space-x-2">
+                      {isLate ? <AlertCircle className="text-red-600" /> : <CheckCircle className="text-green-600" />}
+                      <span className="text-gray-700">{a.role} - {a.prefectNumber}</span>
+                    </div>
+                    <span className="text-black">{arrivalTime.toLocaleString()}</span>
+                  </motion.div>
+                )
+              })}
             </div>
           </div>
           <AnimatePresence>
