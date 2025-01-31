@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, saveAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 import { Download, Upload, Clock, BarChart2 } from "lucide-react"
-import { Label } from "./ui/label"
+import { Label } from "@/components/ui/label"
 
 export default function AdminPanel() {
   const [lateArrivals, setLateArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
@@ -35,15 +35,17 @@ export default function AdminPanel() {
     const csvContent =
       "data:text/csv;charset=utf-8," +
       "Role,Prefect Number,Timestamp\n" +
-      attendance.map((a) => `${a.role},${a.prefectNumber},${a.timestamp}`).join("\n")
+      attendance.map((a) => `${a.role},${a.prefectNumber},${a.timestamp}`).join("\n") +
+      "\n\nPowered by Rish Studio"
 
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement("a")
     link.setAttribute("href", encodedUri)
-
     link.setAttribute("download", `attendance_${new Date().toISOString().split("T")[0]}.csv`)
     document.body.appendChild(link)
     link.click()
+    document.body.removeChild(link)
+
     toast({
       title: "Attendance Exported",
       description: "The attendance data has been exported successfully.",
@@ -118,10 +120,16 @@ export default function AdminPanel() {
             </h3>
             <div className="grid grid-cols-2 gap-4">
               {Object.entries(attendanceStats).map(([role, count]) => (
-                <div key={role} className="flex justify-between items-center p-2 bg-gray-100 rounded">
+                <motion.div
+                  key={role}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex justify-between items-center p-2 bg-gray-100 rounded"
+                >
                   <span className="text-gray-700">{role}:</span>
                   <span className="text-primary font-bold">{count}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
