@@ -16,15 +16,15 @@ export default function About() {
           <CardTitle className="text-2xl font-bold text-center">About Us</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <p className="text-gray-700 text-base mb-4">
-            Welcome to Prefect Board! We aim to streamline the process of attendance tracking for school prefects, making it easier and more efficient for everyone involved.
-          </p>
-          <p className="text-gray-700 text-base mb-4">
-            Our platform allows prefects to quickly mark their attendance, view attendance records, and generate reports. We believe in providing a seamless experience to ensure that attendance tracking is the least of your worries.
-          </p>
-          <p className="text-gray-700 text-base">
-            Thank you for being a part of our community. Your support and feedback are invaluable to us as we continue to improve and provide the best service possible.
-          </p>
+        <p className="text-gray-700 text-base mb-4">
+  Welcome to the Attendance System, developed by <strong>Rish Studio</strong>! Built using Next.js and a local database, our platform offers a fast, secure, and efficient way to track attendance.
+</p>
+<p className="text-gray-700 text-base mb-4">
+  With our system, users can effortlessly mark attendance, view detailed records, and generate insightful reports—all with just a few clicks. Designed for reliability, it ensures smooth operation without relying on external servers.
+</p>
+<p className="text-gray-700 text-base">
+  At <strong>Rish Studio</strong>, we are committed to providing an intuitive, user-friendly experience. Your feedback and support are invaluable as we continue to improve and offer the best service possible.
+</p>
         </CardContent>
       </Card>
     </motion.div>

@@ -17,7 +17,7 @@ export default function PrivacyPolicy() {
         </CardHeader>
         <CardContent className="p-6">
           <p className="text-gray-700 text-base mb-4">
-            At Prefect Board, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and disclose your personal information.
+            At MRCM Prefect Board, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and disclose your personal information.
           </p>
           <p className="text-gray-700 text-base mb-4">
             We collect information that you provide to us directly, such as when you create an account, mark your attendance, or communicate with us. We also automatically collect certain information about your device and usage of our services.
