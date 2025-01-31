@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2, Trash2 } from "lucide-react"
+import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle } from "lucide-react"
 import { Label } from "@/components/ui/label"
 
 export default function AdminPanel() {
@@ -176,9 +176,12 @@ export default function AdminPanel() {
                       transition={{ delay: index * 0.1 }}
                       className="bg-gray-100 p-2 rounded flex justify-between items-center"
                     >
-                      <span className="text-gray-700">
-                        {a.role} - {a.prefectNumber}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <AlertCircle className="text-red-600" />
+                        <span className="text-gray-700">
+                          {a.role} - {a.prefectNumber}
+                        </span>
+                      </div>
                       <span className="text-black">{new Date(a.timestamp).toLocaleString()}</span>
                     </motion.li>
                   ))}
