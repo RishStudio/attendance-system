@@ -35,6 +35,45 @@ export default function Footer() {
               </a>
             </div>
           </div>
+          <div className="mt-12 xl:mt-0 xl:col-span-2 text-gray-700">
+            <div className="md:grid md:grid-cols-2 md:gap-8">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">Company</h3>
+                <ul className="mt-4 space-y-4">
+                  <li>
+                    <a href="#" className="text-base hover:text-indigo-600">
+                      About
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="text-base hover:text-indigo-600">
+                      Blog
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="text-base hover:text-indigo-600">
+                      Careers
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div className="mt-12 md:mt-0">
+                <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">Legal</h3>
+                <ul className="mt-4 space-y-4">
+                  <li>
+                    <a href="#" className="text-base hover:text-indigo-600">
+                      Privacy Policy
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="text-base hover:text-indigo-600">
+                      Terms of Service
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="mt-12 border-t border-gray-300 pt-8 text-center">
           <p className="text-base text-gray-600">&copy; 2023 Prefect Board. All rights reserved.</p>
