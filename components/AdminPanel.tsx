@@ -106,20 +106,20 @@ export default function AdminPanel() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-4xl mx-auto"
+      className="w-full max-w-4xl mx-auto p-4"
     >
-      <Card className="card">
-        <CardHeader className="bg-primary text-white rounded-t-lg">
+      <Card className="card shadow-lg">
+        <CardHeader className="bg-primary text-white rounded-t-lg p-4">
           <CardTitle className="text-2xl font-bold text-center">Admin Panel</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <Button onClick={exportAttendance} className="btn-primary flex items-center justify-center">
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            <Button onClick={exportAttendance} className="btn-primary flex items-center justify-center w-full md:w-auto">
               <Download className="mr-2 h-4 w-4" />
               Export Attendance
             </Button>
-            <Label htmlFor="import-attendance" className="flex-1">
-              <Button className="w-full btn-secondary flex items-center justify-center">
+            <Label htmlFor="import-attendance" className="w-full md:w-auto">
+              <Button className="w-full md:w-auto btn-secondary flex items-center justify-center">
                 <Upload className="mr-2 h-4 w-4" />
                 Import Attendance
               </Button>
@@ -139,7 +139,7 @@ export default function AdminPanel() {
               <BarChart2 className="mr-2 h-5 w-5" />
               Attendance Statistics
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Object.entries(attendanceStats).map(([role, count]) => (
                 <motion.div
                   key={role}
@@ -179,7 +179,7 @@ export default function AdminPanel() {
                       <span className="text-gray-700">
                         {a.role} - {a.prefectNumber}
                       </span>
-                      <span className="text-accent">{new Date(a.timestamp).toLocaleString()}</span>
+                      <span className="text-black">{new Date(a.timestamp).toLocaleString()}</span>
                     </motion.li>
                   ))}
                 </ul>
