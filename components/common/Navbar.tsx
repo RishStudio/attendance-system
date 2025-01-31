@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import type React from "react"
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
@@ -52,27 +52,30 @@ export default function Navbar() {
         </div>
       </div>
 
-      {isOpen && (
-        <motion.div
-          className="sm:hidden"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-        >
-          <div className="pt-2 pb-3 space-y-1">
-            {navItems.map((item) => (
-              <MobileNavLink
-                key={item.name}
-                href={item.href}
-                active={pathname === item.href}
-                onClick={() => setIsOpen(false)}
-              >
-                {item.name}
-              </MobileNavLink>
-            ))}
-          </div>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="sm:hidden"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="pt-2 pb-3 space-y-1">
+              {navItems.map((item) => (
+                <MobileNavLink
+                  key={item.name}
+                  href={item.href}
+                  active={pathname === item.href}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </MobileNavLink>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   )
 }
@@ -117,4 +120,3 @@ function MobileNavLink({
     </Link>
   )
 }
-
