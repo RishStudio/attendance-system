@@ -6,9 +6,9 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { getAttendance, cleanupOldData, saveAttendance } from "@/lib/storage"
+import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2 } from "lucide-react"
+import { Download, Upload, Clock, BarChart2, Trash2 } from "lucide-react"
 import { Label } from "@/components/ui/label"
 
 export default function AdminPanel() {
@@ -84,6 +84,23 @@ export default function AdminPanel() {
     setLateArrivals(late)
   }
 
+  const clearAllAttendance = () => {
+    if (window.confirm("Are you sure you want to delete all attendance data? This action cannot be undone.")) {
+      clearAttendance()
+      updateAttendanceStats()
+      setLateArrivals([])
+      toast({
+        title: "Attendance Cleared",
+        description: "All attendance data has been deleted successfully.",
+      })
+    } else {
+      toast({
+        title: "Action Cancelled",
+        description: "The attendance data has not been deleted.",
+      })
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -112,6 +129,10 @@ export default function AdminPanel() {
           <Button onClick={showLateArrivals} className="w-full btn-primary flex items-center justify-center">
             <Clock className="mr-2 h-4 w-4" />
             Show Late Arrivals
+          </Button>
+          <Button onClick={clearAllAttendance} className="w-full bg-red-500 text-white py-2 rounded-md shadow-sm hover:bg-red-600 flex items-center justify-center">
+            <Trash2 className="mr-2 h-4 w-4" />
+            Clear All Attendance
           </Button>
           <div className="mt-4">
             <h3 className="text-xl font-bold mb-2 text-primary flex items-center">
