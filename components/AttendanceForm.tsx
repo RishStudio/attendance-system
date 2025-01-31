@@ -11,11 +11,11 @@ import { saveAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 
 const roles = [
-  "Head Prefect",
-  "Deputy Prefect",
-  "Senior Executive Prefect",
-  "Executive PRefect ",
-  "Super Senior Prefect",
+  "Head Prefect 🥇",
+  "Deputy Prefect 🥈",
+  "Senior Executive Prefect 🥉",
+  "Executive Prefect 🏅",
+  "Super Senior Prefect 🎖",
   "Senior Prefect",
   "Junior Prefect",
   "Sub Prefect",
@@ -66,7 +66,7 @@ export default function AttendanceForm() {
               <div className="relative">
                 <button
                   type="button"
-                  className="w-full input-field text-left flex items-center justify-between"
+                  className="w-full input-field text-left flex items-center justify-between bg-white border border-gray-300 rounded-md shadow-sm px-4 py-2"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   {role || "Select your role"}
@@ -115,10 +115,10 @@ export default function AttendanceForm() {
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
                 required
-                className="input-field w-full"
+                className="input-field w-full bg-white border border-gray-300 rounded-md shadow-sm px-4 py-2"
               />
             </div>
-            <Button type="submit" className="w-full btn-primary">
+            <Button type="submit" className="w-full bg-primary text-white py-2 rounded-md shadow-sm hover:bg-primary-dark">
               Mark Attendance
             </Button>
           </form>
@@ -127,4 +127,3 @@ export default function AttendanceForm() {
     </motion.div>
   )
 }
-
