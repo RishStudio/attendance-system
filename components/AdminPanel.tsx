@@ -8,11 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle } from "lucide-react"
+import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle } from "lucide-react"
 import { Label } from "@/components/ui/label"
 
 export default function AdminPanel() {
   const [lateArrivals, setLateArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
+  const [earlyArrivals, setEarlyArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
   const [attendanceStats, setAttendanceStats] = useState<{ [key: string]: number }>({})
   const { toast } = useToast()
 
@@ -75,13 +76,18 @@ export default function AdminPanel() {
     }
   }
 
-  const showLateArrivals = () => {
+  const showArrivals = () => {
     const attendance = getAttendance()
     const late = attendance.filter((a) => {
       const arrivalTime = new Date(a.timestamp)
       return arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
     })
+    const early = attendance.filter((a) => {
+      const arrivalTime = new Date(a.timestamp)
+      return arrivalTime.getHours() < 7 || (arrivalTime.getHours() === 7 && arrivalTime.getMinutes() === 0)
+    })
     setLateArrivals(late)
+    setEarlyArrivals(early)
   }
 
   const clearAllAttendance = () => {
@@ -89,6 +95,7 @@ export default function AdminPanel() {
       clearAttendance()
       updateAttendanceStats()
       setLateArrivals([])
+      setEarlyArrivals([])
       toast({
         title: "Attendance Cleared",
         description: "All attendance data has been deleted successfully.",
@@ -126,9 +133,9 @@ export default function AdminPanel() {
               <Input id="import-attendance" type="file" accept=".csv" className="hidden" onChange={importAttendance} />
             </Label>
           </div>
-          <Button onClick={showLateArrivals} className="w-full btn-primary flex items-center justify-center">
+          <Button onClick={showArrivals} className="w-full btn-primary flex items-center justify-center">
             <Clock className="mr-2 h-4 w-4" />
-            Show Late Arrivals
+            Show Arrivals
           </Button>
           <Button onClick={clearAllAttendance} className="w-full bg-red-500 text-white py-2 rounded-md shadow-sm hover:bg-red-600 flex items-center justify-center">
             <Trash2 className="mr-2 h-4 w-4" />
@@ -155,6 +162,41 @@ export default function AdminPanel() {
             </div>
           </div>
           <AnimatePresence>
+            {earlyArrivals.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4"
+              >
+                <h3 className="text-xl font-bold mb-2 text-primary flex items-center">
+                  <CheckCircle className="mr-2 h-5 w-5 text-green-600" />
+                  Early Arrivals
+                </h3>
+                <ul className="space-y-2">
+                  {earlyArrivals.map((a, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-gray-100 p-2 rounded flex justify-between items-center"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle className="text-green-600" />
+                        <span className="text-gray-700">
+                          {a.role} - {a.prefectNumber}
+                        </span>
+                      </div>
+                      <span className="text-black">{new Date(a.timestamp).toLocaleString()}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
             {lateArrivals.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
@@ -164,7 +206,7 @@ export default function AdminPanel() {
                 className="mt-4"
               >
                 <h3 className="text-xl font-bold mb-2 text-primary flex items-center">
-                  <Clock className="mr-2 h-5 w-5" />
+                  <AlertCircle className="mr-2 h-5 w-5 text-red-600" />
                   Late Arrivals
                 </h3>
                 <ul className="space-y-2">
