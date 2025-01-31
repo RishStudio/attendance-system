@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "BOP Attendance System",
   description: "Rishmika Idea Fixed by Vimukthi Indunil",
   keywords: "attendance, system, BOP, Rishmika, Vimukthi, tracking, management",
-  author: "Rishmika and Vimukthi Indunil",
+  authors: [{ name: "Rishmika and Vimukthi Indunil" }], // Fixed property name
   viewport: "width=device-width, initial-scale=1.0",
   charset: "UTF-8",
   robots: "index, follow",
