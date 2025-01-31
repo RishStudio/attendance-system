@@ -29,7 +29,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                Prefect Board
+                BOP Attendance System
               </motion.span>
             </Link>
           </div>
