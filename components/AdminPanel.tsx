@@ -35,7 +35,7 @@ export default function AdminPanel() {
     const csvContent =
       "data:text/csv;charset=utf-8," +
       "Role,Prefect Number,Timestamp\n" +
-      attendance.map((a) => `${a.role},${a.prefectNumber},${a.timestamp}`).join("\n") +
+      attendance.map((a) => `${a.role},${a.prefectNumber},${new Date(a.timestamp).toLocaleString()}`).join("\n") +
       "\n\nPowered by Rish Studio ⚡"
 
     const encodedUri = encodeURI(csvContent)
