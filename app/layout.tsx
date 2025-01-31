@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   keywords: "attendance, system, BOP, Rishmika, Vimukthi, tracking, management",
   authors: [{ name: "Rishmika and Vimukthi Indunil" }], // Fixed property name
   viewport: "width=device-width, initial-scale=1.0",
-  charset: "UTF-8",
   robots: "index, follow",
 };
 
