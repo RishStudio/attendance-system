@@ -31,9 +31,6 @@ export default function PrivacyPolicy() {
           <p className="text-gray-700 text-base mb-4">
             <strong>Data Retention:</strong> We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law.
           </p>
-          <p className="text-gray-700 text-base mb-4">
-            <strong>Your Rights:</strong> You have the right to access, update, or delete your personal information. If you wish to exercise these rights or have any questions or concerns about our Privacy Policy, please contact us.
-          </p>
           <p className="text-gray-700 text-base">
             By using our Attendance System, you consent to the collection and use of your information as described in this Privacy Policy. If you have any questions or concerns, please contact us at [contact email/phone number].
           </p>
