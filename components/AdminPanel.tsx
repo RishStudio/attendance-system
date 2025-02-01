@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
+import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code, Bell, UserCheck, RefreshCcw } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
@@ -64,7 +64,7 @@ export default function AdminPanel() {
       const reader = new FileReader()
       reader.onload = (e) => {
         const content = e.target?.result as string
-        const lines = content.split("\n")
+        const lines = content.split("\n").filter((line) => line.trim().length > 0)
         lines.shift() // Remove header
         const importedAttendance = lines.map((line) => {
           const [role, prefectNumber, timestamp] = line.split(",")
