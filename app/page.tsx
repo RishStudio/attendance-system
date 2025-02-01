@@ -25,15 +25,28 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
-          className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4"
+          className="bg-gradient-to-r from-blue-500 to-purple-600 border border-blue-700 text-white px-4 py-5 rounded-lg shadow-lg relative mb-4"
           role="alert"
         >
-          <strong className="font-bold">New Version v0.1.2 Beta 2 Available!</strong>
-          <span className="block sm:inline"> Please refresh the page to update to the latest version.</span>
-          <button onClick={closeMessage} className="absolute top-0 bottom-0 right-0 px-4 py-3">
-            <XCircle className="fill-current h-6 w-6 text-blue-700" />
-          </button>
+          <div className="flex items-center">
+            <div className="flex-grow">
+              <h2 className="text-lg font-bold mb-1">🚀 New Version v0.1.2 Beta 2 Available!</h2>
+              <p className="text-sm mb-2">
+                This update includes performance improvements, new features, and bug fixes. Please refresh the page to update to the latest version and enjoy the enhanced experience.
+              </p>
+              <ul className="text-sm list-disc pl-5">
+                <li>Improved UI for better user experience</li>
+                <li>Added real-time notifications</li>
+                <li>Enhanced security measures</li>
+                <li>Bug fixes and performance optimizations</li>
+              </ul>
+            </div>
+            <button onClick={closeMessage} className="text-white hover:text-gray-300">
+              <XCircle className="fill-current h-6 w-6" />
+            </button>
+          </div>
         </motion.div>
       )}
       
