@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
-import { Label } from "@/components/ui/label"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
 
