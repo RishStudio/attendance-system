@@ -34,7 +34,7 @@ export default function Home() {
             <div className="flex-grow">
               <h2 className="text-lg font-bold mb-2 flex items-center">
                 <CheckCircle className="h-5 w-5 mr-2 text-green-400" />
-                🚀 New Version v0.1.2 Beta 2 Available!
+                🚀 New Version v0.1.4 Available!
               </h2>
               <p className="text-sm mb-3">
                 This update includes performance improvements, new features, and bug fixes. Please refresh the page to update to the latest version and enjoy the enhanced experience.
