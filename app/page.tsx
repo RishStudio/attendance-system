@@ -27,7 +27,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 border border-blue-700 text-white px-4 py-5 rounded-lg shadow-lg relative mb-4"
+          className="bg-white border border-gray-300 text-gray-800 px-4 py-5 rounded-lg shadow-lg relative mb-4"
           role="alert"
         >
           <div className="flex items-center">
@@ -43,7 +43,7 @@ export default function Home() {
                 <li>Bug fixes and performance optimizations</li>
               </ul>
             </div>
-            <button onClick={closeMessage} className="text-white hover:text-gray-300">
+            <button onClick={closeMessage} className="text-gray-800 hover:text-gray-600 ml-4">
               <XCircle className="fill-current h-6 w-6" />
             </button>
           </div>
