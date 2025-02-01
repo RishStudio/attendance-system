@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code, Bell, UserCheck, RefreshCcw } from "lucide-react"
+import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
@@ -137,7 +137,7 @@ export default function AdminPanel() {
       transition={{ duration: 0.5 }}
       className="w-full max-w-4xl mx-auto p-4"
     >
-      <Card className="card shadow-lg">
+      <Card className="shadow-lg">
         <CardHeader className="bg-primary text-white rounded-t-lg p-4">
           <CardTitle className="text-2xl font-bold text-center">Admin Panel</CardTitle>
         </CardHeader>
