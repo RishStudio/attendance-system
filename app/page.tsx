@@ -38,7 +38,8 @@ export default function Home() {
               </p>
               <ul className="text-sm list-disc pl-5">
                 <li>Improved UI for better user experience</li>
-                <li>Added real-time notifications</li>
+                <li>Added Icons For Fun</li>
+                <li>Admin Panel Updated</li>
                 <li>Enhanced security measures</li>
                 <li>Bug fixes and performance optimizations</li>
               </ul>
