@@ -20,7 +20,7 @@ export default function About() {
             Welcome to the <strong>Mahinda Rajapaksha College Matara Prefect Board Attendance System</strong>. Developed by <strong>Rish Studio</strong>, our platform is designed to streamline the attendance tracking process for our school.
           </p>
           <p className="text-gray-700 text-base mb-4">
-            Utilizing modern technologies like Next.js and a robust local database, our system ensures fast, secure, and efficient attendance management. Whether you're marking attendance, viewing detailed records, or generating insightful reports, our system makes these tasks effortless and reliable.
+            Utilizing modern technologies like Next.js and a robust local database, our system ensures fast, secure, and efficient attendance management. Whether you&apos;re marking attendance, viewing detailed records, or generating insightful reports, our system makes these tasks effortless and reliable.
           </p>
           <p className="text-gray-700 text-base mb-4">
             <strong>Key Features:</strong>
