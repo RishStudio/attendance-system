@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search } from "lucide-react"
+import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
@@ -124,15 +124,6 @@ export default function AdminPanel() {
     ],
   }
 
-  const handleSpecialAttendance = (role: string, prefectNumber: string) => {
-    if (role === "Sub Prefect" && prefectNumber === "64") {
-      toast({
-        title: "Special Attendance",
-        description: "Attendance System Developer Marked His Attendance.",
-      })
-    }
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -183,6 +174,7 @@ export default function AdminPanel() {
               {filteredAttendance.map((a, index) => {
                 const arrivalTime = new Date(a.timestamp)
                 const isLate = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
+                const isDeveloper = a.role === "Sub Prefect" && a.prefectNumber === "64"
                 return (
                   <motion.div
                     key={index}
@@ -190,11 +182,17 @@ export default function AdminPanel() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
                     className="flex justify-between items-center p-2 bg-gray-100 rounded"
-                    onClick={() => handleSpecialAttendance(a.role, a.prefectNumber)}
+                    onClick={() => isDeveloper && toast({
+                      title: "Special Attendance",
+                      description: "Attendance System Developer Marked His Attendance.",
+                    })}
                   >
                     <div className="flex items-center space-x-2">
                       {isLate ? <AlertCircle className="text-red-600" /> : <CheckCircle className="text-green-600" />}
-                      <span className="text-gray-700">{a.role} - {a.prefectNumber}</span>
+                      <span className="text-gray-700 flex items-center">
+                        {a.role} - {a.prefectNumber}
+                        {isDeveloper && <Code className="ml-2 h-4 w-4 text-blue-600" title="Developer" />}
+                      </span>
                     </div>
                     <span className="text-black">{arrivalTime.toLocaleString()}</span>
                   </motion.div>
@@ -263,6 +261,12 @@ export default function AdminPanel() {
                         <AlertCircle className="text-red-600" />
                         <span className="text-gray-700">
                           {a.role} - {a.prefectNumber}
+                          {a.role === "Sub Prefect" && a.prefectNumber === "64" && (
+                            <>
+                              <Code className="ml-2 h-4 w-4 text-blue-600" title="Developer" />
+                              <span className="ml-2 text-blue-600">(Developer)</span>
+                            </>
+                          )}
                         </span>
                       </div>
                       <span className="text-black">{new Date(a.timestamp).toLocaleString()}</span>
