@@ -1,9 +1,8 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown, Check } from "lucide-react"
+import { ChevronDown, Check, User, ClipboardCheck, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,12 +10,12 @@ import { saveAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 
 const roles = [
-  "Head Prefect ",
-  "Deputy Prefect ",
-  "Senior Executive Prefect ",
-  "Executive Prefect ",
-  "Super Senior Prefect ",
-  "Senior Prefect ",
+  "Head Prefect",
+  "Deputy Prefect",
+  "Senior Executive Prefect",
+  "Executive Prefect",
+  "Super Senior Prefect",
+  "Senior Prefect",
   "Junior Prefect",
   "Sub Prefect",
   "Apprentice Prefect",
@@ -37,13 +36,22 @@ export default function AttendanceForm() {
         timestamp: new Date().toISOString(),
       }
       saveAttendance(attendance)
-      setRole("")
-      setPrefectNumber("")
+      clearForm()
       toast({
         title: "Attendance Marked",
         description: "Your attendance has been recorded successfully.",
       })
     }
+  }
+
+  const clearForm = () => {
+    setRole("")
+    setPrefectNumber("")
+  }
+
+  const handleRoleSelect = (selectedRole: string) => {
+    setRole(selectedRole)
+    setIsDropdownOpen(false)
   }
 
   return (
@@ -53,15 +61,15 @@ export default function AttendanceForm() {
       transition={{ duration: 0.5 }}
       className="w-full max-w-md mx-auto"
     >
-      <Card className="card">
-        <CardHeader className="bg-primary text-white rounded-t-lg">
+      <Card className="card shadow-lg">
+        <CardHeader className="bg-primary text-white rounded-t-lg p-4">
           <CardTitle className="text-2xl font-bold text-center">Mark Your Attendance</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="role" className="text-sm font-medium text-gray-700">
-                Select your role
+              <label htmlFor="role" className="text-sm font-medium text-gray-700 flex items-center">
+                <User className="mr-2 h-5 w-5 text-gray-500" /> Select your role
               </label>
               <div className="relative">
                 <button
@@ -90,10 +98,7 @@ export default function AttendanceForm() {
                           className={`w-full text-left px-4 py-2 text-sm ${
                             role === r ? "bg-primary text-white" : "text-gray-700 hover:bg-gray-100"
                           }`}
-                          onClick={() => {
-                            setRole(r)
-                            setIsDropdownOpen(false)
-                          }}
+                          onClick={() => handleRoleSelect(r)}
                         >
                           {r}
                           {role === r && <Check className="inline-block ml-2 h-4 w-4" />}
@@ -105,8 +110,8 @@ export default function AttendanceForm() {
               </div>
             </div>
             <div className="space-y-2">
-              <label htmlFor="prefectNumber" className="text-sm font-medium text-gray-700">
-                Prefect number
+              <label htmlFor="prefectNumber" className="text-sm font-medium text-gray-700 flex items-center">
+                <ClipboardCheck className="mr-2 h-5 w-5 text-gray-500" /> Prefect number
               </label>
               <Input
                 id="prefectNumber"
@@ -118,9 +123,16 @@ export default function AttendanceForm() {
                 className="input-field w-full bg-white border border-gray-300 rounded-md shadow-sm px-4 py-2"
               />
             </div>
-            <Button type="submit" className="w-full bg-primary text-white py-2 rounded-md shadow-sm hover:bg-primary-dark">
-              Mark Attendance
-            </Button>
+            <div className="flex space-x-4">
+              <Button type="submit" className="w-full bg-primary text-white py-2 rounded-md shadow-sm hover:bg-primary-dark flex items-center justify-center">
+                <ClipboardCheck className="mr-2 h-5 w-5" />
+                Mark Attendance
+              </Button>
+              <Button type="button" onClick={clearForm} className="w-full bg-gray-500 text-white py-2 rounded-md shadow-sm hover:bg-gray-600 flex items-center justify-center">
+                <Trash2 className="mr-2 h-5 w-5" />
+                Clear
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
