@@ -190,7 +190,7 @@ export default function AdminPanel() {
                     className="flex justify-between items-center p-2 bg-gray-100 rounded"
                     onClick={() => isDeveloper && toast({
                       title: "Special Attendance",
-                      description: "Attendance System Developer Marked His Attendance.",
+                      description: "The Visionary Behind the Attendance System, Rishmika Sandanu, has officially marked their presence—ensuring seamless functionality, innovation, and excellence.",
                     })}
                   >
                     <div className="flex items-center space-x-2">
