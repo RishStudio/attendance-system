@@ -1,14 +1,13 @@
 "use client"
 
-import type React from "react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search } from "lucide-react"
+import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
