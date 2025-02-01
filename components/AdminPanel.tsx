@@ -8,13 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle } from "lucide-react"
+import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search } from "lucide-react"
 import { Label } from "@/components/ui/label"
+import { Bar } from 'react-chartjs-2'
+import 'chart.js/auto'
 
 export default function AdminPanel() {
   const [lateArrivals, setLateArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
   const [earlyArrivals, setEarlyArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
   const [attendanceStats, setAttendanceStats] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
+  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [filterDate, setFilterDate] = useState<string>("")
   const { toast } = useToast()
 
   useEffect(() => {
@@ -104,6 +108,23 @@ export default function AdminPanel() {
     }
   }
 
+  const filteredAttendance = attendanceStats.filter((a) => {
+    const matchesSearchTerm = searchTerm === "" || a.prefectNumber.includes(searchTerm)
+    const matchesFilterDate = filterDate === "" || new Date(a.timestamp).toISOString().split("T")[0] === filterDate
+    return matchesSearchTerm && matchesFilterDate
+  })
+
+  const attendanceChartData = {
+    labels: ["Early Arrivals", "Late Arrivals"],
+    datasets: [
+      {
+        label: "Count",
+        data: [earlyArrivals.length, lateArrivals.length],
+        backgroundColor: ["#4caf50", "#f44336"],
+      },
+    ],
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -129,10 +150,14 @@ export default function AdminPanel() {
               <Input id="import-attendance" type="file" accept=".csv" className="hidden" onChange={importAttendance} />
             </Label>
           </div>
-          <Button onClick={showArrivals} className="w-full btn-primary flex items-center justify-center">
-            <Clock className="mr-2 h-4 w-4" />
-            Show Arrivals
-          </Button>
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            <Input placeholder="Search by Prefect Number" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            <Input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
+            <Button onClick={showArrivals} className="btn-primary flex items-center justify-center w-full md:w-auto">
+              <Clock className="mr-2 h-4 w-4" />
+              Show Arrivals
+            </Button>
+          </div>
           <Button onClick={clearAllAttendance} className="w-full bg-red-500 text-white py-2 rounded-md shadow-sm hover:bg-red-600 flex items-center justify-center">
             <Trash2 className="mr-2 h-4 w-4" />
             Clear All Attendance
@@ -142,10 +167,11 @@ export default function AdminPanel() {
               <BarChart2 className="mr-2 h-5 w-5" />
               Attendance Statistics
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {attendanceStats.map((a, index) => {
-                const arrivalTime = new Date(a.timestamp);
-                const isLate = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0;
+            <Bar data={attendanceChartData} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              {filteredAttendance.map((a, index) => {
+                const arrivalTime = new Date(a.timestamp)
+                const isLate = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
                 return (
                   <motion.div
                     key={index}
