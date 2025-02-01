@@ -4,8 +4,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-          <h2 className="text-2xl font-bold text-black">Mahinda Rajapaksha College Attendance System</h2>
-            <p className="text-gray-700 text-base">Streamlining attendance tracking for MRCM prefects. Powered by Rish Studio.</p>
+            <h2 className="text-2xl font-bold text-black">Mahinda Rajapaksha College Attendance System</h2>
+            <p className="text-gray-700 text-base">
+              Streamlining attendance tracking for MRCM prefects. Powered by Rish Studio.
+            </p>
             <div className="flex space-x-6">
               <a href="https://web.facebook.com/p/Board-of-prefects-MRCM-100057210318764/" className="text-gray-500 hover:text-gray-700">
                 <span className="sr-only">Facebook</span>
@@ -70,8 +72,8 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-gray-300 pt-8 text-center">
-          <p className="text-base text-gray-600">&copy; 2023 MRCM Prefect Board. All rights reserved.</p>
-          <p className="text-sm text-gray-500">Developed by Rishmika Sandanu</p>
+          <p className="text-base text-gray-600">&copy; 2025 MRCM Prefect Board. All rights reserved.</p>
+          <p className="text-sm text-gray-500">Developed by <a href="https://imrishmika.site" className="hover:text-gray-700">Rishmika Sandanu</a></p>
         </div>
       </div>
     </footer>
