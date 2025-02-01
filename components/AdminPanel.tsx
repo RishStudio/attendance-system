@@ -34,8 +34,14 @@ export default function AdminPanel() {
     const attendance = getAttendance()
     const csvContent =
       "data:text/csv;charset=utf-8," +
-      "Role,Prefect Number,Timestamp\n" +
-      attendance.map((a) => `${a.role},${a.prefectNumber},${new Date(a.timestamp).toLocaleString()}`).join("\n") +
+      "Role,Prefect Number,Timestamp,Date,Time,Status\n" +
+      attendance.map((a) => {
+        const arrivalTime = new Date(a.timestamp)
+        const date = arrivalTime.toLocaleDateString()
+        const time = arrivalTime.toLocaleTimeString()
+        const status = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0 ? "Late" : "Early"
+        return `${a.role},${a.prefectNumber},${a.timestamp},${date},${time},${status}`
+      }).join("\n") +
       "\n\nPowered by Rish Studio ⚡"
 
     const encodedUri = encodeURI(csvContent)
@@ -191,7 +197,7 @@ export default function AdminPanel() {
                       {isLate ? <AlertCircle className="text-red-600" /> : <CheckCircle className="text-green-600" />}
                       <span className="text-gray-700 flex items-center">
                         {a.role} - {a.prefectNumber}
-                        {isDeveloper && <Code className="ml-2 h-4 w-4 text-blue-600" title="Developer" />}
+                        {isDeveloper && <Code className="ml-2 h-4 w-4 text-blue-600" />}
                       </span>
                     </div>
                     <span className="text-black">{arrivalTime.toLocaleString()}</span>
@@ -263,7 +269,7 @@ export default function AdminPanel() {
                           {a.role} - {a.prefectNumber}
                           {a.role === "Sub Prefect" && a.prefectNumber === "64" && (
                             <>
-                              <Code className="ml-2 h-4 w-4 text-blue-600" title="Developer" />
+                              <Code className="ml-2 h-4 w-4 text-blue-600" />
                               <span className="ml-2 text-blue-600">(Developer)</span>
                             </>
                           )}
