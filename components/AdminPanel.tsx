@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { getAttendance, cleanupOldData, saveAttendance, clearAttendance } from "@/lib/storage"
+import { getAttendance, cleanupOldData, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Upload, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
+import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
@@ -56,29 +56,6 @@ export default function AdminPanel() {
       title: "Attendance Exported",
       description: "The attendance data has been exported successfully.",
     })
-  }
-
-  const importAttendance = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const content = e.target?.result as string
-        const lines = content.split("\n").filter((line) => line.trim().length > 0)
-        lines.shift() // Remove header
-        const importedAttendance = lines.map((line) => {
-          const [role, prefectNumber, timestamp] = line.split(",")
-          return { role, prefectNumber, timestamp }
-        })
-        importedAttendance.forEach(saveAttendance)
-        updateAttendanceStats()
-        toast({
-          title: "Attendance Imported",
-          description: `${importedAttendance.length} records have been imported successfully.`,
-        })
-      }
-      reader.readAsText(file)
-    }
   }
 
   const showArrivals = () => {
@@ -147,13 +124,6 @@ export default function AdminPanel() {
               <Download className="mr-2 h-4 w-4" />
               Export Attendance
             </Button>
-            <Label htmlFor="import-attendance" className="w-full md:w-auto">
-              <Button className="w-full md:w-auto btn-secondary flex items-center justify-center">
-                <Upload className="mr-2 h-4 w-4" />
-                Import Attendance
-              </Button>
-              <Input id="import-attendance" type="file" accept=".csv" className="hidden" onChange={importAttendance} />
-            </Label>
           </div>
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
             <div className="relative w-full md:w-auto">
