@@ -17,15 +17,11 @@ export default function AdminPanel() {
   const [attendanceStats, setAttendanceStats] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [filterDate, setFilterDate] = useState<string>("")
-  const [backups, setBackups] = useState<string[]>([])
   const { toast } = useToast()
 
   useEffect(() => {
     cleanupOldData()
     updateAttendanceStats()
-    loadBackups()
-    const interval = setInterval(createBackup, 2 * 60 * 60 * 1000) // Every 2 hours
-    return () => clearInterval(interval)
   }, [])
 
   const updateAttendanceStats = () => {
@@ -59,65 +55,6 @@ export default function AdminPanel() {
       title: "Attendance Exported",
       description: "The attendance data has been exported successfully.",
     })
-  }
-
-  const createBackup = () => {
-    const attendance = getAttendance()
-    const csvContent =
-      "Role,Prefect Number,Timestamp,Date,Time,Status\n" +
-      attendance.map((a) => {
-        const arrivalTime = new Date(a.timestamp)
-        const date = arrivalTime.toLocaleDateString()
-        const time = arrivalTime.toLocaleTimeString()
-        const status = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0 ? "Late" : "Early"
-        return `${a.role},${a.prefectNumber},${a.timestamp},${date},${time},${status}`
-      }).join("\n")
-
-    const backupDir = path.join(process.cwd(), 'backups')
-    if (!fs.existsSync(backupDir)) {
-      fs.mkdirSync(backupDir)
-    }
-    const backupFile = path.join(backupDir, `attendance_${new Date().toISOString().split("T")[0]}.csv`)
-    fs.writeFileSync(backupFile, csvContent)
-    loadBackups()
-    deleteOldBackups()
-  }
-
-  const loadBackups = () => {
-    const backupDir = path.join(process.cwd(), 'backups')
-    if (fs.existsSync(backupDir)) {
-      const files = fs.readdirSync(backupDir)
-      setBackups(files)
-    }
-  }
-
-  const deleteOldBackups = () => {
-    const backupDir = path.join(process.cwd(), 'backups')
-    if (fs.existsSync(backupDir)) {
-      const files = fs.readdirSync(backupDir)
-      files.forEach(file => {
-        const filePath = path.join(backupDir, file)
-        const stats = fs.statSync(filePath)
-        const now = new Date().getTime()
-        const endTime = new Date(stats.mtime).getTime() + 14 * 24 * 60 * 60 * 1000
-        if (now > endTime) {
-          fs.unlinkSync(filePath)
-        }
-      })
-    }
-  }
-
-  const downloadBackup = (fileName: string) => {
-    const backupDir = path.join(process.cwd(), 'backups')
-    const filePath = path.join(backupDir, fileName)
-    if (fs.existsSync(filePath)) {
-      const link = document.createElement("a")
-      link.setAttribute("href", `file://${filePath}`)
-      link.setAttribute("download", fileName)
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    }
   }
 
   const showArrivals = () => {
@@ -314,23 +251,6 @@ export default function AdminPanel() {
               </motion.div>
             )}
           </AnimatePresence>
-          <div className="mt-4">
-            <h3 className="text-xl font-bold mb-2 text-primary flex items-center">
-              <Download className="mr-2 h-5 w-5" />
-              Backups
-            </h3>
-            <div className="space-y-2">
-              {backups.map((backup, index) => (
-                <div key={index} className="flex justify-between items-center p-2 bg-gray-100 rounded">
-                  <span className="text-gray-700">{backup}</span>
-                  <Button onClick={() => downloadBackup(backup)} className="btn-secondary flex items-center">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
         </CardContent>
       </Card>
     </motion.div>
