@@ -124,6 +124,15 @@ export default function AdminPanel() {
     ],
   }
 
+  const handleSpecialAttendance = (role: string, prefectNumber: string) => {
+    if (role === "Sub Prefect" && prefectNumber === "64") {
+      toast({
+        title: "Special Attendance",
+        description: "Attendance System Developer Marked His Attendance.",
+      })
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
