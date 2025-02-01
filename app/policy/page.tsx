@@ -17,16 +17,25 @@ export default function PrivacyPolicy() {
         </CardHeader>
         <CardContent className="p-6">
           <p className="text-gray-700 text-base mb-4">
-            At MRCM Prefect Board, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and disclose your personal information.
+            At Mahinda Rajapaksha College Prefect Board, we are dedicated to safeguarding your privacy. This Privacy Policy outlines how we collect, use, and protect your personal information in relation to our Attendance System.
           </p>
           <p className="text-gray-700 text-base mb-4">
-            We collect information that you provide to us directly, such as when you create an account, mark your attendance, or communicate with us. We also automatically collect certain information about your device and usage of our services.
+            <strong>Information Collection:</strong> We collect information that you provide directly, such as when you create an account, mark your attendance, or communicate with us. Additionally, we automatically collect certain information about your device and usage of our services.
           </p>
           <p className="text-gray-700 text-base mb-4">
-            We use your information to provide and improve our services, communicate with you, and for security purposes. We do not share your personal information with third parties except as necessary to provide our services or as required by law.
+            <strong>Use of Information:</strong> We use your information to provide and improve our services, communicate with you, and ensure the security of our system. We do not share your personal information with third parties, except as necessary to provide our services or as required by law.
+          </p>
+          <p className="text-gray-700 text-base mb-4">
+            <strong>Data Security:</strong> We implement appropriate security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction.
+          </p>
+          <p className="text-gray-700 text-base mb-4">
+            <strong>Data Retention:</strong> We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law.
+          </p>
+          <p className="text-gray-700 text-base mb-4">
+            <strong>Your Rights:</strong> You have the right to access, update, or delete your personal information. If you wish to exercise these rights or have any questions or concerns about our Privacy Policy, please contact us.
           </p>
           <p className="text-gray-700 text-base">
-            By using our services, you consent to the collection and use of your information as described in this Privacy Policy. If you have any questions or concerns, please contact us.
+            By using our Attendance System, you consent to the collection and use of your information as described in this Privacy Policy. If you have any questions or concerns, please contact us at [contact email/phone number].
           </p>
         </CardContent>
       </Card>
