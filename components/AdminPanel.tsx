@@ -10,8 +10,6 @@ import { useToast } from "@/hooks/use-toast"
 import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
-import fs from 'fs'
-import path from 'path'
 
 export default function AdminPanel() {
   const [lateArrivals, setLateArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
