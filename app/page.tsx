@@ -3,11 +3,10 @@
 import { useState, useEffect } from "react"
 import AttendanceForm from "@/components/AttendanceForm"
 import { motion } from "framer-motion"
-import { XCircle, CheckCircle, Info, Shield, Bug, RefreshCcw, Bell, UserCheck, Maximize2, Minimize2 } from "lucide-react"
+import { XCircle, CheckCircle, Info, Shield, Bug, RefreshCcw, Bell, UserCheck } from "lucide-react"
 
 export default function Home() {
   const [showNewVersionMessage, setShowNewVersionMessage] = useState(false)
-  const [isFullScreen, setIsFullScreen] = useState(false)
 
   useEffect(() => {
     // Simulate checking for a new version (you can replace this with an actual version check)
@@ -18,20 +17,8 @@ export default function Home() {
     setShowNewVersionMessage(false)
   }
 
-  const toggleFullScreen = () => {
-    setIsFullScreen(!isFullScreen)
-  }
-
   return (
-    <div className={`w-full max-w-4xl mx-auto ${isFullScreen ? "fixed inset-0 bg-white z-50 p-4" : ""}`}>
-      <nav className="flex justify-between items-center p-4 bg-primary text-white shadow-md">
-        <h1 className="text-xl font-bold">School Prefect Board</h1>
-        <button onClick={toggleFullScreen} className="text-white hover:text-gray-300 flex items-center">
-          {isFullScreen ? <Minimize2 className="h-6 w-6" /> : <Maximize2 className="h-6 w-6" />}
-          <span className="ml-2">{isFullScreen ? "Exit Full Screen" : "Full Screen"}</span>
-        </button>
-      </nav>
-
+    <div className="w-full max-w-4xl mx-auto">
       <h1 className="text-4xl font-bold mb-8 text-center text-primary">School Prefect Board Attendance System</h1>
 
       {showNewVersionMessage && (
