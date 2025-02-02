@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { saveAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 import Particles from "react-tsparticles"
-import { loadFull, Engine } from "tsparticles"
+import { loadFull } from "tsparticles"
+import type { Engine } from "tsparticles-engine"
 
 const roles = [
   "Head Prefect",
