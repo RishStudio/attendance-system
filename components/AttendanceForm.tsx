@@ -59,9 +59,9 @@ export default function AttendanceForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-md mx-auto"
+      className="w-full max-w-md mx-auto p-4"
     >
-      <Card className="card shadow-lg">
+      <Card className="shadow-lg">
         <CardHeader className="bg-primary text-white rounded-t-lg p-4">
           <CardTitle className="text-2xl font-bold text-center">Mark Your Attendance</CardTitle>
         </CardHeader>
@@ -74,7 +74,7 @@ export default function AttendanceForm() {
               <div className="relative">
                 <button
                   type="button"
-                  className="w-full input-field text-left flex items-center justify-between bg-white border border-gray-300 rounded-md shadow-sm px-4 py-2"
+                  className="w-full text-left flex items-center justify-between bg-gray-100 border border-gray-300 rounded-md shadow-sm px-4 py-2"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   {role || "Select your role"}
@@ -120,7 +120,7 @@ export default function AttendanceForm() {
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
                 required
-                className="input-field w-full bg-white border border-gray-300 rounded-md shadow-sm px-4 py-2"
+                className="w-full bg-gray-100 border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:border-primary focus:ring-primary"
               />
             </div>
             <div className="flex space-x-4">
