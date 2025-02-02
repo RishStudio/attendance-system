@@ -8,8 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { saveAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import Particles from "react-tsparticles"
-import { loadFull } from "tsparticles"
 
 const roles = [
   "Head Prefect",
@@ -61,14 +59,6 @@ export default function AttendanceForm() {
     setIsFullScreen(!isFullScreen)
   }
 
-  const particlesInit = async (main) => {
-    await loadFull(main);
-  }
-
-  const particlesLoaded = (container) => {
-    // console.log(container);
-  }
-
   useEffect(() => {
     if (prefectNumber.length === 1 && /^[1-9]$/.test(prefectNumber)) {
       setPrefectNumber(`0${prefectNumber}`);
@@ -76,92 +66,7 @@ export default function AttendanceForm() {
   }, [prefectNumber]);
 
   return (
-    <div className={`relative w-full ${isFullScreen ? "fixed inset-0 z-50 flex items-center justify-center bg-black" : "max-w-md mx-auto p-4"}`}>
-      {isFullScreen && (
-        <Particles
-          id="tsparticles"
-          init={particlesInit}
-          loaded={particlesLoaded}
-          options={{
-            background: {
-              color: {
-                value: "#000",
-              },
-            },
-            fpsLimit: 60,
-            interactivity: {
-              events: {
-                onClick: {
-                  enable: true,
-                  mode: "push",
-                },
-                onHover: {
-                  enable: true,
-                  mode: "repulse",
-                },
-                resize: true,
-              },
-              modes: {
-                bubble: {
-                  distance: 400,
-                  duration: 2,
-                  opacity: 0.8,
-                  size: 40,
-                },
-                push: {
-                  quantity: 4,
-                },
-                repulse: {
-                  distance: 200,
-                  duration: 0.4,
-                },
-              },
-            },
-            particles: {
-              color: {
-                value: "#ffffff",
-              },
-              links: {
-                color: "#ffffff",
-                distance: 150,
-                enable: true,
-                opacity: 0.5,
-                width: 1,
-              },
-              collisions: {
-                enable: true,
-              },
-              move: {
-                directions: "none",
-                enable: true,
-                outModes: {
-                  default: "bounce",
-                },
-                random: false,
-                speed: 2,
-                straight: false,
-              },
-              number: {
-                density: {
-                  enable: true,
-                  area: 800,
-                },
-                value: 80,
-              },
-              opacity: {
-                value: 0.5,
-              },
-              shape: {
-                type: "circle",
-              },
-              size: {
-                value: { min: 1, max: 5 },
-              },
-            },
-            detectRetina: true,
-          }}
-        />
-      )}
+    <div className={`relative w-full ${isFullScreen ? "fixed inset-0 z-50 flex items-center justify-center bg-gray-800" : "max-w-md mx-auto p-4"}`}>
       <button
         onClick={toggleFullScreen}
         className={`fixed top-4 right-4 p-2 rounded-full bg-primary text-white shadow-md z-50 ${isFullScreen ? "hover:bg-primary-dark" : "hover:bg-primary-light"}`}
