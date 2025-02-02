@@ -10,7 +10,7 @@ export default function Home() {
 
   useEffect(() => {
     // Simulate checking for a new version (you can replace this with an actual version check)
-    setShowNewVersionMessage(true)
+    setShowNewVersionMessage(false)
   }, [])
 
   const closeMessage = () => {
