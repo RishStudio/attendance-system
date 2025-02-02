@@ -34,6 +34,7 @@ export default function AdminPanel() {
   const updateAttendanceStats = () => {
     const attendance: Attendance[] = getAttendance()
     setAttendanceStats(attendance)
+    showArrivals(attendance)
   }
 
   const exportAttendance = () => {
@@ -64,8 +65,7 @@ export default function AdminPanel() {
     })
   }
 
-  const showArrivals = () => {
-    const attendance = getAttendance()
+  const showArrivals = (attendance: Attendance[] = getAttendance()) => {
     const late = attendance.filter((a) => {
       const arrivalTime = new Date(a.timestamp)
       return arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
@@ -130,7 +130,7 @@ export default function AdminPanel() {
               <Download className="mr-2 h-4 w-4" />
               Export Attendance
             </Button>
-            <Button onClick={showArrivals} className="btn-primary flex items-center justify-center w-full md:w-auto">
+            <Button onClick={() => showArrivals()} className="btn-primary flex items-center justify-center w-full md:w-auto">
               <Clock className="mr-2 h-4 w-4" />
               Show Arrivals
             </Button>
