@@ -61,7 +61,7 @@ export default function AttendanceForm() {
     setIsFullScreen(!isFullScreen)
   }
 
-  const particlesInit = async (main) => {
+  const particlesInit = async (main: any) => {
     await loadFull(main);
   }
 
