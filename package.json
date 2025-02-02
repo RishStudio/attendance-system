@@ -24,7 +24,9 @@
     "react-chartjs-2": "^4.3.1",
     "chart.js": "^3.5.0", 
     "fs": "latest",
-    "path": "latest"
+    "path": "latest",
+    "react-tsparticles": "^2.3.0", 
+    "tsparticles": "^2.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
