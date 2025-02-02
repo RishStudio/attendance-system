@@ -12,9 +12,9 @@ import { useToast } from "@/hooks/use-toast"
 const roles = [
   "Head Prefect",
   "Deputy Prefect",
-  "Senior Executive Prefect",
+  "Senior Executive",
   "Executive Prefect",
-  "Super Senior Prefect",
+  "Super Senior ",
   "Senior Prefect",
   "Junior Prefect",
   "Sub Prefect",
