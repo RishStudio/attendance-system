@@ -150,8 +150,9 @@ export default function AdminPanel() {
                 const arrivalTime = new Date(a.timestamp)
                 const isLate = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
                 const isDeveloper = a.role === "Sub Prefect" && a.prefectNumber === "64"
-                const isHeadPrefect1 = a.role === "Head Prefect 1"
-                const isHeadPrefect2 = a.role === "Head Prefect 2"
+                const isHeadPrefect = a.role === "Head Prefect" && a.prefectNumber === "01"
+                const isHeadPrefect = a.role === "Head Prefect" && a.prefectNumber === "02"
+
                 return (
                   <motion.div
                     key={index}
@@ -169,8 +170,8 @@ export default function AdminPanel() {
                       <span className="text-gray-700 flex items-center">
                         {a.role} - {a.prefectNumber}
                         {isDeveloper && <Code className="ml-2 h-4 w-4 text-blue-600" />}
-                        {isHeadPrefect1 && <Crown className="ml-2 h-4 w-4 text-yellow-500" />}
-                        {isHeadPrefect2 && <Crown className="ml-2 h-4 w-4 text-pink-500" />}
+                        {isHeadPrefect && <Crown className="ml-2 h-4 w-4 text-yellow-500" />}
+                        {isHeadPrefect && <Crown className="ml-2 h-4 w-4 text-pink-500" />}
                       </span>
                     </div>
                     <span className="text-black">{arrivalTime.toLocaleString()}</span>
@@ -246,13 +247,13 @@ export default function AdminPanel() {
                               <span className="ml-2 text-blue-600">Developer</span>
                             </>
                           )}
-                          {a.role === "Head Prefect 1" && (
+                          {a.role === "Head Prefect" && a.prefectNumber === "1" && (
                             <>
                               <Crown className="ml-2 h-4 w-4 text-yellow-500" />
                               <span className="ml-2 text-yellow-500">Rashan Meranga</span>
                             </>
                           )}
-                          {a.role === "Head Prefect 2" && (
+                          {a.role === "Head Prefect" && a.prefectNumber === "2" && (
                             <>
                               <Crown className="ml-2 h-4 w-4 text-pink-500" />
                               <span className="ml-2 text-pink-500">Kavishma</span>
