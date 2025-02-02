@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, Check, User, ClipboardCheck, Trash2, Maximize2, Minimize2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -59,14 +59,8 @@ export default function AttendanceForm() {
     setIsFullScreen(!isFullScreen)
   }
 
-  useEffect(() => {
-    if (prefectNumber.length === 1 && /^[1-9]$/.test(prefectNumber)) {
-      setPrefectNumber(`0${prefectNumber}`);
-    }
-  }, [prefectNumber]);
-
   return (
-    <div className={`relative w-full ${isFullScreen ? "fixed inset-0 z-50 flex items-center justify-center bg-gray-800" : "max-w-md mx-auto p-4"}`}>
+    <div className={`w-full ${isFullScreen ? "fixed inset-0 bg-white z-50 flex items-center justify-center" : "max-w-md mx-auto p-4"}`}>
       <button
         onClick={toggleFullScreen}
         className={`fixed top-4 right-4 p-2 rounded-full bg-primary text-white shadow-md z-50 ${isFullScreen ? "hover:bg-primary-dark" : "hover:bg-primary-light"}`}
