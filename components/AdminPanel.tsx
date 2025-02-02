@@ -12,11 +12,11 @@ import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
 
 export default function AdminPanel() {
-  const [lateArrivals, setLateArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
-  const [earlyArrivals, setEarlyArrivals] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
-  const [attendanceStats, setAttendanceStats] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
-  const [searchTerm, setSearchTerm] = useState<string>("")
-  const [filterDate, setFilterDate] = useState<string>("")
+  const [lateArrivals, setLateArrivals] = useState([])
+  const [earlyArrivals, setEarlyArrivals] = useState([])
+  const [attendanceStats, setAttendanceStats] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterDate, setFilterDate] = useState("")
   const { toast } = useToast()
 
   useEffect(() => {
@@ -123,6 +123,14 @@ export default function AdminPanel() {
               <Download className="mr-2 h-4 w-4" />
               Export Attendance
             </Button>
+            <Button onClick={showArrivals} className="btn-primary flex items-center justify-center w-full md:w-auto">
+              <Clock className="mr-2 h-4 w-4" />
+              Show Arrivals
+            </Button>
+            <Button onClick={clearAllAttendance} className="w-full bg-red-500 text-white py-2 rounded-md shadow-sm hover:bg-red-600 flex items-center justify-center">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Clear All Attendance
+            </Button>
           </div>
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
             <div className="relative w-full md:w-auto">
@@ -130,15 +138,7 @@ export default function AdminPanel() {
               <Input placeholder="Search by Prefect Number" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
             </div>
             <Input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
-            <Button onClick={showArrivals} className="btn-primary flex items-center justify-center w-full md:w-auto">
-              <Clock className="mr-2 h-4 w-4" />
-              Show Arrivals
-            </Button>
           </div>
-          <Button onClick={clearAllAttendance} className="w-full bg-red-500 text-white py-2 rounded-md shadow-sm hover:bg-red-600 flex items-center justify-center">
-            <Trash2 className="mr-2 h-4 w-4" />
-            Clear All Attendance
-          </Button>
           <div className="mt-4">
             <h3 className="text-xl font-bold mb-2 text-primary flex items-center">
               <BarChart2 className="mr-2 h-5 w-5" />
@@ -150,8 +150,8 @@ export default function AdminPanel() {
                 const arrivalTime = new Date(a.timestamp)
                 const isLate = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
                 const isDeveloper = a.role === "Sub Prefect" && a.prefectNumber === "64"
-                const isHeadPrefect = a.role === "Head Prefect" && a.prefectNumber === "01"
-                const isHeadPrefect = a.role === "Head Prefect" && a.prefectNumber === "02"
+                const isHeadPrefect1 = a.role === "Head Prefect" && a.prefectNumber === "01"
+                const isHeadPrefect2 = a.role === "Head Prefect" && a.prefectNumber === "02"
 
                 return (
                   <motion.div
@@ -170,8 +170,8 @@ export default function AdminPanel() {
                       <span className="text-gray-700 flex items-center">
                         {a.role} - {a.prefectNumber}
                         {isDeveloper && <Code className="ml-2 h-4 w-4 text-blue-600" />}
-                        {isHeadPrefect && <Crown className="ml-2 h-4 w-4 text-yellow-500" />}
-                        {isHeadPrefect && <Crown className="ml-2 h-4 w-4 text-pink-500" />}
+                        {isHeadPrefect1 && <Crown className="ml-2 h-4 w-4 text-yellow-500" />}
+                        {isHeadPrefect2 && <Crown className="ml-2 h-4 w-4 text-pink-500" />}
                       </span>
                     </div>
                     <span className="text-black">{arrivalTime.toLocaleString()}</span>
