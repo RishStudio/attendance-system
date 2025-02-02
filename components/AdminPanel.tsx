@@ -11,12 +11,19 @@ import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, C
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
 
+// Define the type for attendance data
+interface Attendance {
+  role: string;
+  prefectNumber: string;
+  timestamp: string;
+}
+
 export default function AdminPanel() {
-  const [lateArrivals, setLateArrivals] = useState([])
-  const [earlyArrivals, setEarlyArrivals] = useState([])
-  const [attendanceStats, setAttendanceStats] = useState([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterDate, setFilterDate] = useState("")
+  const [lateArrivals, setLateArrivals] = useState<Attendance[]>([])
+  const [earlyArrivals, setEarlyArrivals] = useState<Attendance[]>([])
+  const [attendanceStats, setAttendanceStats] = useState<Attendance[]>([])
+  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [filterDate, setFilterDate] = useState<string>("")
   const { toast } = useToast()
 
   useEffect(() => {
@@ -25,7 +32,7 @@ export default function AdminPanel() {
   }, [])
 
   const updateAttendanceStats = () => {
-    const attendance = getAttendance()
+    const attendance: Attendance[] = getAttendance()
     setAttendanceStats(attendance)
   }
 
@@ -247,13 +254,13 @@ export default function AdminPanel() {
                               <span className="ml-2 text-blue-600">Developer</span>
                             </>
                           )}
-                          {a.role === "Head Prefect" && a.prefectNumber === "1" && (
+                          {a.role === "Head Prefect" && a.prefectNumber === "01" && (
                             <>
                               <Crown className="ml-2 h-4 w-4 text-yellow-500" />
                               <span className="ml-2 text-yellow-500">Rashan Meranga</span>
                             </>
                           )}
-                          {a.role === "Head Prefect" && a.prefectNumber === "2" && (
+                          {a.role === "Head Prefect" && a.prefectNumber === "02" && (
                             <>
                               <Crown className="ml-2 h-4 w-4 text-pink-500" />
                               <span className="ml-2 text-pink-500">Kavishma</span>
