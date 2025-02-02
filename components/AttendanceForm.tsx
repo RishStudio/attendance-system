@@ -65,10 +65,6 @@ export default function AttendanceForm() {
     await loadFull(main);
   }
 
-  const particlesLoaded = (container) => {
-    // console.log(container);
-  }
-
   useEffect(() => {
     if (prefectNumber.length === 1 && /^[1-9]$/.test(prefectNumber)) {
       setPrefectNumber(`0${prefectNumber}`);
@@ -81,7 +77,6 @@ export default function AttendanceForm() {
         <Particles
           id="tsparticles"
           init={particlesInit}
-          loaded={particlesLoaded}
           options={{
             background: {
               color: {
