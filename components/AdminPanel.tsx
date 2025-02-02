@@ -243,19 +243,19 @@ export default function AdminPanel() {
                           {a.role === "Sub Prefect" && a.prefectNumber === "64" && (
                             <>
                               <Code className="ml-2 h-4 w-4 text-blue-600" />
-                              <span className="ml-2 text-blue-600">(Developer)</span>
+                              <span className="ml-2 text-blue-600">Developer</span>
                             </>
                           )}
                           {a.role === "Head Prefect 1" && (
                             <>
                               <Crown className="ml-2 h-4 w-4 text-yellow-500" />
-                              <span className="ml-2 text-yellow-500">(Rashan Meranga)</span>
+                              <span className="ml-2 text-yellow-500">Rashan Meranga</span>
                             </>
                           )}
                           {a.role === "Head Prefect 2" && (
                             <>
                               <Crown className="ml-2 h-4 w-4 text-pink-500" />
-                              <span className="ml-2 text-pink-500">(Kavishma)</span>
+                              <span className="ml-2 text-pink-500">Kavishma</span>
                             </>
                           )}
                         </span>
