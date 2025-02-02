@@ -1,10 +1,8 @@
-"use client"
-
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input, Select, SelectItem } from "@/components/ui/input"
+import { Input, Select, SelectItem } from "@/components/ui/input" // Adjust this import based on your file structure
 import { getAttendance, cleanupOldData, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code, Sun, Moon } from "lucide-react"

@@ -1,22 +1,36 @@
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+const Select = React.forwardRef<HTMLSelectElement, React.ComponentProps<"select">>(
+  ({ className, children, ...props }, ref) => {
     return (
-      <input
-        type={type}
+      <select
         className={cn(
-          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
           className
         )}
         ref={ref}
         {...props}
-      />
+      >
+        {children}
+      </select>
     )
   }
 )
-Input.displayName = "Input"
+Select.displayName = "Select"
 
-export { Input }
+const SelectItem: React.FC<React.ComponentProps<"option">> = ({ className, children, ...props }) => {
+  return (
+    <option
+      className={cn(
+        "bg-transparent text-foreground file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </option>
+  )
+}
+
+export { Input, Select, SelectItem }
