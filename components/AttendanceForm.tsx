@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { saveAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 import Particles from "react-tsparticles"
-import { loadFull } from "tsparticles"
+import { loadFull, Engine } from "tsparticles"
 
 const roles = [
   "Head Prefect",
@@ -24,10 +24,10 @@ const roles = [
 ]
 
 export default function AttendanceForm() {
-  const [role, setRole] = useState("")
-  const [prefectNumber, setPrefectNumber] = useState("")
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [role, setRole] = useState<string>("")
+  const [prefectNumber, setPrefectNumber] = useState<string>("")
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   const { toast } = useToast()
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -61,7 +61,7 @@ export default function AttendanceForm() {
     setIsFullScreen(!isFullScreen)
   }
 
-  const particlesInit = async (main: any) => {
+  const particlesInit = async (main: Engine) => {
     await loadFull(main);
   }
 
