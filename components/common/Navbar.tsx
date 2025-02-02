@@ -14,8 +14,8 @@ const navItems = [
 ]
 
 const dropdownItems = [
-  { name: "Profile", href: "/profile" },
-  { name: "Settings", href: "/settings" },
+  { name: "Developer", href: "https://imrishmika.site" },
+  { name: "Main Web", href: "https://bop.mrcm.lk/" },
 ]
 
 export default function Navbar() {
