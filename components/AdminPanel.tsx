@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
+import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code, Crown } from "lucide-react"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
 
@@ -150,6 +150,8 @@ export default function AdminPanel() {
                 const arrivalTime = new Date(a.timestamp)
                 const isLate = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
                 const isDeveloper = a.role === "Sub Prefect" && a.prefectNumber === "64"
+                const isHeadPrefect1 = a.role === "Head Prefect 1"
+                const isHeadPrefect2 = a.role === "Head Prefect 2"
                 return (
                   <motion.div
                     key={index}
@@ -167,6 +169,8 @@ export default function AdminPanel() {
                       <span className="text-gray-700 flex items-center">
                         {a.role} - {a.prefectNumber}
                         {isDeveloper && <Code className="ml-2 h-4 w-4 text-blue-600" />}
+                        {isHeadPrefect1 && <Crown className="ml-2 h-4 w-4 text-yellow-500" />}
+                        {isHeadPrefect2 && <Crown className="ml-2 h-4 w-4 text-pink-500" />}
                       </span>
                     </div>
                     <span className="text-black">{arrivalTime.toLocaleString()}</span>
@@ -240,6 +244,18 @@ export default function AdminPanel() {
                             <>
                               <Code className="ml-2 h-4 w-4 text-blue-600" />
                               <span className="ml-2 text-blue-600">(Developer)</span>
+                            </>
+                          )}
+                          {a.role === "Head Prefect 1" && (
+                            <>
+                              <Crown className="ml-2 h-4 w-4 text-yellow-500" />
+                              <span className="ml-2 text-yellow-500">(Rashan Meranga)</span>
+                            </>
+                          )}
+                          {a.role === "Head Prefect 2" && (
+                            <>
+                              <Crown className="ml-2 h-4 w-4 text-pink-500" />
+                              <span className="ml-2 text-pink-500">(Kavishma)</span>
                             </>
                           )}
                         </span>
