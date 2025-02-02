@@ -61,14 +61,13 @@ export default function AttendanceForm() {
 
   return (
     <div className={`w-full ${isFullScreen ? "fixed inset-0 bg-white z-50 p-4" : "max-w-md mx-auto p-4"}`}>
-      <nav className="flex justify-between items-center p-4 bg-primary text-white shadow-md">
-        <h1 className="text-xl font-bold">Attendance System</h1>
-        <button onClick={toggleFullScreen} className="text-white hover:text-gray-300 flex items-center">
-          {isFullScreen ? <Minimize2 className="h-6 w-6" /> : <Maximize2 className="h-6 w-6" />}
-          <span className="ml-2">{isFullScreen ? "Exit Full Screen" : "Full Screen"}</span>
-        </button>
-      </nav>
-
+      <button
+        onClick={toggleFullScreen}
+        className={`fixed top-4 right-4 p-2 rounded-full bg-primary text-white shadow-md z-50 ${isFullScreen ? "hover:bg-primary-dark" : "hover:bg-primary-light"}`}
+      >
+        {isFullScreen ? <Minimize2 className="h-6 w-6" /> : <Maximize2 className="h-6 w-6" />}
+      </button>
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
