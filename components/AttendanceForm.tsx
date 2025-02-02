@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown, Check, User, ClipboardCheck, Trash2 } from "lucide-react"
+import { ChevronDown, Check, User, ClipboardCheck, Trash2, Maximize2, Minimize2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { saveAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import Particles from "react-tsparticles"
+import { loadFull } from "tsparticles"
 
 const roles = [
   "Head Prefect",
@@ -23,10 +24,10 @@ const roles = [
 ]
 
 export default function AttendanceForm() {
-  const [role, setRole] = useState<string>("")
-  const [prefectNumber, setPrefectNumber] = useState<string>("")
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
-  const [isClearDialogOpen, setIsClearDialogOpen] = useState<boolean>(false)
+  const [role, setRole] = useState("")
+  const [prefectNumber, setPrefectNumber] = useState("")
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isFullScreen, setIsFullScreen] = useState(false)
   const { toast } = useToast()
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,12 +44,6 @@ export default function AttendanceForm() {
         title: "Attendance Marked",
         description: "Your attendance has been recorded successfully.",
       })
-    } else {
-      toast({
-        title: "Error",
-        description: "Please fill in all the fields.",
-        variant: "destructive",
-      })
     }
   }
 
@@ -62,17 +57,16 @@ export default function AttendanceForm() {
     setIsDropdownOpen(false)
   }
 
-  const openClearDialog = () => {
-    setIsClearDialogOpen(true)
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen)
   }
 
-  const closeClearDialog = () => {
-    setIsClearDialogOpen(false)
+  const particlesInit = async (main) => {
+    await loadFull(main);
   }
 
-  const confirmClearForm = () => {
-    clearForm();
-    closeClearDialog();
+  const particlesLoaded = (container) => {
+    // console.log(container);
   }
 
   useEffect(() => {
@@ -82,7 +76,99 @@ export default function AttendanceForm() {
   }, [prefectNumber]);
 
   return (
-    <div className="relative w-full max-w-md mx-auto p-4">
+    <div className={`relative w-full ${isFullScreen ? "fixed inset-0 z-50 flex items-center justify-center bg-black" : "max-w-md mx-auto p-4"}`}>
+      {isFullScreen && (
+        <Particles
+          id="tsparticles"
+          init={particlesInit}
+          loaded={particlesLoaded}
+          options={{
+            background: {
+              color: {
+                value: "#000",
+              },
+            },
+            fpsLimit: 60,
+            interactivity: {
+              events: {
+                onClick: {
+                  enable: true,
+                  mode: "push",
+                },
+                onHover: {
+                  enable: true,
+                  mode: "repulse",
+                },
+                resize: true,
+              },
+              modes: {
+                bubble: {
+                  distance: 400,
+                  duration: 2,
+                  opacity: 0.8,
+                  size: 40,
+                },
+                push: {
+                  quantity: 4,
+                },
+                repulse: {
+                  distance: 200,
+                  duration: 0.4,
+                },
+              },
+            },
+            particles: {
+              color: {
+                value: "#ffffff",
+              },
+              links: {
+                color: "#ffffff",
+                distance: 150,
+                enable: true,
+                opacity: 0.5,
+                width: 1,
+              },
+              collisions: {
+                enable: true,
+              },
+              move: {
+                directions: "none",
+                enable: true,
+                outModes: {
+                  default: "bounce",
+                },
+                random: false,
+                speed: 2,
+                straight: false,
+              },
+              number: {
+                density: {
+                  enable: true,
+                  area: 800,
+                },
+                value: 80,
+              },
+              opacity: {
+                value: 0.5,
+              },
+              shape: {
+                type: "circle",
+              },
+              size: {
+                value: { min: 1, max: 5 },
+              },
+            },
+            detectRetina: true,
+          }}
+        />
+      )}
+      <button
+        onClick={toggleFullScreen}
+        className={`fixed top-4 right-4 p-2 rounded-full bg-primary text-white shadow-md z-50 ${isFullScreen ? "hover:bg-primary-dark" : "hover:bg-primary-light"}`}
+      >
+        {isFullScreen ? <Minimize2 className="h-6 w-6" /> : <Maximize2 className="h-6 w-6" />}
+      </button>
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -156,7 +242,7 @@ export default function AttendanceForm() {
                   <ClipboardCheck className="mr-2 h-5 w-5" />
                   Mark Attendance
                 </Button>
-                <Button type="button" onClick={openClearDialog} className="w-full bg-gray-500 text-white py-2 rounded-md shadow-sm hover:bg-gray-600 flex items-center justify-center">
+                <Button type="button" onClick={clearForm} className="w-full bg-gray-500 text-white py-2 rounded-md shadow-sm hover:bg-gray-600 flex items-center justify-center">
                   <Trash2 className="mr-2 h-5 w-5" />
                   Clear
                 </Button>
@@ -165,18 +251,6 @@ export default function AttendanceForm() {
           </CardContent>
         </Card>
       </motion.div>
-      <Dialog open={isClearDialogOpen} onOpenChange={setIsClearDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Clear</DialogTitle>
-          </DialogHeader>
-          <p>Are you sure you want to clear the form?</p>
-          <DialogFooter>
-            <Button onClick={confirmClearForm} className="bg-red-500 hover:bg-red-600">Yes, Clear</Button>
-            <Button onClick={closeClearDialog} className="bg-gray-500 hover:bg-gray-600">Cancel</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
