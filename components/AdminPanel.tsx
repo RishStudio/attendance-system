@@ -1,11 +1,13 @@
+"use client"
+
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input, Select, SelectItem } from "@/components/ui/input" // Adjust this import based on your file structure
+import { Input } from "@/components/ui/input"
 import { getAttendance, cleanupOldData, clearAttendance } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
-import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code, Sun, Moon } from "lucide-react"
+import { Download, Clock, BarChart2, Trash2, AlertCircle, CheckCircle, Search, Code } from "lucide-react"
 import { Bar } from 'react-chartjs-2'
 import 'chart.js/auto'
 
@@ -15,11 +17,7 @@ export default function AdminPanel() {
   const [attendanceStats, setAttendanceStats] = useState<Array<{ role: string; prefectNumber: string; timestamp: string }>>([])
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [filterDate, setFilterDate] = useState<string>("")
-  const [filterRole, setFilterRole] = useState<string>("")
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [darkMode, setDarkMode] = useState<boolean>(false)
   const { toast } = useToast()
-  const itemsPerPage = 10
 
   useEffect(() => {
     cleanupOldData()
@@ -94,14 +92,8 @@ export default function AdminPanel() {
   const filteredAttendance = attendanceStats.filter((a) => {
     const matchesSearchTerm = searchTerm === "" || a.prefectNumber.includes(searchTerm)
     const matchesFilterDate = filterDate === "" || new Date(a.timestamp).toISOString().split("T")[0] === filterDate
-    const matchesFilterRole = filterRole === "" || a.role === filterRole
-    return matchesSearchTerm && matchesFilterDate && matchesFilterRole
+    return matchesSearchTerm && matchesFilterDate
   })
-
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedAttendance = filteredAttendance.slice(startIndex, startIndex + itemsPerPage)
-
-  const totalPages = Math.ceil(filteredAttendance.length / itemsPerPage)
 
   const attendanceChartData = {
     labels: ["Early Arrivals", "Late Arrivals"],
@@ -119,17 +111,11 @@ export default function AdminPanel() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`w-full max-w-4xl mx-auto p-4 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"}`}
+      className="w-full max-w-4xl mx-auto p-4"
     >
-      <Card className={`shadow-lg ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-        <CardHeader className={`rounded-t-lg p-4 ${darkMode ? "bg-gray-700" : "bg-primary text-white"}`}>
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-2xl font-bold text-center">Admin Panel</CardTitle>
-            <Button onClick={() => setDarkMode(!darkMode)} className="btn-primary flex items-center justify-center">
-              {darkMode ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-              {darkMode ? "Light Mode" : "Dark Mode"}
-            </Button>
-          </div>
+      <Card className="shadow-lg">
+        <CardHeader className="bg-primary text-white rounded-t-lg p-4">
+          <CardTitle className="text-2xl font-bold text-center">Admin Panel</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
@@ -144,12 +130,6 @@ export default function AdminPanel() {
               <Input placeholder="Search by Prefect Number" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
             </div>
             <Input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
-            <Select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} placeholder="Filter by Role">
-              <SelectItem value="">All Roles</SelectItem>
-              <SelectItem value="Prefect">Prefect</SelectItem>
-              <SelectItem value="Sub Prefect">Sub Prefect</SelectItem>
-              {/* Add more roles as needed */}
-            </Select>
             <Button onClick={showArrivals} className="btn-primary flex items-center justify-center w-full md:w-auto">
               <Clock className="mr-2 h-4 w-4" />
               Show Arrivals
@@ -166,7 +146,7 @@ export default function AdminPanel() {
             </h3>
             <Bar data={attendanceChartData} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              {paginatedAttendance.map((a, index) => {
+              {filteredAttendance.map((a, index) => {
                 const arrivalTime = new Date(a.timestamp)
                 const isLate = arrivalTime.getHours() >= 7 && arrivalTime.getMinutes() > 0
                 const isDeveloper = a.role === "Sub Prefect" && a.prefectNumber === "64"
@@ -194,15 +174,6 @@ export default function AdminPanel() {
                 )
               })}
             </div>
-          </div>
-          <div className="flex justify-between mt-4">
-            <Button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-              Previous
-            </Button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <Button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-              Next
-            </Button>
           </div>
           <AnimatePresence>
             {earlyArrivals.length > 0 && (
