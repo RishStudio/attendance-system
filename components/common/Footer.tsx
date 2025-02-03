@@ -3,6 +3,22 @@
 import React from "react"
 import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react"
 
+interface SocialLinkProps {
+  href: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  label: string;
+}
+
+interface FooterLinkProps {
+  href: string;
+  label: string;
+}
+
+interface FooterSectionProps {
+  title: string;
+  children: React.ReactNode;
+}
+
 export default function Footer() {
   return (
     <footer className="bg-gray-100 shadow-md mt-8">
@@ -43,7 +59,7 @@ export default function Footer() {
   );
 }
 
-function SocialLink({ href, icon: Icon, label }) {
+function SocialLink({ href, icon: Icon, label }: SocialLinkProps) {
   return (
     <a href={href} className="text-gray-500 hover:text-gray-700" aria-label={label}>
       <Icon className="h-6 w-6" />
@@ -51,7 +67,7 @@ function SocialLink({ href, icon: Icon, label }) {
   );
 }
 
-function FooterSection({ title, children }) {
+function FooterSection({ title, children }: FooterSectionProps) {
   return (
     <div className="mt-12 md:mt-0">
       <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">{title}</h3>
@@ -62,7 +78,7 @@ function FooterSection({ title, children }) {
   );
 }
 
-function FooterLink({ href, label }) {
+function FooterLink({ href, label }: FooterLinkProps) {
   return (
     <li>
       <a href={href} className="text-base hover:text-gray-700">
