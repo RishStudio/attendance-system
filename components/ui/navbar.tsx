@@ -1,12 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { Shield, Sun, Moon } from 'lucide-react';
+import { Shield, Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from './button';
 
 export function Navbar() {
   const { theme, setTheme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,24 +23,25 @@ export function Navbar() {
             Prefect Board
           </span>
         </Link>
-        
+
         <nav className="flex items-center space-x-2">
-          
-         <Link href="/">
-            <Button variant="ghost" size="sm" className="hidden sm:inline-block">
-              Attendance
-            </Button>
-          </Link>
-          <Link href="/docs">
-            <Button variant="ghost" size="sm" className="hidden sm:inline-block">
-              Documentation
-            </Button>
-          </Link>
-          <Link href="/admin">
-            <Button variant="ghost" size="sm" className="hidden sm:inline-block">
-              Admin
-            </Button>
-          </Link>
+          <div className="hidden sm:flex space-x-2">
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                Attendance
+              </Button>
+            </Link>
+            <Link href="/docs">
+              <Button variant="ghost" size="sm">
+                Documentation
+              </Button>
+            </Link>
+            <Link href="/admin">
+              <Button variant="ghost" size="sm">
+                Admin
+              </Button>
+            </Link>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -45,23 +52,39 @@ export function Navbar() {
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             <span className="sr-only">Toggle theme</span>
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="sm:hidden"
+            onClick={toggleMenu}
+          >
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <span className="sr-only">Toggle menu</span>
+          </Button>
         </nav>
       </div>
 
-      <div className="block sm:hidden mt-2">
-        <nav className="flex flex-col items-start space-y-2 px-4">
-          <Link href="/docs">
-            <Button variant="ghost" size="sm">
-              Documentation
-            </Button>
-          </Link>
-          <Link href="/admin">
-            <Button variant="ghost" size="sm">
-              Admin
-            </Button>
-          </Link>
-        </nav>
-      </div>
+      {isOpen && (
+        <div className="sm:hidden mt-2">
+          <nav className="flex flex-col items-start space-y-2 px-4">
+            <Link href="/">
+              <Button variant="ghost" size="sm" onClick={toggleMenu}>
+                Attendance
+              </Button>
+            </Link>
+            <Link href="/docs">
+              <Button variant="ghost" size="sm" onClick={toggleMenu}>
+                Documentation
+              </Button>
+            </Link>
+            <Link href="/admin">
+              <Button variant="ghost" size="sm" onClick={toggleMenu}>
+                Admin
+              </Button>
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
