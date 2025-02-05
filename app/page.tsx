@@ -11,15 +11,15 @@ import { PrefectRole } from '@/lib/types';
 import { saveAttendance } from '@/lib/attendance';
 
 const roles: PrefectRole[] = [
-  'Head',
-  'Deputy',
-  'Senior Executive',
-  'Executive',
-  'Super Senior',
-  'Senior',
-  'Junior',
-  'Sub',
-  'Apprentice'
+  'Head Prefect',
+  'Deputy Prefect',
+  'Senior Executive Prefect',
+  'Executive Prefect',
+  'Super Senior Prefect',
+  'Senior Prefect',
+  'Junior Prefect',
+  'Sub Prefect',
+  'Apprentice Prefect'
 ];
 
 export default function Home() {
@@ -91,6 +91,11 @@ export default function Home() {
                 placeholder="Enter your prefect number"
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSubmit(e);
+                  }
+                }}
                 className="w-full"
               />
             </div>
