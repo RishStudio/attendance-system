@@ -20,6 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="https://cdn.imrishmika.site/images/v2.png" />
+      </head>
       <body className={inter.className}>
         <Providers>
           <div className="relative min-h-screen flex flex-col">
