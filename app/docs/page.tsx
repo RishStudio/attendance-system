@@ -7,10 +7,10 @@ export default function DocsPage() {
   return (
     <div className="container py-10">
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-8 text-4xl font-bold">Documentation</h1>
+        <h1 className="mb-8 text-4xl font-bold text-center">Documentation</h1>
         
         <Tabs defaultValue="overview">
-          <TabsList className="mb-4">
+          <TabsList className="mb-4 flex justify-center">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="shortcuts">Keyboard Shortcuts</TabsTrigger>
             <TabsTrigger value="features">Features</TabsTrigger>
@@ -31,6 +31,13 @@ export default function DocsPage() {
                   <li>Enter your unique prefect number</li>
                   <li>Click "Mark Attendance" or press Enter</li>
                 </ol>
+
+                <h3 className="text-lg font-semibold mt-4">System Requirements</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>A modern web browser (Chrome, Firefox, Edge, Safari)</li>
+                  <li>Internet connection</li>
+                  <li>Valid prefect number</li>
+                </ul>
               </CardContent>
             </Card>
           </TabsContent>
@@ -39,7 +46,7 @@ export default function DocsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Keyboard Shortcuts</CardTitle>
-                <CardDescription>Quick access to system features ( This is Testing Feature and Still this Not Working ) </CardDescription>
+                <CardDescription>Quick access to system features</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
@@ -55,7 +62,12 @@ export default function DocsPage() {
                     <span>View Documentation</span>
                     <kbd className="px-2 py-1 bg-muted rounded">Ctrl + D</kbd>
                   </div>
+                  <div className="flex items-center justify-between">
+                    <span>Mark Attendance</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">Enter</kbd>
+                  </div>
                 </div>
+                <p className="mt-4 text-sm text-muted-foreground">Note: This is a testing feature and may not be fully functional yet.</p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -82,6 +94,13 @@ export default function DocsPage() {
                   <li>Late arrival monitoring</li>
                   <li>14-day data retention</li>
                   <li>Automatic data cleanup</li>
+                </ul>
+
+                <h3 className="font-semibold mt-4">User Management</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Add, edit, and remove user profiles</li>
+                  <li>Assign roles to users</li>
+                  <li>Import user data from CSV</li>
                 </ul>
               </CardContent>
             </Card>
