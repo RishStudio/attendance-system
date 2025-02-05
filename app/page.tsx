@@ -11,27 +11,27 @@ import { PrefectRole } from '@/lib/types';
 import { saveAttendance } from '@/lib/attendance';
 
 const roles: PrefectRole[] = [
-  'Head Prefect',
-  'Deputy Prefect',
-  'Senior Executive Prefect',
-  'Executive Prefect',
-  'Super Senior Prefect',
-  'Senior Prefect',
-  'Junior Prefect',
-  'Sub Prefect',
-  'Apprentice Prefect'
+  'Head',
+  'Deputy',
+  'Senior Executive',
+  'Executive',
+  'Super Senior',
+  'Senior',
+  'Junior',
+  'Sub',
+  'Apprentice'
 ];
 
 const roleShortcuts: { [key: string]: PrefectRole } = {
-  '1': 'Head Prefect',
-  '2': 'Deputy Prefect',
-  '3': 'Senior Executive Prefect',
-  '4': 'Executive Prefect',
-  '5': 'Super Senior Prefect',
-  '6': 'Senior Prefect',
-  '7': 'Junior Prefect',
-  '8': 'Sub Prefect',
-  '9': 'Apprentice Prefect'
+  '1': 'Head',
+  '2': 'Deputy',
+  '3': 'Senior Executive',
+  '4': 'Executive',
+  '5': 'Super Senior',
+  '6': 'Senior',
+  '7': 'Junior',
+  '8': 'Sub',
+  '9': 'Apprentice'
 };
 
 export default function Home() {
