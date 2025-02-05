@@ -1,5 +1,5 @@
 {
-  "name": "nextjs",
+  "name": "attendnace-system-nextjs",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -66,6 +66,7 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.2.2",
     "vaul": "^0.9.9",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "framer-motion": "^10.0.0"
   }
 }
