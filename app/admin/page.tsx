@@ -38,7 +38,7 @@ export default function AdminPanel() {
     setStats(getDailyStats(date));
 
     // Get unique dates from records
-    const dates = [...new Set(records.map(r => r.date))].sort((a, b) => 
+    const dates = Array.from(new Set(records.map(r => r.date))).sort((a, b) => 
       new Date(b).getTime() - new Date(a).getTime()
     );
     setUniqueDates(dates);
