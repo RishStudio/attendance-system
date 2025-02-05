@@ -65,7 +65,7 @@ export default function Home() {
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
             <Shield className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">Prefect Attendance</CardTitle>
+          <CardTitle className="text-2xl font-bold">BOP Attendance System</CardTitle>
           <CardDescription className="text-sm">Mark your daily attendance</CardDescription>
         </CardHeader>
         <CardContent>

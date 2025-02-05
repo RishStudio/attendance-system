@@ -48,7 +48,7 @@ export default function AdminPanel() {
       toast('Daily Export Reminder', {
         description: 'Please remember to export today\'s attendance records before end of day.',
         icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
-        duration: 5000,
+        duration: 2000,
       });
     }
   }, [date]);
