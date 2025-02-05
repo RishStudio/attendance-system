@@ -35,6 +35,8 @@ export default function DocsPage() {
                 <h3 className="text-lg font-semibold mt-4">System Requirements</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>A modern web browser (Chrome, Firefox, Edge, Safari)</li>
+                  <li>MAke Sure Web Browser is Updated to Latest Version</li>
+                  <li>This is Web Made with next.js </li>
                   <li>Internet connection</li>
                   <li>Valid prefect number</li>
                 </ul>
