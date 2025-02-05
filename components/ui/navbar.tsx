@@ -19,6 +19,12 @@ export function Navbar() {
         </Link>
         
         <nav className="flex items-center space-x-2">
+          
+         <Link href="/">
+            <Button variant="ghost" size="sm" className="hidden sm:inline-block">
+              Attendance
+            </Button>
+          </Link>
           <Link href="/docs">
             <Button variant="ghost" size="sm" className="hidden sm:inline-block">
               Documentation
