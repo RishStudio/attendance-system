@@ -1,79 +1,106 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import AttendanceForm from "@/components/AttendanceForm"
-import { motion } from "framer-motion"
-import { XCircle, CheckCircle, Info, Shield, Bug, RefreshCcw, Bell, UserCheck } from "lucide-react"
+import { useState } from 'react';
+import { Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { PrefectRole } from '@/lib/types';
+import { saveAttendance } from '@/lib/attendance';
+
+const roles: PrefectRole[] = [
+  'Head',
+  'Deputy',
+  'Senior Executive',
+  'Executive',
+  'Super Senior',
+  'Senior',
+  'Junior',
+  'Sub',
+  'Apprentice'
+];
 
 export default function Home() {
-  const [showNewVersionMessage, setShowNewVersionMessage] = useState(false)
+  const [role, setRole] = useState<PrefectRole | ''>('');
+  const [prefectNumber, setPrefectNumber] = useState('');
 
-  useEffect(() => {
-    // Simulate checking for a new version (you can replace this with an actual version check)
-    setShowNewVersionMessage(false)
-  }, [])
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!role || !prefectNumber) {
+      toast.error('Please fill in all fields', {
+        description: 'Both role and prefect number are required.',
+        duration: 3000,
+      });
+      return;
+    }
 
-  const closeMessage = () => {
-    setShowNewVersionMessage(false)
-  }
+    const record = saveAttendance(prefectNumber, role);
+    const time = new Date(record.timestamp);
+    const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
+
+    toast.success('Attendance Marked Successfully', {
+      description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
+      duration: 4000,
+    });
+
+    if (isLate) {
+      toast.warning('Late Arrival Detected', {
+        description: 'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
+        duration: 5000,
+      });
+    }
+
+    setRole('');
+    setPrefectNumber('');
+  };
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold mb-8 text-center text-primary">School Prefect Board Attendance System</h1>
-
-      {showNewVersionMessage && (
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          transition={{ duration: 0.5 }}
-          className="bg-gray-800 text-white px-6 py-4 rounded-lg shadow-lg fixed top-4 right-4 z-50 w-96"
-          role="alert"
-        >
-          <div className="flex items-start">
-            <div className="flex-grow">
-              <h2 className="text-lg font-bold mb-2 flex items-center">
-                <CheckCircle className="h-5 w-5 mr-2 text-green-400" />
-                🚀 New Version v0.1.4 Available!
-              </h2>
-              <p className="text-sm mb-3">
-                This update includes performance improvements, new features, and bug fixes. Please refresh the page to update to the latest version and enjoy the enhanced experience.
-              </p>
-              <ul className="text-sm list-disc pl-5 space-y-2">
-                <li className="flex items-center">
-                  <Info className="h-4 w-4 mr-2 text-blue-400" />
-                  Improved UI for a better user experience
-                </li>
-                <li className="flex items-center">
-                  <Bell className="h-4 w-4 mr-2 text-yellow-400" />
-                  Added real-time notifications
-                </li>
-                <li className="flex items-center">
-                  <UserCheck className="h-4 w-4 mr-2 text-purple-400" />
-                  Admin Panel Updated
-                </li>
-                <li className="flex items-center">
-                  <Shield className="h-4 w-4 mr-2 text-red-400" />
-                  Enhanced security measures
-                </li>
-                <li className="flex items-center">
-                  <Bug className="h-4 w-4 mr-2 text-orange-400" />
-                  Bug fixes and performance optimizations
-                </li>
-                <li className="flex items-center">
-                  <RefreshCcw className="h-4 w-4 mr-2 text-green-400" />
-                  Seamless update process
-                </li>
-              </ul>
-            </div>
-            <button onClick={closeMessage} className="text-white hover:text-gray-300 ml-4">
-              <XCircle className="fill-current h-6 w-6" />
-            </button>
+    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4 sm:p-6">
+      <div className="absolute inset-0 -z-10" />
+      <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80">
+        <CardHeader className="text-center space-y-2">
+          <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
+            <Shield className="w-8 h-8 text-primary" />
           </div>
-        </motion.div>
-      )}
+          <CardTitle className="text-2xl font-bold">Prefect Attendance</CardTitle>
+          <CardDescription className="text-sm">Mark your daily attendance</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {roles.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Input
+                type="text"
+                placeholder="Enter your prefect number"
+                value={prefectNumber}
+                onChange={(e) => setPrefectNumber(e.target.value)}
+                className="w-full"
+              />
+            </div>
 
-      <AttendanceForm />
+            <Button type="submit" className="w-full text-base font-medium">
+              Mark Attendance
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
-  )
+  );
 }

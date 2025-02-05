@@ -1,48 +1,34 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Navbar from "@/components/common/Navbar";
-import Footer from "@/components/common/Footer";
-import { Toaster } from "@/components/ui/toaster";
+import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { Providers } from './providers';
+import { Navbar } from '@/components/ui/navbar';
+import { Footer } from '@/components/ui/footer';
+import { ParticlesBackground } from '@/components/ui/particles';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "BOP Attendance System",
-  description: "Rishmika Idea Fixed by Vimukthi Indunil",
-  keywords: "attendance, system, BOP, Rishmika, Vimukthi, tracking, management",
-  authors: [{ name: "Rishmika and Vimukthi Indunil" }], // Fixed property name
-  viewport: "width=device-width, initial-scale=1.0",
-  robots: "index, follow",
+  title: 'Prefect Board Attendance System',
+  description: 'Modern attendance tracking system for school prefects',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="robots" content="index, follow" />
-        <meta name="author" content="Rishmika and Vimukthi Indunil" />
-        <meta name="keywords" content="attendance, system, BOP, Rishmika, Vimukthi, tracking, management" />
-        <meta name="description" content="Idea From Rishmika Sandanu & Bug Fixed by Vimukthi Indunil" />
-        <link rel="icon" href="https://cdn.imrishmika.site/images/attendance.png" />
-        <title>BOP Attendance System</title>
-      </head>
-      <body
-        className={`${inter.className} bg-background text-text flex flex-col min-h-screen`}
-      >
-        <div className="gradient-bg"></div>
-        <Navbar />
-        <main className="flex-grow container mx-auto px-4 py-8 flex items-center justify-center">
-          {children}
-        </main>
-        <Footer />
-        <Toaster />
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <Providers>
+          <div className="relative min-h-screen flex flex-col">
+            <Navbar />
+            <ParticlesBackground />
+            <main className="flex-1 container mx-auto">{children}</main>
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );
