@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,34 +22,9 @@ const roles: PrefectRole[] = [
   'Apprentice'
 ];
 
-const roleShortcuts: { [key: string]: PrefectRole } = {
-  '1': 'Head',
-  '2': 'Deputy',
-  '3': 'Senior Executive',
-  '4': 'Executive',
-  '5': 'Super Senior',
-  '6': 'Senior',
-  '7': 'Junior',
-  '8': 'Sub',
-  '9': 'Apprentice'
-};
-
 export default function Home() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
-
-  useEffect(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      if (roleShortcuts[e.key]) {
-        setRole(roleShortcuts[e.key]);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeydown);
-    return () => {
-      window.removeEventListener('keydown', handleKeydown);
-    };
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
