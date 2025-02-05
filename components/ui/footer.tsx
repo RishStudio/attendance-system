@@ -22,6 +22,11 @@ export function Footer() {
           </a>
         </div>
       </div>
+      <div className="container mx-auto px-4 py-2 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+        <p className="text-center text-sm text-muted-foreground">
+          Developed by <a href="https://imrishmika.site" className="text-foreground hover:underline">Rishmika Sandanu</a>
+        </p>
+      </div>
     </footer>
   );
 }
