@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield } from 'lucide-react';
+import { Shield, User, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -22,7 +22,7 @@ const roles: PrefectRole[] = [
   'Apprentice'
 ];
 
-export default function Home() {
+export default function AttendanceForm() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
 
@@ -73,7 +73,7 @@ export default function Home() {
             <div className="space-y-2">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your role" />
+                  <SelectValue placeholder={<span><User className="inline-block mr-2" />Select your role</span>} />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
@@ -97,6 +97,7 @@ export default function Home() {
                   }
                 }}
                 className="w-full"
+                icon={<ClipboardCheck className="text-gray-400" />}
               />
             </div>
 
