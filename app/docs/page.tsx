@@ -22,14 +22,14 @@ export default function DocsPage() {
           <TabsContent value="new-version">
             <Card>
               <CardHeader>
-                <CardTitle>Introducing Version 5.0.1</CardTitle>
+                <CardTitle>Introducing Version 5.0.2</CardTitle>
                 <CardDescription>Enhanced features and improvements</CardDescription>
               </CardHeader>
               <div className="mt-4">
-                <img src="/version.png" alt="Version 5.0.1" className="w-full h-auto rounded-lg shadow-lg" />
+                <img src="/version2.png" alt="Version 5.0.2" className="w-full h-auto rounded-lg shadow-lg" />
               </div>
               <CardContent className="space-y-4 mt-4">
-                <p>We are excited to introduce Version 5.0.1 of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
+                <p>We are excited to introduce Version 5.0.2 of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
                 
                 <h3 className="text-lg font-semibold">New Features</h3>
                 <ul className="list-disc pl-6 space-y-2">
