@@ -70,10 +70,11 @@ export default function AttendanceForm() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
+            <div className="relative">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={<span><User className="inline-block mr-2" />Select your role</span>} />
+                <SelectTrigger className="w-full pl-10">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
@@ -88,17 +89,12 @@ export default function AttendanceForm() {
               </Select>
             </div>
             
-            <div className="relative space-y-2">
+            <div className="relative">
               <Input
                 type="text"
                 placeholder="Enter your prefect number"
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSubmit(e);
-                  }
-                }}
                 className="w-full pl-10"
               />
               <ClipboardCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
