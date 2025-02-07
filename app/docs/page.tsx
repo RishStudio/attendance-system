@@ -12,23 +12,12 @@ export default function DocsPage() {
         <h1 className="mb-8 text-4xl font-bold">Documentation</h1>
         
         <Tabs defaultValue="overview">
-          <TabsList className="mb-4 flex flex-wrap">
-            <TabsTrigger value="new-version" className="flex items-center space-x-2">
-              <Code className="mr-2 h-4 w-4" />
-              <span>New Version</span>
-            </TabsTrigger>
-            <TabsTrigger value="overview" className="flex items-center space-x-2">
-              <Info className="mr-2 h-4 w-4" />
-              <span>Overview</span>
-            </TabsTrigger>
-            <TabsTrigger value="shortcuts" className="flex items-center space-x-2">
-              <Keyboard className="mr-2 h-4 w-4" />
-              <span>Keyboard Shortcuts</span>
-            </TabsTrigger>
-            <TabsTrigger value="features" className="flex items-center space-x-2">
-              <Star className="mr-2 h-4 w-4" />
-              <span>Features</span>
-            </TabsTrigger>
+          <TabsList className="mb-4">
+            <TabsTrigger value="new-version"><Code className="mr-2 h-4 w-4" />New Version</TabsTrigger>
+            <TabsTrigger value="overview"><Info className="mr-2 h-4 w-4" />Overview</TabsTrigger>
+            <TabsTrigger value="shortcuts"><Keyboard className="mr-2 h-4 w-4" />Keyboard Shortcuts</TabsTrigger>
+            <TabsTrigger value="features"><Star className="mr-2 h-4 w-4" />Features</TabsTrigger>
+  
           </TabsList>
           
           <TabsContent value="overview">
@@ -54,7 +43,7 @@ export default function DocsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Keyboard Shortcuts</CardTitle>
-                <CardDescription>Quick access to system features (This is a testing feature and is not fully functional yet)</CardDescription>
+                <CardDescription>Quick access to system features ( This is Testing Feature and Still this Not Working )</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
@@ -105,20 +94,18 @@ export default function DocsPage() {
           <TabsContent value="new-version">
             <Card>
               <CardHeader>
-                <CardTitle>Introducing Version 5.0.1 Beta</CardTitle>
+                <CardTitle>Introducing Version 2.0</CardTitle>
                 <CardDescription>Enhanced features and improvements</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p>We are excited to introduce Version 5.0.1 Beta of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
+                <p>We are excited to introduce Version 2.0 of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
                 
                 <h3 className="text-lg font-semibold">New Features</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Enhanced role management</li>
                   <li>Customizable attendance reports</li>
                   <li>Improved late arrival alerts</li>
-                  <li>New user interface with Light mode support</li>
-                  <li>Manul Time Adding Panel added</li>
-                  <li>Add Icons More</li>
+                  <li>New user interface with dark mode support</li>
                 </ul>
                 
                 <h3 className="text-lg font-semibold mt-4">Bug Fixes</h3>
@@ -129,7 +116,7 @@ export default function DocsPage() {
                 </ul>
                 
                 <div className="mt-6">
-                  <Image src="/images/version-2.0.png" alt="Version 2.0" width={800} height={400} className="w-full h-auto rounded-lg shadow-lg" />
+                  <img src="/images/version-2.0.png" alt="Version 2.0" className="w-full h-auto rounded-lg shadow-lg" />
                 </div>
               </CardContent>
             </Card>
