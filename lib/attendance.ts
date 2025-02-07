@@ -76,18 +76,18 @@ export function exportAttendance(date: string): string {
     .filter(r => r.date === date)
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
-  const groupedByRole: Record<string, AttendanceRecord[]> = records.reduce((acc, record) => {
+  const groupedByRole: Record<PrefectRole, AttendanceRecord[]> = records.reduce((acc, record) => {
     if (!acc[record.role]) {
       acc[record.role] = [];
     }
     acc[record.role].push(record);
     return acc;
-  }, {});
+  }, {} as Record<PrefectRole, AttendanceRecord[]>);
 
   const csv = [
     ['Role', 'Prefect Number', 'Date', 'Time', 'Status'].join(','),
     ...Object.keys(groupedByRole).flatMap(role => 
-      groupedByRole[role].map(record => {
+      groupedByRole[role as PrefectRole].map(record => {
         const time = new Date(record.timestamp);
         const status = time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)
           ? 'On Time'
@@ -111,16 +111,16 @@ export function previewAttendance(date: string): string {
     .filter(r => r.date === date)
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
-  const groupedByRole: Record<string, AttendanceRecord[]> = records.reduce((acc, record) => {
+  const groupedByRole: Record<PrefectRole, AttendanceRecord[]> = records.reduce((acc, record) => {
     if (!acc[record.role]) {
       acc[record.role] = [];
     }
     acc[record.role].push(record);
     return acc;
-  }, {});
+  }, {} as Record<PrefectRole, AttendanceRecord[]>);
 
   const preview = Object.keys(groupedByRole).map(role => 
-    groupedByRole[role].map(record => {
+    groupedByRole[role as PrefectRole].map(record => {
       const time = new Date(record.timestamp);
       const status = time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)
         ? 'On Time'
