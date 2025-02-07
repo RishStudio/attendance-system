@@ -38,7 +38,7 @@ export default function AttendanceForm() {
       return;
     }
 
-    const time = new Date(manualTime);
+    const time = new Date(`1970-01-01T${manualTime}:00`);
     if (isNaN(time.getTime())) {
       toast.error('Invalid Time Format', {
         description: 'Please enter a valid time.',
@@ -51,7 +51,7 @@ export default function AttendanceForm() {
     const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
 
     toast.success('Attendance Marked Successfully', {
-      description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
+      description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
       duration: 4000,
     });
 
@@ -83,7 +83,7 @@ export default function AttendanceForm() {
             <div className="space-y-2">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={<span><User className="inline-block mr-2" />Select your role</span>} />
+                  <SelectValue placeholder={<span className="flex items-center"><User className="inline-block mr-2" />Select your role</span>} />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
@@ -116,7 +116,7 @@ export default function AttendanceForm() {
 
             <div className="relative space-y-2">
               <Input
-                type="datetime-local"
+                type="time"
                 placeholder="Enter the time"
                 value={manualTime}
                 onChange={(e) => setManualTime(e.target.value)}
