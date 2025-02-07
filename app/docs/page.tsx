@@ -26,7 +26,7 @@ export default function DocsPage() {
                 <CardDescription>Enhanced features and improvements</CardDescription>
               </CardHeader>
               <div className="mt-4">
-                <img src="/version2.png" alt="Version 5.0.2" className="w-full h-auto rounded-lg shadow-lg" />
+                <img src="/Version2.png" alt="Version 5.0.2" className="w-full h-auto rounded-lg shadow-lg" />
               </div>
               <CardContent className="space-y-4 mt-4">
                 <p>We are excited to introduce Version 5.0.2 of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
