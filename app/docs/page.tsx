@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ClipboardCheck, Keyboard, Star, Info, Code, Users, Shield, ChartBar, AlertCircle, Sun } from 'lucide-react';
+import { ClipboardCheck, Keyboard, Star, Info, Code, Users } from 'lucide-react';
 import Image from 'next/image';
 
 export default function DocsPage() {
@@ -25,30 +25,30 @@ export default function DocsPage() {
                 <CardTitle>Introducing Version 5.0.1</CardTitle>
                 <CardDescription>Enhanced features and improvements</CardDescription>
               </CardHeader>
-              <div className="mt-4 flex justify-center">
-                <img src="/version.png" alt="Version 5.0.1" className="max-w-full h-auto rounded-lg shadow-lg" />
+              <div className="mt-4">
+                <img src="/version.png" alt="Version 5.0.1" className="w-full h-auto rounded-lg shadow-lg" />
               </div>
               <CardContent className="space-y-4 mt-4">
                 <p>We are excited to introduce Version 5.0.1 of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
                 
-                <h3 className="text-lg font-semibold flex items-center"><Shield className="mr-2" />New Features</h3>
+                <h3 className="text-lg font-semibold">New Features</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li><ChartBar className="inline mr-2" />Enhanced role management</li>
-                  <li><ClipboardCheck className="inline mr-2" />Customizable attendance reports</li>
-                  <li><AlertCircle className="inline mr-2" />Improved late arrival alerts</li>
-                  <li><Sun className="inline mr-2" />New user interface with light mode support</li>
-                  <li><Code className="inline mr-2" />Manual time entry system (in development)</li>
-                  <li><Star className="inline mr-2" />Additional icons for better user experience</li>
+                  <li>Enhanced role management</li>
+                  <li>Customizable attendance reports</li>
+                  <li>Improved late arrival alerts</li>
+                  <li>New user interface with light mode support</li>
+                  <li>Manual time entry system (in development)</li>
+                  <li>Additional icons for better user experience</li>
                 </ul>
                 
-                <h3 className="text-lg font-semibold mt-4 flex items-center"><AlertCircle className="mr-2" />Bug Fixes</h3>
+                <h3 className="text-lg font-semibold mt-4">Bug Fixes</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                    <li><ClipboardCheck className="inline mr-2" />Fixed issues with timestamp accuracy</li>
-                    <li><AlertCircle className="inline mr-2" />Resolved UI glitches on mobile devices</li>
-                    <li><ChartBar className="inline mr-2" />Improved performance and load times</li>
-                    <li><Info className="inline mr-2" />Fixed broken links in the documentation</li>
-                    <li><Code className="inline mr-2" />Addressed minor memory leaks</li>
-                    <li><AlertCircle className="inline mr-2" />Enhanced error messages for better debugging</li>
+                    <li>Fixed issues with timestamp accuracy</li>
+                    <li>Resolved UI glitches on mobile devices</li>
+                    <li>Improved performance and load times</li>
+                    <li>Fixed broken links in the documentation</li>
+                    <li>Addressed minor memory leaks</li>
+                    <li>Enhanced error messages for better debugging</li>
                 </ul>
               </CardContent>
             </Card>
