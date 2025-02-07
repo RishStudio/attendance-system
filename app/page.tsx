@@ -79,10 +79,7 @@ export default function AttendanceForm() {
                 <SelectContent>
                   {roles.map((role) => (
                     <SelectItem key={role} value={role}>
-                      <span className="flex items-center">
-                        <User className="mr-2" />
-                        {role}
-                      </span>
+                      {role}
                     </SelectItem>
                   ))}
                 </SelectContent>
