@@ -31,7 +31,7 @@ export function Navbar() {
                 Attendance
               </Button>
             </Link>
-            <Link href="/">
+            <Link href="/time">
                 <Button variant="ghost" size="sm">
                 Manual Attendance
                 </Button>
