@@ -44,12 +44,6 @@ export function Navbar() {
                 Admin
               </Button>
             </Link>
-            <Link href="/time">
-              <Button variant="ghost" size="sm">
-                <Clock className="mr-2 h-4 w-4" />
-                Manual Attendance (Beta)
-              </Button>
-            </Link>
           </div>
           <Button
             variant="ghost"
