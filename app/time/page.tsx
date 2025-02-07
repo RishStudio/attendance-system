@@ -47,7 +47,7 @@ export default function AttendanceForm() {
       return;
     }
 
-    const record = saveAttendance(prefectNumber, role);
+    saveAttendance(prefectNumber, role);
     const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
 
     toast.success('Attendance Marked Successfully', {
@@ -68,9 +68,9 @@ export default function AttendanceForm() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4 sm:p-6">
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
       <div className="absolute inset-0 -z-10" />
-      <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80">
+      <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80 shadow-lg">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
             <Shield className="w-8 h-8 text-primary" />
@@ -83,7 +83,7 @@ export default function AttendanceForm() {
             <div className="space-y-2">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={<span className="flex items-center"><User className="inline-block mr-2" />Select your role</span>} />
+                  <SelectValue placeholder={<span className="flex items-center"><User className="mr-2" />Select your role</span>} />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
@@ -98,7 +98,7 @@ export default function AttendanceForm() {
               </Select>
             </div>
             
-            <div className="relative space-y-2">
+            <div className="relative">
               <Input
                 type="text"
                 placeholder="Enter your prefect number"
@@ -114,7 +114,7 @@ export default function AttendanceForm() {
               <ClipboardCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
-            <div className="relative space-y-2">
+            <div className="relative">
               <Input
                 type="time"
                 placeholder="Enter the time"
