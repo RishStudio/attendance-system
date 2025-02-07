@@ -85,7 +85,7 @@ export default function AttendanceForm() {
               </Select>
             </div>
             
-            <div className="space-y-2">
+            <div className="relative space-y-2">
               <Input
                 type="text"
                 placeholder="Enter your prefect number"
@@ -96,9 +96,9 @@ export default function AttendanceForm() {
                     handleSubmit(e);
                   }
                 }}
-                className="w-full"
-                icon={<ClipboardCheck className="text-gray-400" />}
+                className="w-full pl-10"
               />
+              <ClipboardCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <Button type="submit" className="w-full text-base font-medium">
