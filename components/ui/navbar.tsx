@@ -31,6 +31,11 @@ export function Navbar() {
                 Attendance
               </Button>
             </Link>
+            <Link href="/">
+                <Button variant="ghost" size="sm">
+                Manual Attendance
+                </Button>
+            </Link>
             <Link href="/docs">
               <Button variant="ghost" size="sm">
                 Documentation
