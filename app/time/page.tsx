@@ -47,7 +47,7 @@ export default function AttendanceForm() {
       return;
     }
 
-    saveAttendance(prefectNumber, role);
+    const record = saveAttendance(prefectNumber, role, time);
     const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
 
     toast.success('Attendance Marked Successfully', {

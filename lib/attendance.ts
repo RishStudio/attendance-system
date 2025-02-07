@@ -1,13 +1,11 @@
-'use client';
-
 import { AttendanceRecord, DailyStats, PrefectRole } from './types';
 
 const STORAGE_KEY = 'prefect_attendance_records';
 const MAX_DAYS = 14;
 
-export function saveAttendance(prefectNumber: string, role: PrefectRole): AttendanceRecord {
+export function saveAttendance(prefectNumber: string, role: PrefectRole, manualTime?: Date): AttendanceRecord {
   const records = getAttendanceRecords();
-  const now = new Date();
+  const now = manualTime || new Date();
   
   const record: AttendanceRecord = {
     id: crypto.randomUUID(),
