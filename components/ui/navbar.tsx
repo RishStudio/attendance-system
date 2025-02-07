@@ -33,7 +33,7 @@ export function Navbar() {
             </Link>
             <Link href="/time">
                 <Button variant="ghost" size="sm">
-                Manual Attendance
+                Manual Attendance ( Beta )
                 </Button>
             </Link>
             <Link href="/docs">
