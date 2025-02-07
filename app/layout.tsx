@@ -5,20 +5,19 @@ import { Providers } from './providers';
 import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
 import { ParticlesBackground } from '@/components/ui/particles';
-import Images from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Prefect Board Attendance System',
-  description: 'Modern attendance tracking system for school prefects in Mahinda Rajapaksha College',
+  description: 'Modern attendance tracking system for school prefects',
   openGraph: {
     images: [
       {
         url: '/Version2.png',
         width: 800,
         height: 600,
-        alt: 'Prefect Board Attendance System V5.0.2',
+        alt: 'Prefect Board Attendance System',
       },
     ],
   },
@@ -26,7 +25,12 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Prefect Board Attendance System',
     description: 'Modern attendance tracking system for school prefects',
-    image: '/Version2.png',
+    images: [
+      {
+        url: '/Version2.png',
+        alt: 'Prefect Board Attendance System',
+      },
+    ],
   },
 };
 
