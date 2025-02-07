@@ -7,16 +7,16 @@ import Image from 'next/image';
 
 export default function DocsPage() {
   return (
-    <div className="container py-10 px-4 sm:px-6 lg:px-8">
+    <div className="container py-10 px-4">
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-8 text-4xl font-bold">Documentation</h1>
+        <h1 className="mb-8 text-4xl font-bold text-center sm:text-left">Documentation</h1>
         
         <Tabs defaultValue="new-version">
-          <TabsList className="mb-4 flex flex-wrap">
-            <TabsTrigger value="new-version" className="mb-2 sm:mb-0"><Code className="mr-2 h-4 w-4" />New Version</TabsTrigger>
-            <TabsTrigger value="overview" className="mb-2 sm:mb-0"><Info className="mr-2 h-4 w-4" />Overview</TabsTrigger>
-            <TabsTrigger value="features" className="mb-2 sm:mb-0"><Star className="mr-2 h-4 w-4" />Features</TabsTrigger>
-            <TabsTrigger value="shortcuts" className="mb-2 sm:mb-0"><Keyboard className="mr-2 h-4 w-4" />Keyboard Shortcuts</TabsTrigger>
+          <TabsList className="mb-4 flex flex-col sm:flex-row">
+            <TabsTrigger value="new-version" className="flex-1"><Code className="mr-2 h-4 w-4" />New Version</TabsTrigger>
+            <TabsTrigger value="overview" className="flex-1"><Info className="mr-2 h-4 w-4" />Overview</TabsTrigger>
+            <TabsTrigger value="features" className="flex-1"><Star className="mr-2 h-4 w-4" />Features</TabsTrigger>
+            <TabsTrigger value="shortcuts" className="flex-1"><Keyboard className="mr-2 h-4 w-4" />Keyboard Shortcuts</TabsTrigger>
           </TabsList>
           
           <TabsContent value="new-version">
@@ -25,8 +25,8 @@ export default function DocsPage() {
                 <CardTitle>Introducing Version 5.0.1</CardTitle>
                 <CardDescription>Enhanced features and improvements</CardDescription>
               </CardHeader>
-              <div className="mt-4 flex justify-center">
-                <img src="/version.png" alt="Version 5.0.1" className="max-w-full h-auto rounded-lg shadow-lg" />
+              <div className="mt-4">
+                <Image src="/version.png" alt="Version 5.0.1" width={800} height={400} className="w-full h-auto rounded-lg shadow-lg" />
               </div>
               <CardContent className="space-y-4 mt-4">
                 <p>We are excited to introduce Version 5.0.1 of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
