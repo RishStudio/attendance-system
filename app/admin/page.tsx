@@ -166,7 +166,7 @@ export default function AdminPanel() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-8rem)] p-4 sm:p-8 bg-gray-50 dark:bg-gray-900">
+    <div className="relative min-h-[calc(100vh-8rem)] p-4 sm:p-8">
       <div className="absolute inset-0 -z-10" />
       <div className="relative max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
