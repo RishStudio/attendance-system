@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, User, ClipboardCheck, Star, Users, Award, Briefcase, BookOpen, GraduationCap, Hammer } from 'lucide-react';
+import { Shield, User, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -10,16 +10,16 @@ import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
 import { saveAttendance } from '@/lib/attendance';
 
-const roles: { role: PrefectRole, icon: React.ReactNode }[] = [
-  { role: 'Head', icon: <Shield /> },
-  { role: 'Deputy', icon: <Star /> },
-  { role: 'Senior Executive', icon: <Users /> },
-  { role: 'Executive', icon: <Award /> },
-  { role: 'Super Senior', icon: <Briefcase /> },
-  { role: 'Senior', icon: <BookOpen /> },
-  { role: 'Junior', icon: <GraduationCap /> },
-  { role: 'Sub', icon: <User /> },
-  { role: 'Apprentice', icon: <Hammer /> },
+const roles: PrefectRole[] = [
+  'Head',
+  'Deputy',
+  'Senior Executive',
+  'Executive',
+  'Super Senior',
+  'Senior',
+  'Junior',
+  'Sub',
+  'Apprentice'
 ];
 
 export default function AttendanceForm() {
@@ -73,14 +73,14 @@ export default function AttendanceForm() {
             <div className="relative">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
                 <SelectTrigger className="w-full pl-10">
-                  {role ? roles.find(r => r.role === role)?.icon : <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />}
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
-                  {roles.map(({ role, icon }) => (
+                  {roles.map((role) => (
                     <SelectItem key={role} value={role}>
                       <span className="flex items-center">
-                        <span className="mr-2">{icon}</span>
+                        <User className="mr-2" />
                         {role}
                       </span>
                     </SelectItem>
