@@ -121,7 +121,7 @@ export default function DocsPage() {
                 </ul>
                 
                 <div className="mt-6">
-                  <img src="/images/version.png" alt="Version 5.0.1" className="w-full h-auto rounded-lg shadow-lg" />
+                  <img src="/version.png" alt="Version 5.0.1" className="w-full h-auto rounded-lg shadow-lg" />
                 </div>
               </CardContent>
             </Card>
