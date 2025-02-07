@@ -12,11 +12,23 @@ export default function DocsPage() {
         <h1 className="mb-8 text-4xl font-bold">Documentation</h1>
         
         <Tabs defaultValue="overview">
-          <TabsList className="mb-4">
-            <TabsTrigger value="overview"><Info className="mr-2 h-4 w-4" />Overview</TabsTrigger>
-            <TabsTrigger value="shortcuts"><Keyboard className="mr-2 h-4 w-4" />Keyboard Shortcuts</TabsTrigger>
-            <TabsTrigger value="features"><Star className="mr-2 h-4 w-4" />Features</TabsTrigger>
-            <TabsTrigger value="new-version"><Code className="mr-2 h-4 w-4" />New Version</TabsTrigger>
+          <TabsList className="mb-4 flex flex-wrap">
+            <TabsTrigger value="new-version" className="flex items-center space-x-2">
+              <Code className="mr-2 h-4 w-4" />
+              <span>New Version</span>
+            </TabsTrigger>
+            <TabsTrigger value="overview" className="flex items-center space-x-2">
+              <Info className="mr-2 h-4 w-4" />
+              <span>Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="shortcuts" className="flex items-center space-x-2">
+              <Keyboard className="mr-2 h-4 w-4" />
+              <span>Keyboard Shortcuts</span>
+            </TabsTrigger>
+            <TabsTrigger value="features" className="flex items-center space-x-2">
+              <Star className="mr-2 h-4 w-4" />
+              <span>Features</span>
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview">
@@ -42,7 +54,7 @@ export default function DocsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Keyboard Shortcuts</CardTitle>
-                <CardDescription>Quick access to system features ( This is Testing Feature and Still this Not Working )</CardDescription>
+                <CardDescription>Quick access to system features (This is a testing feature and is not fully functional yet)</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
@@ -115,7 +127,7 @@ export default function DocsPage() {
                 </ul>
                 
                 <div className="mt-6">
-                  <img src="/images/version-2.0.png" alt="Version 2.0" className="w-full h-auto rounded-lg shadow-lg" />
+                  <Image src="/images/version-2.0.png" alt="Version 2.0" width={800} height={400} className="w-full h-auto rounded-lg shadow-lg" />
                 </div>
               </CardContent>
             </Card>
