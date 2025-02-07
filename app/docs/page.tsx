@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ClipboardCheck, Keyboard, Star, Info, Code, Users } from 'lucide-react';
 
 export default function DocsPage() {
   return (
@@ -11,9 +12,10 @@ export default function DocsPage() {
         
         <Tabs defaultValue="overview">
           <TabsList className="mb-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="shortcuts">Keyboard Shortcuts</TabsTrigger>
-            <TabsTrigger value="features">Features</TabsTrigger>
+            <TabsTrigger value="overview"><Info className="mr-2 h-4 w-4" />Overview</TabsTrigger>
+            <TabsTrigger value="shortcuts"><Keyboard className="mr-2 h-4 w-4" />Keyboard Shortcuts</TabsTrigger>
+            <TabsTrigger value="features"><Star className="mr-2 h-4 w-4" />Features</TabsTrigger>
+            <TabsTrigger value="new-version"><Code className="mr-2 h-4 w-4" />New Version</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview">
@@ -39,7 +41,7 @@ export default function DocsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Keyboard Shortcuts</CardTitle>
-                <CardDescription>Quick access to system features ( This is Testing Feature and Still this Not Working ) </CardDescription>
+                <CardDescription>Quick access to system features ( This is Testing Feature and Still this Not Working )</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
@@ -83,6 +85,37 @@ export default function DocsPage() {
                   <li>14-day data retention</li>
                   <li>Automatic data cleanup</li>
                 </ul>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="new-version">
+            <Card>
+              <CardHeader>
+                <CardTitle>Introducing Version 2.0</CardTitle>
+                <CardDescription>Enhanced features and improvements</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p>We are excited to introduce Version 2.0 of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
+                
+                <h3 className="text-lg font-semibold">New Features</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Enhanced role management</li>
+                  <li>Customizable attendance reports</li>
+                  <li>Improved late arrival alerts</li>
+                  <li>New user interface with dark mode support</li>
+                </ul>
+                
+                <h3 className="text-lg font-semibold mt-4">Bug Fixes</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Fixed issues with timestamp accuracy</li>
+                  <li>Resolved UI glitches on mobile devices</li>
+                  <li>Improved performance and load times</li>
+                </ul>
+                
+                <div className="mt-6">
+                  <img src="/images/version-2.0.png" alt="Version 2.0" className="w-full h-auto rounded-lg shadow-lg" />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
