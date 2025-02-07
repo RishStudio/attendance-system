@@ -105,18 +105,20 @@ export default function DocsPage() {
           <TabsContent value="new-version">
             <Card>
               <CardHeader>
-                <CardTitle>Introducing Version 2.0</CardTitle>
+                <CardTitle>Introducing Version 5.0.1 Beta</CardTitle>
                 <CardDescription>Enhanced features and improvements</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p>We are excited to introduce Version 2.0 of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
+                <p>We are excited to introduce Version 5.0.1 Beta of the Prefect Board Attendance System. This update brings a host of new features and improvements to enhance your experience.</p>
                 
                 <h3 className="text-lg font-semibold">New Features</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Enhanced role management</li>
                   <li>Customizable attendance reports</li>
                   <li>Improved late arrival alerts</li>
-                  <li>New user interface with dark mode support</li>
+                  <li>New user interface with Light mode support</li>
+                  <li>Manul Time Adding Panel added</li>
+                  <li>Add Icons More</li>
                 </ul>
                 
                 <h3 className="text-lg font-semibold mt-4">Bug Fixes</h3>
