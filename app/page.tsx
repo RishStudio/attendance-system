@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, User, ClipboardCheck } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
 import { saveAttendance } from '@/lib/attendance';
+import { Clock } from '@/components/ui/clock';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -22,7 +23,7 @@ const roles: PrefectRole[] = [
   'Apprentice'
 ];
 
-export default function AttendanceForm() {
+export default function Home() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
 
@@ -65,15 +66,15 @@ export default function AttendanceForm() {
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
             <Shield className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">BOP Attendance System</CardTitle>
+          <Clock />
+          <CardTitle className="text-2xl font-bold">Prefect Attendance</CardTitle>
           <CardDescription className="text-sm">Mark your daily attendance</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="relative">
+            <div className="space-y-2">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
-                <SelectTrigger className="w-full pl-10">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -86,15 +87,14 @@ export default function AttendanceForm() {
               </Select>
             </div>
             
-            <div className="relative">
+            <div className="space-y-2">
               <Input
                 type="text"
                 placeholder="Enter your prefect number"
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
-                className="w-full pl-10"
+                className="w-full"
               />
-              <ClipboardCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <Button type="submit" className="w-full text-base font-medium">

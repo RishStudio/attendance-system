@@ -18,6 +18,7 @@ import {
   Users,
   BarChart,
   Filter,
+  Lock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,6 +37,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Tabs,
@@ -43,6 +51,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { Clock as ClockComponent } from '@/components/ui/clock';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -57,6 +66,9 @@ const roles: PrefectRole[] = [
 ];
 
 export default function AdminPanel() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pin, setPin] = useState('');
+  const [showPinDialog, setShowPinDialog] = useState(true);
   const [date, setDate] = useState(new Date().toLocaleDateString());
   const [stats, setStats] = useState<DailyStats | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,7 +86,26 @@ export default function AdminPanel() {
     date: '',
   });
 
+  const handlePinSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    
+    if (pin === 'hello') {
+      setIsAuthenticated(true);
+      setShowPinDialog(false);
+      toast.success('Access Granted', {
+        description: 'Welcome to the admin panel',
+      });
+    } else {
+      toast.error('Invalid PIN', {
+        description: 'Please enter the correct PIN to access the admin panel',
+      });
+      setPin('');
+    }
+  };
+
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const records = getAttendanceRecords();
     setAllRecords(records);
     const todayRecords = records.filter(r => r.date === date);
@@ -94,9 +125,11 @@ export default function AdminPanel() {
         duration: 5000,
       });
     }
-  }, [date]);
+  }, [date, isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const filtered = allRecords.filter(record => {
       const matchesSearch = record.prefectNumber.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesDate = record.date === date;
@@ -104,7 +137,7 @@ export default function AdminPanel() {
       return matchesSearch && matchesDate && matchesRole;
     });
     setFilteredRecords(filtered);
-  }, [searchQuery, date, allRecords, roleFilter]);
+  }, [searchQuery, date, allRecords, roleFilter, isAuthenticated]);
 
   useEffect(() => {
     const handleFullScreenChange = () => {
@@ -114,6 +147,38 @@ export default function AdminPanel() {
     document.addEventListener('fullscreenchange', handleFullScreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
   }, []);
+
+  if (!isAuthenticated) {
+    return (
+      <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Admin PIN</DialogTitle>
+            <DialogDescription>
+              Please enter the PIN to access the admin panel
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handlePinSubmit} className="space-y-4 py-4">
+            <div className="flex items-center space-x-4">
+              <Input
+                type="password"
+                placeholder="Enter PIN"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit">
+                <Lock className="mr-2 h-4 w-4" />
+                Access Admin Panel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   const handleExport = () => {
     if (filteredRecords.length === 0) {
@@ -463,8 +528,7 @@ export default function AdminPanel() {
                             <Input
                               type="time"
                               value={editForm.time}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, time: e.target.value }))}
-                            />
+                              onChange={(e) => setEditForm(prev => ({ ...prev, time: e.target.value }))} />
                           </div>
                           <div className="flex justify-end gap-2">
                             <Button
