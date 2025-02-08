@@ -1,32 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  Download,
-  ArrowLeft,
-  AlertTriangle,
-  Search,
-  Calendar,
-  Trash2,
-  Maximize,
-  Minimize,
-} from 'lucide-react';
+import { Download, ArrowLeft, AlertTriangle, Search, Calendar, Trash2, Maximize, Minimize, Edit2, Save, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { AttendanceRecord, DailyStats } from '@/lib/types';
-import {
-  getAttendanceRecords,
-  getDailyStats,
-  exportAttendance,
-} from '@/lib/attendance';
+import { AttendanceRecord, DailyStats, PrefectRole } from '@/lib/types';
+import { getAttendanceRecords, getDailyStats, exportAttendance, updateAttendance } from '@/lib/attendance';
 import Link from 'next/link';
 import {
   AlertDialog,
@@ -37,50 +18,64 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const roles: PrefectRole[] = [
+  'Head',
+  'Deputy',
+  'Senior Executive',
+  'Executive',
+  'Super Senior',
+  'Senior',
+  'Junior',
+  'Sub',
+  'Apprentice'
+];
 
 export default function AdminPanel() {
   const [date, setDate] = useState(new Date().toLocaleDateString());
   const [stats, setStats] = useState<DailyStats | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredRecords, setFilteredRecords] = useState<AttendanceRecord[]>(
-    []
-  );
+  const [filteredRecords, setFilteredRecords] = useState<AttendanceRecord[]>([]);
   const [allRecords, setAllRecords] = useState<AttendanceRecord[]>([]);
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [uniqueDates, setUniqueDates] = useState<string[]>([]);
+  const [editingRecord, setEditingRecord] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    prefectNumber: '',
+    role: '' as PrefectRole | '',
+    time: '',
+    date: '',
+  });
 
   useEffect(() => {
     const records = getAttendanceRecords();
     setAllRecords(records);
-    const todayRecords = records.filter((r) => r.date === date);
+    const todayRecords = records.filter(r => r.date === date);
     setFilteredRecords(todayRecords);
     setStats(getDailyStats(date));
 
-    // Get unique dates from records
-    const dates = Array.from(new Set(records.map((r) => r.date))).sort(
-      (a, b) => new Date(b).getTime() - new Date(a).getTime()
+    const dates = [...new Set(records.map(r => r.date))].sort((a, b) => 
+      new Date(b).getTime() - new Date(a).getTime()
     );
     setUniqueDates(dates);
 
     const lastExport = localStorage.getItem('last_export_date');
     if (lastExport !== date) {
       toast('Daily Export Reminder', {
-        description:
-          "Please remember to export today's attendance records before end of day.",
+        description: 'Please remember to export today\'s attendance records before end of day.',
         icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
-        duration: 2000,
+        duration: 5000,
       });
     }
   }, [date]);
 
   useEffect(() => {
-    const filtered = allRecords.filter(
-      (record) =>
-        record.prefectNumber
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) && record.date === date
+    const filtered = allRecords.filter(record => 
+      record.prefectNumber.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      record.date === date
     );
     setFilteredRecords(filtered);
   }, [searchQuery, date, allRecords]);
@@ -91,8 +86,7 @@ export default function AdminPanel() {
     };
 
     document.addEventListener('fullscreenchange', handleFullScreenChange);
-    return () =>
-      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
   }, []);
 
   const handleExport = () => {
@@ -114,7 +108,7 @@ export default function AdminPanel() {
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
-
+    
     localStorage.setItem('last_export_date', date);
     toast.success('Export Successful', {
       description: 'Attendance records have been exported to CSV format.',
@@ -161,6 +155,48 @@ export default function AdminPanel() {
       toast.error('Fullscreen Error', {
         description: 'Unable to toggle fullscreen mode.',
         duration: 3000,
+      });
+    }
+  };
+
+  const startEditing = (record: AttendanceRecord) => {
+    const timestamp = new Date(record.timestamp);
+    setEditingRecord(record.id);
+    setEditForm({
+      prefectNumber: record.prefectNumber,
+      role: record.role,
+      date: timestamp.toISOString().split('T')[0],
+      time: timestamp.toTimeString().split(' ')[0].slice(0, 5),
+    });
+  };
+
+  const saveEdit = (id: string) => {
+    try {
+      const timestamp = new Date(`${editForm.date}T${editForm.time}`);
+      if (isNaN(timestamp.getTime())) {
+        throw new Error('Invalid date/time');
+      }
+
+      if (!editForm.role || !editForm.prefectNumber) {
+        throw new Error('All fields are required');
+      }
+
+      const updatedRecord = updateAttendance(id, {
+        prefectNumber: editForm.prefectNumber,
+        role: editForm.role as PrefectRole,
+        timestamp: timestamp.toISOString(),
+        date: timestamp.toLocaleDateString(),
+      });
+
+      setAllRecords(prev => prev.map(r => r.id === id ? updatedRecord : r));
+      setEditingRecord(null);
+      
+      toast.success('Record Updated', {
+        description: 'The attendance record has been updated successfully.',
+      });
+    } catch (error) {
+      toast.error('Update Failed', {
+        description: error instanceof Error ? error.message : 'Failed to update the record.',
       });
     }
   };
@@ -212,8 +248,8 @@ export default function AdminPanel() {
             <Button onClick={handleExport} className="gap-2 w-full sm:w-auto">
               <Download className="h-4 w-4" /> Export Records
             </Button>
-            <Button
-              variant="destructive"
+            <Button 
+              variant="destructive" 
               onClick={() => setShowClearDialog(true)}
               className="gap-2 w-full sm:w-auto"
             >
@@ -270,15 +306,11 @@ export default function AdminPanel() {
                 </div>
                 <div className="flex justify-between items-center p-2 bg-green-500/10 rounded-lg">
                   <span>On Time</span>
-                  <span className="font-bold text-lg text-green-500">
-                    {stats?.onTime || 0}
-                  </span>
+                  <span className="font-bold text-lg text-green-500">{stats?.onTime || 0}</span>
                 </div>
                 <div className="flex justify-between items-center p-2 bg-red-500/10 rounded-lg">
                   <span>Late</span>
-                  <span className="font-bold text-lg text-red-500">
-                    {stats?.late || 0}
-                  </span>
+                  <span className="font-bold text-lg text-red-500">{stats?.late || 0}</span>
                 </div>
               </div>
             </CardContent>
@@ -291,34 +323,88 @@ export default function AdminPanel() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3 max-h-[300px] overflow-y-auto">
-                {filteredRecords.map((record) => (
-                  <div
-                    key={record.id}
-                    className="flex justify-between items-center p-2 bg-secondary/50 rounded-lg"
-                  >
-                    <div className="flex flex-col">
-                      <span className="font-medium">{record.prefectNumber}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {record.role}
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-sm">
-                        {new Date(record.timestamp).toLocaleTimeString()}
-                      </span>
-                      <span className="block text-xs text-muted-foreground">
-                        {new Date(record.timestamp).getHours() >= 7 &&
-                        new Date(record.timestamp).getMinutes() > 0
-                          ? 'Late'
-                          : 'On Time'}
-                      </span>
-                    </div>
+                {filteredRecords.map(record => (
+                  <div key={record.id} className="flex justify-between items-center p-2 bg-secondary/50 rounded-lg">
+                    {editingRecord === record.id ? (
+                      <div className="w-full space-y-2">
+                        <div className="flex gap-2">
+                          <Input
+                            value={editForm.prefectNumber}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, prefectNumber: e.target.value }))}
+                            placeholder="Prefect Number"
+                          />
+                          <Select
+                            value={editForm.role}
+                            onValueChange={(value) => setEditForm(prev => ({ ...prev, role: value as PrefectRole }))}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {roles.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {role}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            type="date"
+                            value={editForm.date}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, date: e.target.value }))}
+                          />
+                          <Input
+                            type="time"
+                            value={editForm.time}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, time: e.target.value }))}
+                          />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setEditingRecord(null)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => saveEdit(record.id)}
+                          >
+                            <Save className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{record.prefectNumber}</span>
+                          <span className="text-sm text-muted-foreground">{record.role}</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <span className="text-sm">{new Date(record.timestamp).toLocaleTimeString()}</span>
+                            <span className="block text-xs text-muted-foreground">
+                              {new Date(record.timestamp).getHours() >= 7 && 
+                               new Date(record.timestamp).getMinutes() > 0 ? 'Late' : 'On Time'}
+                            </span>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => startEditing(record)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
                 {filteredRecords.length === 0 && (
-                  <p className="text-muted-foreground text-sm text-center py-4">
-                    No records found
-                  </p>
+                  <p className="text-muted-foreground text-sm text-center py-4">No records found</p>
                 )}
               </div>
             </CardContent>
@@ -331,16 +417,12 @@ export default function AdminPanel() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {stats &&
-                  Object.entries(stats.byRole).map(([role, count]) => (
-                    <div
-                      key={role}
-                      className="flex justify-between items-center p-2 bg-secondary/50 rounded-lg"
-                    >
-                      <span>{role}</span>
-                      <span className="font-bold">{count}</span>
-                    </div>
-                  ))}
+                {stats && Object.entries(stats.byRole).map(([role, count]) => (
+                  <div key={role} className="flex justify-between items-center p-2 bg-secondary/50 rounded-lg">
+                    <span>{role}</span>
+                    <span className="font-bold">{count}</span>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -352,16 +434,12 @@ export default function AdminPanel() {
           <AlertDialogHeader>
             <AlertDialogTitle>Clear All Data?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete all
-              attendance records.
+              This action cannot be undone. This will permanently delete all attendance records.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleClearData}
-              className="bg-destructive text-destructive-foreground"
-            >
+            <AlertDialogAction onClick={handleClearData} className="bg-destructive text-destructive-foreground">
               Clear Data
             </AlertDialogAction>
           </AlertDialogFooter>

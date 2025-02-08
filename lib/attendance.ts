@@ -1,25 +1,57 @@
+'use client';
+
 import { AttendanceRecord, DailyStats, PrefectRole } from './types';
 
 const STORAGE_KEY = 'prefect_attendance_records';
 const MAX_DAYS = 14;
 
-export function saveAttendance(prefectNumber: string, role: PrefectRole, manualTime?: Date): AttendanceRecord {
-  const records = getAttendanceRecords();
-  const now = manualTime || new Date();
+export function saveAttendance(prefectNumber: string, role: PrefectRole): AttendanceRecord {
+  const now = new Date();
+  return saveManualAttendance(prefectNumber, role, now);
+}
 
+export function saveManualAttendance(
+  prefectNumber: string,
+  role: PrefectRole,
+  timestamp: Date
+): AttendanceRecord {
+  const records = getAttendanceRecords();
+  
   const record: AttendanceRecord = {
     id: crypto.randomUUID(),
     prefectNumber,
     role,
-    timestamp: now.toISOString(),
-    date: now.toLocaleDateString(),
+    timestamp: timestamp.toISOString(),
+    date: timestamp.toLocaleDateString(),
   };
 
   records.push(record);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-
+  
   cleanOldRecords();
   return record;
+}
+
+export function updateAttendance(
+  id: string,
+  updates: Partial<AttendanceRecord>
+): AttendanceRecord {
+  const records = getAttendanceRecords();
+  const index = records.findIndex(r => r.id === id);
+  
+  if (index === -1) {
+    throw new Error('Record not found');
+  }
+
+  const updatedRecord = {
+    ...records[index],
+    ...updates,
+  };
+
+  records[index] = updatedRecord;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+  
+  return updatedRecord;
 }
 
 export function getAttendanceRecords(): AttendanceRecord[] {
@@ -63,11 +95,11 @@ export function cleanOldRecords() {
   const records = getAttendanceRecords();
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - MAX_DAYS);
-
-  const filteredRecords = records.filter(record =>
+  
+  const filteredRecords = records.filter(record => 
     new Date(record.timestamp) > cutoff
   );
-
+  
   localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredRecords));
 }
 
@@ -76,81 +108,54 @@ export function exportAttendance(date: string): string {
     .filter(r => r.date === date)
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
-  const groupedByRole: Record<PrefectRole, AttendanceRecord[]> = records.reduce((acc, record) => {
-    if (!acc[record.role]) {
-      acc[record.role] = [];
-    }
-    acc[record.role].push(record);
-    return acc;
-  }, {} as Record<PrefectRole, AttendanceRecord[]>);
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
-  const csv = [
-    ['Role', 'Prefect Number', 'Date', 'Time', 'Status'].join(','),
-    ...Object.keys(groupedByRole).flatMap(role => 
-      groupedByRole[role as PrefectRole].map(record => {
-        const time = new Date(record.timestamp);
-        const status = time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)
-          ? 'On Time'
-          : 'Late';
-        return [
-          role,
-          record.prefectNumber,
-          record.date,
-          time.toLocaleTimeString(),
-          status
-        ].join(',');
-      })
-    )
+  const stats = getDailyStats(date);
+  
+  const header = [
+    '# Prefect Board Attendance Report',
+    `Date: ${formatDate(date)}`,
+    `Total Prefects: ${stats.total}`,
+    `On Time: ${stats.onTime}`,
+    `Late: ${stats.late}`,
+    '',
+    '## Role Distribution',
+    ...Object.entries(stats.byRole)
+      .filter(([_, count]) => count > 0)
+      .map(([role, count]) => `${role}: ${count}`),
+    '',
+    '## Attendance Records',
+    ['Prefect Number', 'Role', 'Time', 'Status', 'Notes'].join(',')
   ].join('\n');
 
-  return csv;
-}
+  const recordsCSV = records.map(record => {
+    const time = new Date(record.timestamp);
+    const status = time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0) 
+      ? 'On Time' 
+      : 'Late';
+    const timeFormatted = time.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+    const notes = status === 'Late' 
+      ? `Arrived ${time.getHours() - 7}h ${time.getMinutes()}m late`
+      : 'Regular attendance';
+    return [
+      record.prefectNumber,
+      record.role,
+      timeFormatted,
+      status,
+      notes
+    ].join(',');
+  }).join('\n');
 
-export function previewAttendance(date: string): string {
-  const records = getAttendanceRecords()
-    .filter(r => r.date === date)
-    .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-
-  const groupedByRole: Record<PrefectRole, AttendanceRecord[]> = records.reduce((acc, record) => {
-    if (!acc[record.role]) {
-      acc[record.role] = [];
-    }
-    acc[record.role].push(record);
-    return acc;
-  }, {} as Record<PrefectRole, AttendanceRecord[]>);
-
-  const preview = Object.keys(groupedByRole).map(role => 
-    groupedByRole[role as PrefectRole].map(record => {
-      const time = new Date(record.timestamp);
-      const status = time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)
-        ? 'On Time'
-        : 'Late';
-      return `
-        <tr>
-          <td>${role}</td>
-          <td>${record.prefectNumber}</td>
-          <td>${record.date}</td>
-          <td>${time.toLocaleTimeString()}</td>
-          <td style="color: ${status === 'On Time' ? 'green' : 'red'}">${status}</td>
-        </tr>
-      `;
-    }).join('')
-  ).join('');
-
-  return `
-    <table>
-      <thead>
-        <tr>
-          <th>Role</th>
-          <th>Prefect Number</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${preview}
-      </tbody>
-    </table>
-  `;
+  return `${header}\n${recordsCSV}`;
 }

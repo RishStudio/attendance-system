@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, User, ClipboardCheck, Clock } from 'lucide-react';
+import { Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
-import { saveAttendance } from '@/lib/attendance';
+import { saveManualAttendance } from '@/lib/attendance';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -22,111 +22,104 @@ const roles: PrefectRole[] = [
   'Apprentice'
 ];
 
-export default function AttendanceForm() {
+export default function ManualAttendance() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
-  const [manualTime, setManualTime] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!role || !prefectNumber || !manualTime) {
+    if (!role || !prefectNumber || !date || !time) {
       toast.error('Please fill in all fields', {
-        description: 'Role, prefect number, and time are required.',
+        description: 'All fields are required for manual attendance.',
         duration: 3000,
       });
       return;
     }
 
-    const time = new Date(`1970-01-01T${manualTime}:00`);
-    if (isNaN(time.getTime())) {
-      toast.error('Invalid Time Format', {
-        description: 'Please enter a valid time.',
+    const timestamp = new Date(`${date}T${time}`);
+    if (isNaN(timestamp.getTime())) {
+      toast.error('Invalid Date/Time', {
+        description: 'Please enter a valid date and time.',
         duration: 3000,
       });
       return;
     }
 
-    const record = saveAttendance(prefectNumber, role, time);
-    const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
+    const record = saveManualAttendance(prefectNumber, role, timestamp);
+    const isLate = timestamp.getHours() >= 7 && timestamp.getMinutes() > 0;
 
-    toast.success('Attendance Marked Successfully', {
-      description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+    toast.success('Manual Attendance Marked', {
+      description: `${role} ${prefectNumber} marked for ${timestamp.toLocaleString()}`,
       duration: 4000,
     });
 
     if (isLate) {
-      toast.warning('Late Arrival Detected', {
-        description: 'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
+      toast.warning('Late Arrival Recorded', {
+        description: 'This attendance has been marked as late (after 7:00 AM).',
         duration: 5000,
       });
     }
 
     setRole('');
     setPrefectNumber('');
-    setManualTime('');
+    setDate('');
+    setTime('');
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 -z-10" />
-      <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80 shadow-lg">
+    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4 sm:p-6">
+      <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
-            <Shield className="w-8 h-8 text-primary" />
+            <Clock className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">BOP Attendance System</CardTitle>
-          <CardDescription className="text-sm">Mark your daily attendance</CardDescription>
+          <CardTitle className="text-2xl font-bold">Manual Attendance</CardTitle>
+          <CardDescription className="text-sm">Enter attendance with custom date/time</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={<span className="flex items-center"><User className="mr-2" />Select your role</span>} />
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
                     <SelectItem key={role} value={role}>
-                      <span className="flex items-center">
-                        <User className="mr-2" />
-                        {role}
-                      </span>
+                      {role}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             
-            <div className="relative">
+            <div className="space-y-2">
               <Input
                 type="text"
                 placeholder="Enter your prefect number"
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSubmit(e);
-                  }
-                }}
-                className="w-full pl-10"
               />
-              <ClipboardCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
-            <div className="relative">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
               <Input
                 type="time"
-                placeholder="Enter the time"
-                value={manualTime}
-                onChange={(e) => setManualTime(e.target.value)}
-                className="w-full pl-10"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
               />
-              <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <Button type="submit" className="w-full text-base font-medium">
-              Mark Attendance
+              Mark Manual Attendance
             </Button>
           </form>
         </CardContent>
