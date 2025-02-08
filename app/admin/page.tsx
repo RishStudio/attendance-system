@@ -89,7 +89,7 @@ export default function AdminPanel() {
   const handlePinSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     
-    if (pin === 'hello') {
+    if (pin === 'rishstudio') {
       setIsAuthenticated(true);
       setShowPinDialog(false);
       toast.success('Access Granted', {
