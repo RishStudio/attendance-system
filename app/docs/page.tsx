@@ -24,38 +24,37 @@ export default function DocsPage() {
   <Card>
     <CardHeader>
       <CardTitle>🚀 Introducing Version 5.0.3</CardTitle>
-      <CardDescription>Smarter, Faster, and More Efficient</CardDescription>
+      <CardDescription>Simpler, Faster, Better</CardDescription>
     </CardHeader>
     <div className="mt-4">
       <img src="/Version3.png" alt="Version 5.0.3" className="w-full h-auto rounded-lg shadow-lg" />
     </div>
     <CardContent className="space-y-4 mt-4">
       <p>
-        We’re thrilled to unveil <span className="font-semibold">Version 5.0.3</span> of the <span className="font-semibold">Prefect Board Attendance System</span>,  
-        packed with exciting new features, performance improvements, and essential bug fixes.  
-        This update is designed to make attendance management more seamless, accurate, and user-friendly than ever before.
+        We’re excited to announce <span className="font-semibold">Version 5.0.3</span> of the <span className="font-semibold">Prefect Board Attendance System</span>.  
+        This update brings new features, performance improvements, and essential bug fixes to make attendance management even easier and more accurate.
       </p>
 
       <h3 className="text-lg font-semibold">✨ What’s New</h3>
       <ul className="list-disc pl-6 space-y-2">
-        <li><span className="font-semibold">Advanced Role Management</span> – Fine-tune user permissions with more control and flexibility.</li>
-        <li><span className="font-semibold">Customizable Attendance Reports</span> – Generate reports tailored to your specific needs.</li>
-        <li><span className="font-semibold">Improved Late Arrival Alerts</span> – Get instant notifications for better monitoring.</li>
-        <li><span className="font-semibold">Refreshed User Interface</span> – Enjoy a modern look with seamless light mode support.</li>
-        <li><span className="font-semibold">Manual Time Entry (Beta)</span> – Log attendance manually for better accuracy.</li>
-        <li><span className="font-semibold">Enhanced Visual Elements</span> – New icons and UI tweaks for an improved experience.</li>
-        <li><span className="font-semibold">Clock and Manual Time Entry Enhancements</span> – Improved clock functionalities and manual time entry options for better accuracy in tracking attendance.</li>
-        <li><span className="font-semibold">Admin Panel Redesign</span> – A revamped admin panel for a more intuitive and efficient user experience.</li>
-        <li><span className="font-semibold">Admin Panel Password Protection</span> – Added password protection for the admin panel to enhance security.</li>
+        <li><span className="font-semibold">Advanced Role Management</span> – More control over user permissions.</li>
+        <li><span className="font-semibold">Customizable Attendance Reports</span> – Tailor reports to your needs.</li>
+        <li><span className="font-semibold">Improved Late Arrival Alerts</span> – Instant notifications for better monitoring.</li>
+        <li><span className="font-semibold">Refreshed User Interface</span> – Modern look with light mode support.</li>
+        <li><span className="font-semibold">Manual Time Entry (Beta)</span> – Log attendance manually for accuracy.</li>
+        <li><span className="font-semibold">Enhanced Visual Elements</span> – New icons and UI improvements.</li>
+        <li><span className="font-semibold">Clock and Manual Time Entry Enhancements</span> – Better accuracy in tracking attendance.</li>
+        <li><span className="font-semibold">Admin Panel Redesign</span> – More intuitive and efficient user experience.</li>
+        <li><span className="font-semibold">Admin Panel Password Protection</span> – Added security for the admin panel.</li>
       </ul>
 
       <h3 className="text-lg font-semibold mt-4">🐞 Bug Fixes & Improvements</h3>
       <ul className="list-disc pl-6 space-y-2">
-        <li><span className="font-semibold">Precision Timestamp Fix</span> – Ensuring accurate time tracking across all platforms.</li>
-        <li><span className="font-semibold">Mobile UI Enhancements</span> – Resolved layout glitches for a smoother mobile experience.</li>
-        <li><span className="font-semibold">Performance Boost</span> – Optimized load times for a faster workflow.</li>
+        <li><span className="font-semibold">Precision Timestamp Fix</span> – Accurate time tracking on all platforms.</li>
+        <li><span className="font-semibold">Mobile UI Enhancements</span> – Smoother mobile experience.</li>
+        <li><span className="font-semibold">Performance Boost</span> – Faster load times.</li>
         <li><span className="font-semibold">Fixed Broken Documentation Links</span> – Easy access to updated guides.</li>
-        <li><span className="font-semibold">Memory Leak Fixes</span> – Improved system stability and resource management.</li>
+        <li><span className="font-semibold">Memory Leak Fixes</span> – Better system stability and resource management.</li>
         <li><span className="font-semibold">Clearer Error Messages</span> – More informative alerts for easier troubleshooting.</li>
       </ul>
     </CardContent>
