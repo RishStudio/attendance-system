@@ -32,7 +32,7 @@ export function Navbar() {
                 Attendance
               </Button>
             </Link>
-            <Link href="/">
+            <Link href="/manual">
               <Button variant="ghost" size="sm">
                 <Clock className="mr-2 h-4 w-4" />
                 Manual Attendance
