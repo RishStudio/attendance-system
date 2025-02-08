@@ -32,6 +32,12 @@ export function Navbar() {
                 Attendance
               </Button>
             </Link>
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                <Clock className="mr-2 h-4 w-4" />
+                Manual Attendance
+              </Button>
+            </Link>
             <Link href="/docs">
               <Button variant="ghost" size="sm">
                 <FileText className="mr-2 h-4 w-4" />
