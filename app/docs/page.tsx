@@ -19,18 +19,19 @@ export default function DocsPage() {
             <TabsTrigger value="shortcuts"><Keyboard className="mr-2 h-4 w-4" />Keyboard Shortcuts</TabsTrigger>
           </TabsList>
           
+          
           <TabsContent value="new-version">
   <Card>
     <CardHeader>
-      <CardTitle>🚀 Introducing Version 5.0.2</CardTitle>
+      <CardTitle>🚀 Introducing Version 5.0.3</CardTitle>
       <CardDescription>Smarter, Faster, and More Efficient</CardDescription>
     </CardHeader>
     <div className="mt-4">
-      <img src="/Version2.png" alt="Version 5.0.2" className="w-full h-auto rounded-lg shadow-lg" />
+      <img src="/Version3.png" alt="Version 5.0.3" className="w-full h-auto rounded-lg shadow-lg" />
     </div>
     <CardContent className="space-y-4 mt-4">
       <p>
-        We’re thrilled to unveil <span className="font-semibold">Version 5.0.2</span> of the <span className="font-semibold">Prefect Board Attendance System</span>,  
+        We’re thrilled to unveil <span className="font-semibold">Version 5.0.3</span> of the <span className="font-semibold">Prefect Board Attendance System</span>,  
         packed with exciting new features, performance improvements, and essential bug fixes.  
         This update is designed to make attendance management more seamless, accurate, and user-friendly than ever before.
       </p>
@@ -43,6 +44,9 @@ export default function DocsPage() {
         <li><span className="font-semibold">Refreshed User Interface</span> – Enjoy a modern look with seamless light mode support.</li>
         <li><span className="font-semibold">Manual Time Entry (Beta)</span> – Log attendance manually for better accuracy.</li>
         <li><span className="font-semibold">Enhanced Visual Elements</span> – New icons and UI tweaks for an improved experience.</li>
+        <li><span className="font-semibold">Clock and Manual Time Entry Enhancements</span> – Improved clock functionalities and manual time entry options for better accuracy in tracking attendance.</li>
+        <li><span className="font-semibold">Admin Panel Redesign</span> – A revamped admin panel for a more intuitive and efficient user experience.</li>
+        <li><span className="font-semibold">Admin Panel Password Protection</span> – Added password protection for the admin panel to enhance security.</li>
       </ul>
 
       <h3 className="text-lg font-semibold mt-4">🐞 Bug Fixes & Improvements</h3>
