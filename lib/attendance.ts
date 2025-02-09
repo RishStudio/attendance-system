@@ -18,6 +18,34 @@ export function checkDuplicateAttendance(prefectNumber: string, role: PrefectRol
   );
 }
 
+export function checkAdminAccess(pin: string): boolean {
+  const now = Date.now();
+  const lockoutTime = Number(localStorage.getItem(LOCKOUT_TIME_KEY) || '0');
+  
+  if (now < lockoutTime) {
+    const remainingMinutes = Math.ceil((lockoutTime - now) / 60000);
+    throw new Error(`Account is locked. Please try again in ${remainingMinutes} minutes.`);
+  }
+
+  if (pin === 'hello') {
+    localStorage.removeItem(FAILED_ATTEMPTS_KEY);
+    localStorage.removeItem(LOCKOUT_TIME_KEY);
+    return true;
+  }
+
+  const failedAttempts = Number(localStorage.getItem(FAILED_ATTEMPTS_KEY) || '0') + 1;
+  localStorage.setItem(FAILED_ATTEMPTS_KEY, failedAttempts.toString());
+
+  if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
+    const lockoutTime = now + LOCKOUT_DURATION;
+    localStorage.setItem(LOCKOUT_TIME_KEY, lockoutTime.toString());
+    throw new Error(`Too many failed attempts. Account locked for ${LOCKOUT_DURATION / 60000} minutes.`);
+  }
+
+  const remainingAttempts = MAX_FAILED_ATTEMPTS - failedAttempts;
+  throw new Error(`Invalid PIN. ${remainingAttempts} ${remainingAttempts === 1 ? 'attempt' : 'attempts'} remaining.`);
+}
+
 export function saveAttendance(prefectNumber: string, role: PrefectRole): AttendanceRecord {
   const now = new Date();
   return saveManualAttendance(prefectNumber, role, now);
