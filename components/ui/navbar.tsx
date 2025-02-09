@@ -94,7 +94,7 @@ export function Navbar() {
                 Admin
               </Button>
             </Link>
-            <Link href="/time">
+            <Link href="/manual">
               <Button variant="ghost" size="sm" onClick={toggleMenu}>
                 <Clock className="mr-2 h-4 w-4" />
                 Manual Attendance (Beta)
