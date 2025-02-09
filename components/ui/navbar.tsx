@@ -20,7 +20,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center space-x-2">
           <Shield className="h-6 w-6" />
           <span className="hidden sm:inline-block font-bold">
-            Prefect Board
+            Prefect Board Attendance
           </span>
         </Link>
 
