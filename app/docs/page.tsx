@@ -21,47 +21,46 @@ export default function DocsPage() {
           
           
           <TabsContent value="new-version">
-  <Card>
-    <CardHeader>
-      <CardTitle>🚀 Introducing Version 5.0.3</CardTitle>
-      <CardDescription>Simpler, Faster, Better</CardDescription>
-    </CardHeader>
-    <div className="mt-4">
-      <img src="/Version3.png" alt="Version 5.0.3" className="w-full h-auto rounded-lg shadow-lg" />
-    </div>
-    <CardContent className="space-y-4 mt-4">
-      <p>
-        We’re excited to announce <span className="font-semibold">Version 5.0.3</span> of the <span className="font-semibold">Prefect Board Attendance System</span>.  
-        This update brings new features, performance improvements, and essential bug fixes to make attendance management even easier and more accurate.
-      </p>
+            <Card>
+              <CardHeader>
+                <CardTitle>🚀 Introducing Version 5.0.3</CardTitle>
+                <CardDescription>Simpler, Faster, Better</CardDescription>
+              </CardHeader>
+              <div className="mt-4">
+                <img src="/Version3.png" alt="Version 5.0.3" className="w-full h-auto rounded-lg shadow-lg" />
+              </div>
+              <CardContent className="space-y-4 mt-4">
+                <p>
+                  We’re excited to announce <span className="font-semibold">Version 5.0.3</span> of the <span className="font-semibold">Prefect Board Attendance System</span>.  
+                  This update brings new features, performance improvements, and essential bug fixes to make attendance management even easier and more accurate.
+                </p>
 
-      <h3 className="text-lg font-semibold">✨ What’s New</h3>
-      <ul className="list-disc pl-6 space-y-2">
-        <li><span className="font-semibold">Advanced Role Management</span> – More control over user permissions.</li>
-        <li><span className="font-semibold">Customizable Attendance Reports</span> – Tailor reports to your needs.</li>
-        <li><span className="font-semibold">Improved Late Arrival Alerts</span> – Instant notifications for better monitoring.</li>
-        <li><span className="font-semibold">Refreshed User Interface</span> – Modern look with light mode support.</li>
-        <li><span className="font-semibold">Manual Time Entry (Beta)</span> – Log attendance manually for accuracy.</li>
-        <li><span className="font-semibold">Enhanced Visual Elements</span> – New icons and UI improvements.</li>
-        <li><span className="font-semibold">Clock and Manual Time Entry Enhancements</span> – Better accuracy in tracking attendance.</li>
-        <li><span className="font-semibold">Admin Panel Redesign</span> – More intuitive and efficient user experience.</li>
-        <li><span className="font-semibold">Admin Panel Password Protection</span> – Added security for the admin panel.</li>
-      </ul>
+                <h3 className="text-lg font-semibold">✨ What’s New</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li><span className="font-semibold">Advanced Role Management</span> – More control over user permissions.</li>
+                  <li><span className="font-semibold">Customizable Attendance Reports</span> – Tailor reports to your needs.</li>
+                  <li><span className="font-semibold">Improved Late Arrival Alerts</span> – Instant notifications for better monitoring.</li>
+                  <li><span className="font-semibold">Refreshed User Interface</span> – Modern look with light mode support.</li>
+                  <li><span className="font-semibold">Manual Time Entry (Beta)</span> – Log attendance manually for accuracy.</li>
+                  <li><span className="font-semibold">Enhanced Visual Elements</span> – New icons and UI improvements.</li>
+                  <li><span className="font-semibold">Clock and Manual Time Entry Enhancements</span> – Better accuracy in tracking attendance.</li>
+                  <li><span className="font-semibold">Admin Panel Redesign</span> – More intuitive and efficient user experience.</li>
+                  <li><span className="font-semibold">Admin Panel Password Protection</span> – Added security for the admin panel.</li>
+                </ul>
 
-      <h3 className="text-lg font-semibold mt-4">🐞 Bug Fixes & Improvements</h3>
-      <ul className="list-disc pl-6 space-y-2">
-        <li><span className="font-semibold">Precision Timestamp Fix</span> – Accurate time tracking on all platforms.</li>
-        <li><span className="font-semibold">Mobile UI Enhancements</span> – Smoother mobile experience.</li>
-        <li><span className="font-semibold">Performance Boost</span> – Faster load times.</li>
-        <li><span className="font-semibold">Fixed Broken Documentation Links</span> – Easy access to updated guides.</li>
-        <li><span className="font-semibold">Memory Leak Fixes</span> – Better system stability and resource management.</li>
-        <li><span className="font-semibold">Clearer Error Messages</span> – More informative alerts for easier troubleshooting.</li>
-      </ul>
-    </CardContent>
-  </Card>
-</TabsContent>
+                <h3 className="text-lg font-semibold mt-4">🐞 Bug Fixes & Improvements</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li><span className="font-semibold">Precision Timestamp Fix</span> – Accurate time tracking on all platforms.</li>
+                  <li><span className="font-semibold">Mobile UI Enhancements</span> – Smoother mobile experience.</li>
+                  <li><span className="font-semibold">Performance Boost</span> – Faster load times.</li>
+                  <li><span className="font-semibold">Fixed Broken Documentation Links</span> – Easy access to updated guides.</li>
+                  <li><span className="font-semibold">Memory Leak Fixes</span> – Better system stability and resource management.</li>
+                  <li><span className="font-semibold">Clearer Error Messages</span> – More informative alerts for easier troubleshooting.</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          
           <TabsContent value="overview">
             <Card>
               <CardHeader>
@@ -77,31 +76,6 @@ export default function DocsPage() {
                   <li>Enter your unique prefect number</li>
                   <li>Click "Mark Attendance" or press Enter</li>
                 </ol>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="shortcuts">
-            <Card>
-              <CardHeader>
-                <CardTitle>⌨️ Keyboard Shortcuts</CardTitle>
-                <CardDescription>Quick access to system features (This is a testing feature and might not work yet)</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  <div className="flex items-center justify-between">
-                    <span>Navigate to Home</span>
-                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + H</kbd>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Open Admin Panel</span>
-                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + A</kbd>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>View Documentation</span>
-                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + D</kbd>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -129,6 +103,31 @@ export default function DocsPage() {
                   <li>14-day data retention</li>
                   <li>Automatic data cleanup</li>
                 </ul>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="shortcuts">
+            <Card>
+              <CardHeader>
+                <CardTitle>⌨️ Keyboard Shortcuts</CardTitle>
+                <CardDescription>Quick access to system features (This is a testing feature and might not work yet)</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4">
+                  <div className="flex items-center justify-between">
+                    <span>Navigate to Home</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + H</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Open Admin Panel</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + A</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>View Documentation</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + D</kbd>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
