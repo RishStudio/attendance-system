@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   Download,
   ArrowLeft,
@@ -19,13 +19,19 @@ import {
   BarChart,
   Filter,
   Lock,
+  KeyRound,
+  ShieldAlert,
+  Eye,
+  EyeOff,
+  Fingerprint,
+  Shield,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { AttendanceRecord, DailyStats, PrefectRole } from '@/lib/types';
-import { getAttendanceRecords, getDailyStats, exportAttendance, updateAttendance } from '@/lib/attendance';
+import { getAttendanceRecords, getDailyStats, exportAttendance, updateAttendance, checkAdminAccess } from '@/lib/attendance';
 import Link from 'next/link';
 import {
   AlertDialog,
@@ -43,6 +49,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -51,7 +58,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Clock as ClockComponent } from '@/components/ui/clock';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -67,8 +73,12 @@ const roles: PrefectRole[] = [
 
 export default function AdminPanel() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [pin, setPin] = useState('');
+  const [showPin, setShowPin] = useState(false);
   const [showPinDialog, setShowPinDialog] = useState(true);
+  const [pinDigits, setPinDigits] = useState(['', '', '', '', '']);
+  const [activeDigit, setActiveDigit] = useState(0);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [date, setDate] = useState(new Date().toLocaleDateString());
   const [stats, setStats] = useState<DailyStats | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -86,20 +96,68 @@ export default function AdminPanel() {
     date: '',
   });
 
-  const handlePinSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
+  useEffect(() => {
+    if (inputRefs.current[0]) {
+      inputRefs.current[0].focus();
+    }
+  }, []);
+
+  const handlePinDigitChange = (index: number, value: string) => {
+    if (value.length > 1) return;
     
-    if (pin === 'rishstudio') {
-      setIsAuthenticated(true);
-      setShowPinDialog(false);
-      toast.success('Access Granted', {
-        description: 'Welcome to the admin panel',
+    const newPinDigits = [...pinDigits];
+    newPinDigits[index] = value;
+    setPinDigits(newPinDigits);
+
+    if (value && index < 4) {
+      setActiveDigit(index + 1);
+      inputRefs.current[index + 1]?.focus();
+    }
+    
+    if (index === 4 && value) {
+      handlePinSubmit(undefined, newPinDigits.join(''));
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !pinDigits[index] && index > 0) {
+      setActiveDigit(index - 1);
+      inputRefs.current[index - 1]?.focus();
+    } else if (e.key === 'ArrowLeft' && index > 0) {
+      setActiveDigit(index - 1);
+      inputRefs.current[index - 1]?.focus();
+    } else if (e.key === 'ArrowRight' && index < 4) {
+      setActiveDigit(index + 1);
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePinSubmit = async (e?: React.FormEvent, submittedPin?: string) => {
+    e?.preventDefault();
+    if (isAuthenticating) return;
+
+    setIsAuthenticating(true);
+    const finalPin = submittedPin || pinDigits.join('');
+    
+    try {
+      if (checkAdminAccess(finalPin)) {
+        setIsAuthenticated(true);
+        setShowPinDialog(false);
+        toast.success('Access Granted', {
+          description: 'Welcome to the admin panel',
+          icon: <ShieldAlert className="h-5 w-5 text-green-500" />,
+        });
+      }
+    } catch (error) {
+      toast.error('Access Denied', {
+        description: error instanceof Error ? error.message : 'Invalid PIN',
+        icon: <ShieldAlert className="h-5 w-5 text-red-500" />,
       });
-    } else {
-      toast.error('Invalid PIN', {
-        description: 'Please enter the correct PIN to access the admin panel',
-      });
-      setPin('');
+      setPinDigits(['', '', '', '', '']);
+      setActiveDigit(0);
+      inputRefs.current[0]?.focus();
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
@@ -151,30 +209,67 @@ export default function AdminPanel() {
   if (!isAuthenticated) {
     return (
       <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enter Admin PIN</DialogTitle>
-            <DialogDescription>
-              Please enter the PIN to access the admin panel
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Shield className="h-6 w-6 text-primary" />
+            </div>
+            <DialogTitle className="text-2xl font-bold flex items-center justify-center gap-2">
+              <KeyRound className="h-5 w-5" />
+              Admin Access
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Enter your 5-digit PIN to access the admin panel
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handlePinSubmit} className="space-y-4 py-4">
-            <div className="flex items-center space-x-4">
-              <Input
-                type="password"
-                placeholder="Enter PIN"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                autoFocus
-              />
+          <div className="flex flex-col items-center space-y-8">
+            <div className="relative">
+              <Fingerprint className={`h-16 w-16 text-primary transition-opacity duration-500 ${isAuthenticating ? 'animate-pulse' : ''}`} />
+              <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
             </div>
-            <div className="flex justify-end">
-              <Button type="submit">
-                <Lock className="mr-2 h-4 w-4" />
-                Access Admin Panel
-              </Button>
-            </div>
-          </form>
+            <form onSubmit={(e) => handlePinSubmit(e)} className="space-y-6 w-full">
+              <div className="flex justify-center gap-3">
+                {pinDigits.map((digit, index) => (
+                  <Input
+                    key={index}
+                    ref={el => inputRefs.current[index] = el}
+                    type={showPin ? "text" : "password"}
+                    value={digit}
+                    onChange={(e) => handlePinDigitChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-12 h-12 text-center text-2xl"
+                    maxLength={1}
+                    disabled={isAuthenticating}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-center">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowPin(!showPin)}
+                  className="gap-2"
+                  disabled={isAuthenticating}
+                >
+                  {showPin ? (
+                    <>
+                      <EyeOff className="h-4 w-4" /> Hide PIN
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-4 w-4" /> Show PIN
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
+          <DialogFooter className="flex-col space-y-2">
+            <DialogDescription className="text-xs text-center text-muted-foreground">
+              Your session will be locked after 3 failed attempts
+            </DialogDescription>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     );
@@ -528,7 +623,8 @@ export default function AdminPanel() {
                             <Input
                               type="time"
                               value={editForm.time}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, time: e.target.value }))} />
+                              onChange={(e) => setEditForm(prev => ({ ...prev, time: e.target.value }))}
+                            />
                           </div>
                           <div className="flex justify-end gap-2">
                             <Button
