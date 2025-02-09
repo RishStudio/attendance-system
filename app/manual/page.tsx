@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
 import { saveManualAttendance } from '@/lib/attendance';
-import { Clock } from '@/components/ui/clock';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -80,7 +79,6 @@ export default function ManualAttendance() {
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
             <ClockIcon className="w-8 h-8 text-primary" />
           </div>
-          <Clock />
           <CardTitle className="text-2xl font-bold">Manual Attendance</CardTitle>
           <CardDescription className="text-sm">Enter attendance with custom date/time</CardDescription>
         </CardHeader>
