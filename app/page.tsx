@@ -8,8 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
-import { saveAttendance } from '@/lib/attendance';
-import { Clock } from '@/components/ui/clock';
+import { saveAttendance, checkDuplicateAttendance } from '@/lib/attendance';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -38,35 +37,48 @@ export default function Home() {
       return;
     }
 
-    const record = saveAttendance(prefectNumber, role);
-    const time = new Date(record.timestamp);
-    const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
+    try {
+      if (checkDuplicateAttendance(prefectNumber, role, new Date().toLocaleDateString())) {
+        toast.error('Duplicate Entry', {
+          description: `A prefect with number ${prefectNumber} has already registered for role ${role} today.`,
+          duration: 5000,
+        });
+        return;
+      }
 
-    toast.success('Attendance Marked Successfully', {
-      description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
-      duration: 4000,
-    });
+      const record = saveAttendance(prefectNumber, role);
+      const time = new Date(record.timestamp);
+      const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
 
-    if (isLate) {
-      toast.warning('Late Arrival Detected', {
-        description: 'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
-        duration: 5000,
+      toast.success('Attendance Marked Successfully', {
+        description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
+        duration: 4000,
+      });
+
+      if (isLate) {
+        toast.warning('Late Arrival Detected', {
+          description: 'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
+          duration: 5000,
+        });
+      }
+
+      setRole('');
+      setPrefectNumber('');
+    } catch (error) {
+      toast.error('Error', {
+        description: error instanceof Error ? error.message : 'Failed to mark attendance',
+        duration: 4000,
       });
     }
-
-    setRole('');
-    setPrefectNumber('');
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 -z-10" />
+    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center py-8">
       <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
             <Shield className="w-8 h-8 text-primary" />
           </div>
-          <Clock />
           <CardTitle className="text-2xl font-bold">Prefect Attendance</CardTitle>
           <CardDescription className="text-sm">Mark your daily attendance</CardDescription>
         </CardHeader>
