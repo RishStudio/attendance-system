@@ -56,7 +56,23 @@ export function AnalyticsSection({ records }: AnalyticsSectionProps) {
       .sort((a, b) => b.value - a.value);
   }, [records]);
 
-  const COLORS = ['#10b981', '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
+  const COLORS = [
+    '#10b981', // Green
+    '#3b82f6', // Blue
+    '#6366f1', // Indigo
+    '#8b5cf6', // Violet
+    '#ec4899', // Pink
+    '#f87171', // Light Red
+    '#fbbf24', // Light Yellow
+    '#34d399', // Light Green
+    '#60a5fa', // Light Blue
+    '#a78bfa', // Light Purple
+    '#f43f5e', // Dark Red
+    '#f59e0b', // Dark Yellow
+    '#059669', // Dark Green
+    '#2563eb', // Dark Blue
+    '#7c3aed'  // Dark Purple
+  ];
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
