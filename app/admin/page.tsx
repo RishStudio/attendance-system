@@ -59,6 +59,11 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 
+
+
+import { AnalyticsSection } from '@/components/admin/analytics-section';
+
+
 const roles: PrefectRole[] = [
   'Head',
   'Deputy',
@@ -461,6 +466,10 @@ export default function AdminPanel() {
               <BarChart className="h-4 w-4" />
               Overview
             </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-2">
+              <BarChart className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
             <TabsTrigger value="records" className="gap-2">
               <FileText className="h-4 w-4" />
               Records
@@ -576,6 +585,13 @@ export default function AdminPanel() {
               </Card>
             </div>
           </TabsContent>
+
+
+
+          <TabsContent value="analytics">
+            <AnalyticsSection records={allRecords} />
+          </TabsContent>
+          
 
           <TabsContent value="records">
             <Card className="backdrop-blur-sm bg-background/80">
