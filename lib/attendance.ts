@@ -3,7 +3,7 @@
 import { AttendanceRecord, DailyStats, PrefectRole } from './types';
 
 const STORAGE_KEY = 'prefect_attendance_records';
-const MAX_DAYS = 14;
+const MAX_DAYS = 60;
 const FAILED_ATTEMPTS_KEY = 'admin_failed_attempts';
 const LOCKOUT_TIME_KEY = 'admin_lockout_time';
 const MAX_FAILED_ATTEMPTS = 3;
@@ -27,7 +27,7 @@ export function checkAdminAccess(pin: string): boolean {
     throw new Error(`Account is locked. Please try again in ${remainingMinutes} minutes.`);
   }
 
-  if (pin === 'hello') {
+  if (pin === 'rishmika') {
     localStorage.removeItem(FAILED_ATTEMPTS_KEY);
     localStorage.removeItem(LOCKOUT_TIME_KEY);
     return true;

@@ -158,7 +158,7 @@ export default function AdminPanel() {
         description: error instanceof Error ? error.message : 'Invalid PIN',
         icon: <ShieldAlert className="h-5 w-5 text-red-500" />,
       });
-      setPinDigits(['', '', '', '', '']);
+      setPinDigits(['', '', '', '', '', '', '', '']);
       setActiveDigit(0);
       inputRefs.current[0]?.focus();
     } finally {
@@ -591,7 +591,7 @@ export default function AdminPanel() {
           <TabsContent value="analytics">
             <AnalyticsSection records={allRecords} />
           </TabsContent>
-          
+
 
           <TabsContent value="records">
             <Card className="backdrop-blur-sm bg-background/80">
