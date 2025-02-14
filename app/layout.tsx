@@ -52,7 +52,6 @@ export default function RootLayout({
             <ParticlesBackground />
             <main className="flex-1 container mx-auto">{children}</main>
             <FloatingClock />
-            <AttendanceForm />
             <Footer />
           </div>
         </Providers>
