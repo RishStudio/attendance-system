@@ -115,18 +115,6 @@ export default function DocsPage() {
               <CardContent>
                 <div className="grid gap-4">
                   <div className="flex items-center justify-between">
-                    <span>Navigate to Home</span>
-                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + H</kbd>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Open Admin Panel</span>
-                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + A</kbd>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>View Documentation</span>
-                    <kbd className="px-2 py-1 bg-muted rounded">Ctrl + D</kbd>
-                  </div>
-                  <div className="flex items-center justify-between">
                     <span>Role: Head</span>
                     <kbd className="px-2 py-1 bg-muted rounded">1</kbd>
                   </div>
