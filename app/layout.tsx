@@ -6,7 +6,6 @@ import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
 import { ParticlesBackground } from '@/components/ui/particles';
 import { FloatingClock } from '@/components/ui/floating-clock';
-import { AttendanceForm } from '@/components/ui/attendance-form';  // Assuming this is the path to the Attendance form component
 
 const inter = Inter({ subsets: ['latin'] });
 
