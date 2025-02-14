@@ -51,8 +51,9 @@ export default function RootLayout({
             <Navbar />
             <ParticlesBackground />
             <main className="flex-1 container mx-auto">{children}</main>
-            <FloatingClock />
+            
             <Footer />
+            <FloatingClock />
           </div>
         </Providers>
       </body>
