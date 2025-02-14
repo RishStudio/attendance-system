@@ -25,7 +25,7 @@ export function FloatingClock() {
   }, []);
 
   return (
-    <div className="fixed bottom-4 right-4 bg-background/80 backdrop-blur-sm border rounded-full px-4 py-2 shadow-lg">
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-background/80 backdrop-blur-sm border rounded-full px-4 py-2 shadow-lg">
       <div className="text-lg font-mono font-semibold" suppressHydrationWarning>
         {time}
       </div>
