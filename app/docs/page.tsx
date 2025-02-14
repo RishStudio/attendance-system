@@ -19,7 +19,6 @@ export default function DocsPage() {
             <TabsTrigger value="shortcuts"><Keyboard className="mr-2 h-4 w-4" />Keyboard Shortcuts</TabsTrigger>
           </TabsList>
           
-          
           <TabsContent value="new-version">
             <Card>
               <CardHeader>
@@ -126,6 +125,42 @@ export default function DocsPage() {
                   <div className="flex items-center justify-between">
                     <span>View Documentation</span>
                     <kbd className="px-2 py-1 bg-muted rounded">Ctrl + D</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Head</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">1</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Deputy</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">2</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Senior Executive</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">3</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Executive</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">4</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Super Senior</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">5</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Senior</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">6</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Junior</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">7</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Sub</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">8</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Apprentice</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">9</kbd>
                   </div>
                 </div>
               </CardContent>
