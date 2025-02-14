@@ -16,19 +16,19 @@ export function FloatingClock() {
       }));
     };
 
-    // Update the time immediately when the component mounts
+    // Update immediately
     updateTime();
-
-    // Update the time every second
-    const intervalId = setInterval(updateTime, 1000);
-
-    // Clear the interval when the component unmounts
-    return () => clearInterval(intervalId);
+    
+    // Then update every second
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div style={{ position: 'fixed', top: '50px', right: '10px', background: 'white', padding: '10px', borderRadius: '5px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' }}>
-      <span>{time}</span>
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-background/80 backdrop-blur-sm border rounded-full px-4 py-2 shadow-lg">
+      <div className="text-lg font-mono font-semibold" suppressHydrationWarning>
+        {time}
+      </div>
     </div>
   );
 }
