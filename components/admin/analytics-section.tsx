@@ -83,7 +83,7 @@ export function AnalyticsSection({ records }: AnalyticsSectionProps) {
             Attendance Trends
           </CardTitle>
         </CardHeader>
-        <CardContent className="h-[500px]">
+        <CardContent className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <RechartsLineChart data={attendanceTrends}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -105,48 +105,15 @@ export function AnalyticsSection({ records }: AnalyticsSectionProps) {
             Role Distribution
           </CardTitle>
         </CardHeader>
-        <CardContent className="h-[300px]">
+        <CardContent className="h-[250px]">
           <ResponsiveContainer width="100%" height="100%">
             <RechartsPieChart>
               <Pie
                 data={roleDistribution}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                fill="#8884d8"
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {roleDistribution.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </RechartsPieChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <Card className="backdrop-blur-sm bg-background/80 mt-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <PieChart className="h-5 w-5" />
-            Circle Analytics
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <RechartsPieChart>
-              <Pie
-                data={roleDistribution}
-                cx="50%"
-                cy="50%"
-                startAngle={180}
-                endAngle={0}
-                innerRadius={80}
-                outerRadius={100}
+                innerRadius={50}
+                outerRadius={70}
                 fill="#8884d8"
                 paddingAngle={5}
                 dataKey="value"
