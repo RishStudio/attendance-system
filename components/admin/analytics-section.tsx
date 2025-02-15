@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, PieChart } from 'lucide-react';
 import {
   LineChart as RechartsLineChart,
@@ -75,16 +75,15 @@ export function AnalyticsSection({ records }: AnalyticsSectionProps) {
   ];
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="space-y-6">
       <Card className="backdrop-blur-sm bg-background/80">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
             Attendance Trends
           </CardTitle>
-          <CardDescription>Last 7 days attendance patterns</CardDescription>
         </CardHeader>
-        <CardContent className="h-[300px]">
+        <CardContent className="h-[500px]">
           <ResponsiveContainer width="100%" height="100%">
             <RechartsLineChart data={attendanceTrends}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -105,7 +104,6 @@ export function AnalyticsSection({ records }: AnalyticsSectionProps) {
             <PieChart className="h-5 w-5" />
             Role Distribution
           </CardTitle>
-          <CardDescription>Current month breakdown</CardDescription>
         </CardHeader>
         <CardContent className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -116,6 +114,39 @@ export function AnalyticsSection({ records }: AnalyticsSectionProps) {
                 cy="50%"
                 innerRadius={60}
                 outerRadius={80}
+                fill="#8884d8"
+                paddingAngle={5}
+                dataKey="value"
+              >
+                {roleDistribution.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </RechartsPieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      <Card className="backdrop-blur-sm bg-background/80 mt-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <PieChart className="h-5 w-5" />
+            Circle Analytics
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <RechartsPieChart>
+              <Pie
+                data={roleDistribution}
+                cx="50%"
+                cy="50%"
+                startAngle={180}
+                endAngle={0}
+                innerRadius={80}
+                outerRadius={100}
                 fill="#8884d8"
                 paddingAngle={5}
                 dataKey="value"
