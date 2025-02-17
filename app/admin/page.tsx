@@ -677,23 +677,13 @@ export default function AdminPanel() {
                                  new Date(record.timestamp).getMinutes() > 0 ? 'Late' : 'On Time'}
                               </span>
                             </div>
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => startEditing(record)}
-                              >
-                                <Edit2 className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="text-red-500 hover:text-red-600"
-                                onClick={() => handleDeleteRecord(record.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => startEditing(record)}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </>
                       )}
@@ -709,8 +699,6 @@ export default function AdminPanel() {
             </Card>
           </TabsContent>
 
-
-          
           <TabsContent value="history">
             <Card className="backdrop-blur-sm bg-background/80">
               <CardHeader>
