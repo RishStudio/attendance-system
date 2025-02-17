@@ -27,7 +27,7 @@ export function checkAdminAccess(pin: string): boolean {
     throw new Error(`Account is locked. Please try again in ${remainingMinutes} minutes.`);
   }
 
-  if (pin === '12345') {
+  if (pin === 'happy') {
     localStorage.removeItem(FAILED_ATTEMPTS_KEY);
     localStorage.removeItem(LOCKOUT_TIME_KEY);
     return true;
