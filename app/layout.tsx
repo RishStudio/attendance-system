@@ -7,6 +7,7 @@ import { Footer } from '@/components/ui/footer';
 import { ParticlesBackground } from '@/components/ui/particles';
 import { FloatingClock } from '@/components/ui/floating-clock';
 import { UnsupportedDevice } from '@/components/ui/unsupported-device';
+import { useEffect, useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -41,7 +42,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const isDeviceSupported = typeof window !== 'undefined' && 'ontouchstart' in window;
+  const [isDeviceSupported, setIsDeviceSupported] = useState(true);
+
+  useEffect(() => {
+    const checkDeviceSupport = () => {
+      const isSupported = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      setIsDeviceSupported(isSupported);
+    };
+    checkDeviceSupport();
+  }, []);
 
   return (
     <html lang="en" suppressHydrationWarning>
