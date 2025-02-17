@@ -4,13 +4,46 @@ import { AttendanceRecord, DailyStats, PrefectRole } from './types';
 
 const STORAGE_KEY = 'prefect_attendance_records';
 const MAX_DAYS = 60;
-const ADMIN_PIN = '11111'; // In a production environment, this should be properly secured
+const FAILED_ATTEMPTS_KEY = 'admin_failed_attempts';
+const LOCKOUT_TIME_KEY = 'admin_lockout_time';
+const MAX_FAILED_ATTEMPTS = 3;
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+
+export function checkDuplicateAttendance(prefectNumber: string, role: PrefectRole, date: string): boolean {
+  const records = getAttendanceRecords();
+  return records.some(record => 
+    record.prefectNumber === prefectNumber && 
+    record.role === role && 
+    record.date === date
+  );
+}
 
 export function checkAdminAccess(pin: string): boolean {
-  if (pin !== ADMIN_PIN) {
-    throw new Error('Invalid PIN');
+  const now = Date.now();
+  const lockoutTime = Number(localStorage.getItem(LOCKOUT_TIME_KEY) || '0');
+  
+  if (now < lockoutTime) {
+    const remainingMinutes = Math.ceil((lockoutTime - now) / 60000);
+    throw new Error(`Account is locked. Please try again in ${remainingMinutes} minutes.`);
   }
-  return true;
+
+  if (pin === '12345') {
+    localStorage.removeItem(FAILED_ATTEMPTS_KEY);
+    localStorage.removeItem(LOCKOUT_TIME_KEY);
+    return true;
+  }
+
+  const failedAttempts = Number(localStorage.getItem(FAILED_ATTEMPTS_KEY) || '0') + 1;
+  localStorage.setItem(FAILED_ATTEMPTS_KEY, failedAttempts.toString());
+
+  if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
+    const lockoutTime = now + LOCKOUT_DURATION;
+    localStorage.setItem(LOCKOUT_TIME_KEY, lockoutTime.toString());
+    throw new Error(`Too many failed attempts. Account locked for ${LOCKOUT_DURATION / 60000} minutes.`);
+  }
+
+  const remainingAttempts = MAX_FAILED_ATTEMPTS - failedAttempts;
+  throw new Error(`Invalid PIN. ${remainingAttempts} ${remainingAttempts === 1 ? 'attempt' : 'attempts'} remaining.`);
 }
 
 export function saveAttendance(prefectNumber: string, role: PrefectRole): AttendanceRecord {
@@ -23,6 +56,12 @@ export function saveManualAttendance(
   role: PrefectRole,
   timestamp: Date
 ): AttendanceRecord {
+  const date = timestamp.toLocaleDateString();
+  
+  if (checkDuplicateAttendance(prefectNumber, role, date)) {
+    throw new Error(`A prefect with number ${prefectNumber} has already registered for role ${role} today.`);
+  }
+
   const records = getAttendanceRecords();
   
   const record: AttendanceRecord = {
@@ -30,7 +69,7 @@ export function saveManualAttendance(
     prefectNumber,
     role,
     timestamp: timestamp.toISOString(),
-    date: timestamp.toLocaleDateString(),
+    date,
   };
 
   records.push(record);
@@ -51,6 +90,24 @@ export function updateAttendance(
     throw new Error('Record not found');
   }
 
+  // Check for duplicates when updating prefect number or role
+  if (updates.prefectNumber || updates.role) {
+    const date = updates.date || records[index].date;
+    const prefectNumber = updates.prefectNumber || records[index].prefectNumber;
+    const role = updates.role || records[index].role;
+    
+    const hasDuplicate = records.some((record, i) => 
+      i !== index && 
+      record.prefectNumber === prefectNumber && 
+      record.role === role && 
+      record.date === date
+    );
+    
+    if (hasDuplicate) {
+      throw new Error(`A prefect with number ${prefectNumber} has already registered for role ${role} on ${date}.`);
+    }
+  }
+
   const updatedRecord = {
     ...records[index],
     ...updates,
@@ -60,12 +117,6 @@ export function updateAttendance(
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
   
   return updatedRecord;
-}
-
-export function deleteAttendance(id: string): void {
-  const records = getAttendanceRecords();
-  const filteredRecords = records.filter(r => r.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredRecords));
 }
 
 export function getAttendanceRecords(): AttendanceRecord[] {
