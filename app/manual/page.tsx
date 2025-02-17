@@ -28,9 +28,9 @@ export default function ManualAttendance() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!role || !prefectNumber || !date || !time) {
       toast.error('Please fill in all fields', {
         description: 'All fields are required for manual attendance.',
@@ -45,7 +45,7 @@ export default function ManualAttendance() {
         throw new Error('Invalid date/time format');
       }
 
-      const record = saveManualAttendance(prefectNumber, role, timestamp);
+      const record = await saveManualAttendance(prefectNumber, role, timestamp);
       const isLate = timestamp.getHours() >= 7 && timestamp.getMinutes() > 0;
 
       toast.success('Manual Attendance Marked', {
