@@ -6,6 +6,7 @@ import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
 import { ParticlesBackground } from '@/components/ui/particles';
 import { FloatingClock } from '@/components/ui/floating-clock';
+import { UnsupportedDevice } from '@/components/ui/unsupported-device';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -40,6 +41,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const isDeviceSupported = typeof window !== 'undefined' && 'ontouchstart' in window;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -49,11 +52,16 @@ export default function RootLayout({
         <Providers>
           <div className="relative min-h-screen flex flex-col">
             <Navbar />
-            <ParticlesBackground />
-            <main className="flex-1 container mx-auto">{children}</main>
-            
-            <Footer />
-            <FloatingClock />
+            {isDeviceSupported ? (
+              <>
+                <ParticlesBackground />
+                <main className="flex-1 container mx-auto">{children}</main>
+                <Footer />
+                <FloatingClock />
+              </>
+            ) : (
+              <UnsupportedDevice />
+            )}
           </div>
         </Providers>
       </body>
