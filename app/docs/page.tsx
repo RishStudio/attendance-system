@@ -37,13 +37,9 @@ export default function DocsPage() {
                 <h3 className="text-lg font-semibold">✨ What’s New</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li><span className="font-semibold">Advanced Role Management</span> – More control over user permissions.</li>
-                  <li><span className="font-semibold">Customizable Attendance Reports</span> – Tailor reports to your needs.</li>
-                  <li><span className="font-semibold">Improved Late Arrival Alerts</span> – Instant notifications for better monitoring.</li>
-                  <li><span className="font-semibold">Refreshed User Interface</span> – Modern look with light mode support.</li>
                   <li><span className="font-semibold">Manual Time Entry (Beta)</span> – Log attendance manually for accuracy.</li>
                   <li><span className="font-semibold">Enhanced Visual Elements</span> – New icons and UI improvements.</li>
                   <li><span className="font-semibold">Clock and Manual Time Entry Enhancements</span> – Better accuracy in tracking attendance.</li>
-                  <li><span className="font-semibold">Admin Panel Redesign</span> – More intuitive and efficient user experience.</li>
                   <li><span className="font-semibold">Admin Panel Password Protection</span> – Added security for the admin panel.</li>
                   <li><span className="font-semibold">Games Captain Role</span> – New role added for better management.</li>
                 </ul>
