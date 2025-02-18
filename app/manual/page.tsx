@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, Clock as ClockIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +27,11 @@ export default function ManualAttendance() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
   const [dateTime, setDateTime] = useState('');
+
+  useEffect(() => {
+    const currentDateTime = new Date().toISOString().slice(0, 16);
+    setDateTime(currentDateTime);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,13 +67,18 @@ export default function ManualAttendance() {
 
       setRole('');
       setPrefectNumber('');
-      setDateTime('');
+      setDateTime(new Date().toISOString().slice(0, 16));
     } catch (error) {
       toast.error('Invalid Date/Time', {
         description: 'Please enter a valid date and time.',
         duration: 3000,
       });
     }
+  };
+
+  const handleResetDateTime = () => {
+    const currentDateTime = new Date().toISOString().slice(0, 16);
+    setDateTime(currentDateTime);
   };
 
   return (
@@ -117,6 +127,9 @@ export default function ManualAttendance() {
 
             <Button type="submit" className="w-full text-base font-medium">
               Mark Manual Attendance
+            </Button>
+            <Button type="button" className="w-full text-base font-medium mt-2" onClick={handleResetDateTime}>
+              Reset to Current Date/Time
             </Button>
           </form>
         </CardContent>
