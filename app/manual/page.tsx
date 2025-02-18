@@ -19,19 +19,19 @@ const roles: PrefectRole[] = [
   'Senior',
   'Junior',
   'Sub',
-  'Apprentice'
+  'Apprentice',
+  'Games Captain',
 ];
 
 export default function ManualAttendance() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [dateTime, setDateTime] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!role || !prefectNumber || !date || !time) {
+    if (!role || !prefectNumber || !dateTime) {
       toast.error('Please fill in all fields', {
         description: 'All fields are required for manual attendance.',
         duration: 3000,
@@ -40,7 +40,7 @@ export default function ManualAttendance() {
     }
 
     try {
-      const timestamp = new Date(`${date}T${time}`);
+      const timestamp = new Date(dateTime);
       if (isNaN(timestamp.getTime())) {
         throw new Error('Invalid date/time format');
       }
@@ -62,8 +62,7 @@ export default function ManualAttendance() {
 
       setRole('');
       setPrefectNumber('');
-      setDate('');
-      setTime('');
+      setDateTime('');
     } catch (error) {
       toast.error('Invalid Date/Time', {
         description: 'Please enter a valid date and time.',
@@ -108,16 +107,11 @@ export default function ManualAttendance() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-              <Input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
+                type="datetime-local"
+                value={dateTime}
+                onChange={(e) => setDateTime(e.target.value)}
               />
             </div>
 
