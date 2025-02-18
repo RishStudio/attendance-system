@@ -7,7 +7,8 @@ export type PrefectRole =
   | 'Senior'
   | 'Junior'
   | 'Sub'
-  | 'Apprentice';
+  | 'Apprentice'
+  | 'Games Captain';
 
 export interface AttendanceRecord {
   id: string;
