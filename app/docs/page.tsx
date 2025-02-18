@@ -26,7 +26,7 @@ export default function DocsPage() {
                 <CardDescription>Simpler, Faster, Better</CardDescription>
               </CardHeader>
               <div className="mt-4">
-                <Image src="/Version7.png" alt="Version 5.0.7" className="w-full h-auto rounded-lg shadow-lg" width={800} height={400} />
+                <Image src="/version7.png" alt="Version 5.0.7" className="w-full h-auto rounded-lg shadow-lg" width={800} height={400} />
               </div>
               <CardContent className="space-y-4 mt-4">
                 <p>
