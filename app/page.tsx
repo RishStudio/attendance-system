@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -28,18 +29,22 @@ export default function Home() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [isRoleSelected, setIsRoleSelected] = useState(false);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      // Only handle number keys when not typing in the prefect number input
-      if (document.activeElement?.tagName !== 'INPUT') {
+      // Handle number keys for role selection and auto-switch to prefect number input
+      if (document.activeElement?.tagName !== 'INPUT' || isRoleSelected) {
         const selectedRole = roleShortcuts[e.key];
         if (selectedRole) {
           setRole(selectedRole);
+          setIsRoleSelected(true);
           toast.success('Role Selected', {
             description: `${selectedRole} role selected using keyboard shortcut (${e.key})`,
             duration: 2000,
           });
+          document.getElementById('prefectNumberInput')?.focus();
+          return;
         }
       }
 
@@ -48,11 +53,21 @@ export default function Home() {
         e.preventDefault();
         setShowShortcuts(prev => !prev);
       }
+
+      // Navigate between inputs using arrow keys
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (document.activeElement?.id === 'roleSelect' && e.key === 'ArrowDown') {
+          document.getElementById('prefectNumberInput')?.focus();
+        } else if (document.activeElement?.id === 'prefectNumberInput' && e.key === 'ArrowUp') {
+          document.getElementById('roleSelect')?.focus();
+        }
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [isRoleSelected]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,21 +80,23 @@ export default function Home() {
       return;
     }
 
+    const formattedPrefectNumber = prefectNumber.padStart(2, '0');
+
     try {
-      if (checkDuplicateAttendance(prefectNumber, role, new Date().toLocaleDateString())) {
+      if (checkDuplicateAttendance(formattedPrefectNumber, role, new Date().toLocaleDateString())) {
         toast.error('Duplicate Entry', {
-          description: `A prefect with number ${prefectNumber} has already registered for role ${role} today.`,
+          description: `A prefect with number ${formattedPrefectNumber} has already registered for role ${role} today.`,
           duration: 5000,
         });
         return;
       }
 
-      const record = saveAttendance(prefectNumber, role);
+      const record = saveAttendance(formattedPrefectNumber, role);
       const time = new Date(record.timestamp);
       const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
 
       toast.success('Attendance Marked Successfully', {
-        description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
+        description: `${role} ${formattedPrefectNumber} marked at ${time.toLocaleTimeString()}`,
         duration: 4000,
       });
 
@@ -92,6 +109,7 @@ export default function Home() {
 
       setRole('');
       setPrefectNumber('');
+      setIsRoleSelected(false);
     } catch (error) {
       toast.error('Error', {
         description: error instanceof Error ? error.message : 'Failed to mark attendance',
@@ -144,7 +162,12 @@ export default function Home() {
             <div className="space-y-2">
               <Select 
                 value={role} 
-                onValueChange={(value) => setRole(value as PrefectRole)}
+                onValueChange={(value) => {
+                  setRole(value as PrefectRole);
+                  setIsRoleSelected(true);
+                  document.getElementById('prefectNumberInput')?.focus();
+                }}
+                id="roleSelect"
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select your role" />
@@ -171,6 +194,7 @@ export default function Home() {
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
                 className="w-full"
+                id="prefectNumberInput"
               />
             </div>
 
