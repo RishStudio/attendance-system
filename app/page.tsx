@@ -21,7 +21,8 @@ const roleShortcuts: Record<string, PrefectRole> = {
   '6': 'Senior',
   '7': 'Junior',
   '8': 'Sub',
-  '9': 'Apprentice'
+  '9': 'Apprentice',
+  '0': 'Games Captain'
 };
 
 export default function Home() {
