@@ -42,7 +42,9 @@ export default function Home() {
             description: `${selectedRole} role selected using keyboard shortcut (${e.key})`,
             duration: 2000,
           });
-          document.getElementById('prefectNumberInput')?.focus();
+          setTimeout(() => {
+            document.getElementById('prefectNumberInput')?.focus();
+          }, 0);  // Ensure the role selection is complete before focusing
           return;
         }
       }
@@ -164,7 +166,9 @@ export default function Home() {
                 onValueChange={(value) => {
                   setRole(value as PrefectRole);
                   setIsRoleSelected(true);
-                  document.getElementById('prefectNumberInput')?.focus();
+                  setTimeout(() => {
+                    document.getElementById('prefectNumberInput')?.focus();
+                  }, 0);  // Ensure the role selection is complete before focusing
                 }}
               >
                 <SelectTrigger id="roleSelect" className="w-full">
