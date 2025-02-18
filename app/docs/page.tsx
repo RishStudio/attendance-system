@@ -26,7 +26,7 @@ export default function DocsPage() {
                 <CardDescription>Simpler, Faster, Better</CardDescription>
               </CardHeader>
               <div className="mt-4">
-                <img src="/Version7.png" alt="Version 5.0.7" className="w-full h-auto rounded-lg shadow-lg" />
+                <Image src="/Version7.png" alt="Version 5.0.7" className="w-full h-auto rounded-lg shadow-lg" width={800} height={400} />
               </div>
               <CardContent className="space-y-4 mt-4">
                 <p>
@@ -45,6 +45,7 @@ export default function DocsPage() {
                   <li><span className="font-semibold">Clock and Manual Time Entry Enhancements</span> – Better accuracy in tracking attendance.</li>
                   <li><span className="font-semibold">Admin Panel Redesign</span> – More intuitive and efficient user experience.</li>
                   <li><span className="font-semibold">Admin Panel Password Protection</span> – Added security for the admin panel.</li>
+                  <li><span className="font-semibold">Games Captain Role</span> – New role added for better management.</li>
                 </ul>
 
                 <h3 className="text-lg font-semibold mt-4">🐞 Bug Fixes & Improvements</h3>
@@ -55,6 +56,7 @@ export default function DocsPage() {
                   <li><span className="font-semibold">Fixed Broken Documentation Links</span> – Easy access to updated guides.</li>
                   <li><span className="font-semibold">Memory Leak Fixes</span> – Better system stability and resource management.</li>
                   <li><span className="font-semibold">Clearer Error Messages</span> – More informative alerts for easier troubleshooting.</li>
+                  <li><span className="font-semibold">Improved Keyboard Shortcuts</span> – Enhanced functionality for role selection.</li>
                 </ul>
               </CardContent>
             </Card>
@@ -99,8 +101,10 @@ export default function DocsPage() {
                   <li>Daily attendance export</li>
                   <li>Role-wise statistics</li>
                   <li>Late arrival monitoring</li>
-                  <li>14-day data retention</li>
+                  <li>60-day data retention</li>
                   <li>Automatic data cleanup</li>
+                  <li>Admin panel with password protection</li>
+                  <li>Redesigned admin panel for better user experience</li>
                 </ul>
               </CardContent>
             </Card>
@@ -110,7 +114,7 @@ export default function DocsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>⌨️ Keyboard Shortcuts</CardTitle>
-                <CardDescription>Quick access to system features (This is a testing feature and might not work yet)</CardDescription>
+                <CardDescription>Quick access to system features</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
@@ -149,6 +153,14 @@ export default function DocsPage() {
                   <div className="flex items-center justify-between">
                     <span>Role: Apprentice</span>
                     <kbd className="px-2 py-1 bg-muted rounded">9</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Role: Games Captain</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">0</kbd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Toggle Shortcuts</span>
+                    <kbd className="px-2 py-1 bg-muted rounded">?</kbd>
                   </div>
                 </div>
               </CardContent>
