@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -167,9 +166,8 @@ export default function Home() {
                   setIsRoleSelected(true);
                   document.getElementById('prefectNumberInput')?.focus();
                 }}
-                id="roleSelect"
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger id="roleSelect" className="w-full">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
