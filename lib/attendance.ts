@@ -136,6 +136,7 @@ export function getDailyStats(date: string): DailyStats {
       'Senior Executive': 0,
       Executive: 0,
       'Super Senior': 0,
+      'Games Captain': 0,
       Senior: 0,
       Junior: 0,
       Sub: 0,
