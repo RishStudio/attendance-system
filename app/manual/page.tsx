@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Clock as ClockIcon } from 'lucide-react';
+import { Shield, Clock as ClockIcon, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -128,7 +128,8 @@ export default function ManualAttendance() {
             <Button type="submit" className="w-full text-base font-medium">
               Mark Manual Attendance
             </Button>
-            <Button type="button" className="w-full text-base font-medium mt-2" onClick={handleResetDateTime}>
+            <Button type="button" className="w-full text-base font-medium mt-2 flex items-center justify-center" onClick={handleResetDateTime}>
+              <RefreshCw className="w-4 h-4 mr-2" />
               Reset to Current Date/Time
             </Button>
           </form>
