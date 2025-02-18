@@ -9,5 +9,6 @@ export const roles: PrefectRole[] = [
   'Senior',
   'Junior',
   'Sub',
-  'Apprentice'
+  'Apprentice',
+  'Games Captain'
 ];
