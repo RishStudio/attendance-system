@@ -22,15 +22,15 @@ export default function DocsPage() {
           <TabsContent value="new-version">
             <Card>
               <CardHeader>
-                <CardTitle>🚀 Introducing Version 5.0.3</CardTitle>
+                <CardTitle>🚀 Introducing Version 5.0.7</CardTitle>
                 <CardDescription>Simpler, Faster, Better</CardDescription>
               </CardHeader>
               <div className="mt-4">
-                <img src="/Version3.png" alt="Version 5.0.3" className="w-full h-auto rounded-lg shadow-lg" />
+                <img src="/Version7.png" alt="Version 5.0.7" className="w-full h-auto rounded-lg shadow-lg" />
               </div>
               <CardContent className="space-y-4 mt-4">
                 <p>
-                  We’re excited to announce <span className="font-semibold">Version 5.0.3</span> of the <span className="font-semibold">Prefect Board Attendance System</span>.  
+                  We’re excited to announce <span className="font-semibold">Version 5.0.7</span> of the <span className="font-semibold">Prefect Board Attendance System</span>.  
                   This update brings new features, performance improvements, and essential bug fixes to make attendance management even easier and more accurate.
                 </p>
 
