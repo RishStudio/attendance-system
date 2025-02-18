@@ -140,6 +140,7 @@ export function getDailyStats(date: string): DailyStats {
       Junior: 0,
       Sub: 0,
       Apprentice: 0,
+      'Games Captain': 0,
     },
   };
 
