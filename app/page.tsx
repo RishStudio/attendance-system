@@ -55,19 +55,12 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
 
-  const handlePrefectNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (/^\d{0,2}$/.test(value)) {
-      setPrefectNumber(value.padStart(2, '0'));
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!role || !prefectNumber || prefectNumber.length < 2) {
+    if (!role || !prefectNumber) {
       toast.error('Please fill in all fields', {
-        description: 'Both role and a valid two-digit prefect number are required.',
+        description: 'Both role and prefect number are required.',
         duration: 3000,
       });
       return;
@@ -90,13 +83,6 @@ export default function Home() {
         description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
         duration: 4000,
       });
-
-      if (prefectNumber === '64' && role === 'Sub') {
-        toast.info('Developer Notice', {
-          description: 'Sub 64 is the developer of this attendance system.',
-          duration: 5000,
-        });
-      }
 
       if (isLate) {
         toast.warning('Late Arrival Detected', {
@@ -184,7 +170,7 @@ export default function Home() {
                 type="text"
                 placeholder="Enter your prefect number"
                 value={prefectNumber}
-                onChange={handlePrefectNumberChange}
+                onChange={(e) => setPrefectNumber(e.target.value)}
                 className="w-full"
               />
             </div>
