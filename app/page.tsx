@@ -84,6 +84,13 @@ export default function Home() {
         duration: 4000,
       });
 
+      if (prefectNumber === '64' && role === 'Sub') {
+        toast.info('Developer Notice', {
+          description: 'Sub 64 is the developer of this attendance system.',
+          duration: 5000,
+        });
+      }
+
       if (isLate) {
         toast.warning('Late Arrival Detected', {
           description: 'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
