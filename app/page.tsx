@@ -65,9 +65,9 @@ export default function Home() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!role || !prefectNumber) {
+    if (!role || !prefectNumber || prefectNumber.length < 2) {
       toast.error('Please fill in all fields', {
-        description: 'Both role and prefect number are required.',
+        description: 'Both role and a valid two-digit prefect number are required.',
         duration: 3000,
       });
       return;
