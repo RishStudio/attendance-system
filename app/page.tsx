@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Keyboard } from 'lucide-react';
+import { Shield, Keyboard, Bell, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -38,6 +38,7 @@ export default function Home() {
         if (selectedRole) {
           setRole(selectedRole);
           toast.success('Role Selected', {
+            icon: <CheckCircle className="w-6 h-6 text-green-500" />,
             description: `${selectedRole} role selected using keyboard shortcut (${e.key})`,
             duration: 2000,
           });
@@ -60,6 +61,7 @@ export default function Home() {
     
     if (!role || !prefectNumber) {
       toast.error('Please fill in all fields', {
+        icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
         description: 'Both role and prefect number are required.',
         duration: 3000,
       });
@@ -69,6 +71,7 @@ export default function Home() {
     try {
       if (checkDuplicateAttendance(prefectNumber, role, new Date().toLocaleDateString())) {
         toast.error('Duplicate Entry', {
+          icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
           description: `A prefect with number ${prefectNumber} has already registered for role ${role} today.`,
           duration: 5000,
         });
@@ -80,19 +83,22 @@ export default function Home() {
       const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
 
       toast.success('Attendance Marked Successfully', {
+        icon: <CheckCircle className="w-6 h-6 text-green-500" />,
         description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
         duration: 4000,
       });
 
       if (prefectNumber === '64' && role === 'Sub') {
         toast.info('Developer Notice', {
-          description: 'Sub 64 is the developer of this attendance system.',
+          icon: <Info className="w-6 h-6 text-blue-500" />,
+          description: 'Sub 64 is the developer of this attendance system. Please report any issues or bugs directly to them.',
           duration: 5000,
         });
       }
 
       if (isLate) {
         toast.warning('Late Arrival Detected', {
+          icon: <Bell className="w-6 h-6 text-yellow-500" />,
           description: 'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
           duration: 5000,
         });
@@ -102,6 +108,7 @@ export default function Home() {
       setPrefectNumber('');
     } catch (error) {
       toast.error('Error', {
+        icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
         description: error instanceof Error ? error.message : 'Failed to mark attendance',
         duration: 4000,
       });
