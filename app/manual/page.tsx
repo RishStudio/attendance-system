@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
 import { saveManualAttendance } from '@/lib/attendance';
-
+import { Calendar as DatePicker } from '@/components/ui/calendar';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -28,6 +28,7 @@ export default function ManualAttendance() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
   const [dateTime, setDateTime] = useState<Date | null>(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
     const currentDateTime = new Date();
@@ -119,20 +120,28 @@ export default function ManualAttendance() {
             </div>
 
             <div className="space-y-2">
-              <DatePicker
-                selected={dateTime}
-                onChange={(date: Date | null) => setDateTime(date)}
-                showTimeSelect
-                dateFormat="Pp"
-                customInput={
-                  <Input
-                    type="text"
-                    value={dateTime ? dateTime.toLocaleString() : ''}
-                    placeholder="Select date and time"
-                    readOnly
-                  />
-                }
-              />
+              <div className="relative">
+                <Input
+                  type="text"
+                  value={dateTime ? dateTime.toLocaleString() : ''}
+                  placeholder="Select date and time"
+                  readOnly
+                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                />
+                {isCalendarOpen && (
+                  <div className="absolute z-10 mt-2 bg-white border rounded shadow-lg">
+                    <DatePicker
+                      selected={dateTime}
+                      onChange={(date: Date | null) => {
+                        setDateTime(date);
+                        setIsCalendarOpen(false);
+                      }}
+                      showTimeSelect
+                      dateFormat="Pp"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             <Button type="submit" className="w-full text-base font-medium">
