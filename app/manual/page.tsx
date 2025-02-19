@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Clock as ClockIcon, RefreshCw } from 'lucide-react';
+import { Shield, Clock as ClockIcon, RefreshCw, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
 import { saveManualAttendance } from '@/lib/attendance';
+import { DatePicker } from '@/components/ui/datepicker';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -26,10 +27,10 @@ const roles: PrefectRole[] = [
 export default function ManualAttendance() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
-  const [dateTime, setDateTime] = useState('');
+  const [dateTime, setDateTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    const currentDateTime = new Date().toISOString().slice(0, 16);
+    const currentDateTime = new Date();
     setDateTime(currentDateTime);
   }, []);
 
@@ -45,7 +46,7 @@ export default function ManualAttendance() {
     }
 
     try {
-      const timestamp = new Date(dateTime);
+      const timestamp = dateTime;
       if (isNaN(timestamp.getTime())) {
         throw new Error('Invalid date/time format');
       }
@@ -67,7 +68,7 @@ export default function ManualAttendance() {
 
       setRole('');
       setPrefectNumber('');
-      setDateTime(new Date().toISOString().slice(0, 16));
+      setDateTime(new Date());
     } catch (error) {
       toast.error('Invalid Date/Time', {
         description: 'Please enter a valid date and time.',
@@ -77,7 +78,7 @@ export default function ManualAttendance() {
   };
 
   const handleResetDateTime = () => {
-    const currentDateTime = new Date().toISOString().slice(0, 16);
+    const currentDateTime = new Date();
     setDateTime(currentDateTime);
   };
 
@@ -118,10 +119,19 @@ export default function ManualAttendance() {
             </div>
 
             <div className="space-y-2">
-              <Input
-                type="datetime-local"
-                value={dateTime}
-                onChange={(e) => setDateTime(e.target.value)}
+              <DatePicker
+                selected={dateTime}
+                onChange={(date: Date | null) => setDateTime(date)}
+                showTimeSelect
+                dateFormat="Pp"
+                customInput={
+                  <Input
+                    type="text"
+                    value={dateTime ? dateTime.toLocaleString() : ''}
+                    placeholder="Select date and time"
+                    readOnly
+                  />
+                }
               />
             </div>
 
