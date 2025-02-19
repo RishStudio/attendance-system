@@ -76,13 +76,7 @@ export default function Home() {
       }
 
       const record = saveAttendance(prefectNumber, role);
-      let time = new Date(record.timestamp);
-
-      // Custom logic for Sub 64 Prefect
-      if (role === 'Sub' && prefectNumber === '64' && time.getHours() >= 7 && time.getMinutes() > 0) {
-        time = new Date(time.getFullYear(), time.getMonth(), time.getDate(), 6, 58);
-      }
-
+      const time = new Date(record.timestamp);
       const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
 
       toast.success('Attendance Marked Successfully', {
