@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Keyboard, Bell, AlertTriangle, CheckCircle, Info, Code } from 'lucide-react';
+import { Shield, Keyboard, Bell, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -56,13 +56,6 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
 
-  const handlePrefectNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (/^\d{0,2}$/.test(value)) {
-      setPrefectNumber(value.padStart(2, '0'));
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -97,8 +90,8 @@ export default function Home() {
 
       if (prefectNumber === '64' && role === 'Sub') {
         toast.info('Developer Notice', {
-          icon: <Code className="w-6 h-6 text-purple-500" />,
-          description: 'Sub 64 is the mastermind behind this attendance system. Please report any issues or bugs directly to them.',
+          icon: <Info className="w-6 h-6 text-blue-500" />,
+          description: 'Sub 64 is the developer of this attendance system. Please report any issues or bugs directly to them.',
           duration: 5000,
         });
       }
@@ -191,7 +184,7 @@ export default function Home() {
                 type="text"
                 placeholder="Enter your prefect number"
                 value={prefectNumber}
-                onChange={handlePrefectNumberChange}
+                onChange={(e) => setPrefectNumber(e.target.value)}
                 className="w-full"
               />
             </div>
