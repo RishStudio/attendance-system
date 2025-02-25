@@ -304,30 +304,44 @@ export default function QRCodePage() {
         </TabsContent>
 
         <TabsContent value="scan">
-          <Card>
-            <CardHeader>
-              <CardTitle>Scan Attendance QR Code</CardTitle>
-              <CardDescription>
-                Scan the QR code to mark your attendance
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {cameraAvailable === false && (
-                <p className="text-center text-sm text-muted-foreground">
-                  No camera detected. Please connect a camera and refresh the page.
-                </p>
-              )}
-              {cameraAvailable === true && (
-                <div id="qr-reader" className="mx-auto max-w-sm" />
-              )}
-              {cameraAvailable === null && (
-                <p className="text-center text-sm text-muted-foreground mt-4">
-                  Checking for camera availability...
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+  <Card>
+    <CardHeader>
+      <CardTitle>Scan Attendance QR Code</CardTitle>
+      <CardDescription>
+        Scan the QR code to mark your attendance
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      {cameraAvailable === null && (
+        <div className="flex flex-col items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary mb-4"></div>
+          <p className="text-center text-sm text-muted-foreground">
+            Checking for camera availability...
+          </p>
+        </div>
+      )}
+
+      {cameraAvailable === false && (
+        <div className="flex flex-col items-center">
+          <p className="text-center text-sm text-muted-foreground mb-4">
+            No camera detected. Please connect a camera and refresh the page.
+          </p>
+          <button
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {cameraAvailable === true && (
+        <div id="qr-reader" className="mx-auto max-w-sm transition-opacity duration-500 opacity-100" />
+      )}
+    </CardContent>
+  </Card>
+</TabsContent>
+
       </Tabs>
     </div>
   );
