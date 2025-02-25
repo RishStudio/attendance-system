@@ -14,17 +14,23 @@ export function Navbar() {
     setIsOpen(!isOpen);
   };
 
+  const handleThemeSwitch = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 flex h-14 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <Shield className="h-6 w-6" />
-          <span className="hidden sm:inline-block font-bold">
-            Prefect Board Attendance
-          </span>
+          <span className="hidden sm:inline-block font-bold">Prefect Board Attendance</span>
         </Link>
 
-        <nav className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
+          <Button variant="ghost" size="icon" onClick={handleThemeSwitch}>
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
+
           <div className="hidden sm:flex space-x-2">
             <Link href="/">
               <Button variant="ghost" size="sm">
@@ -39,7 +45,7 @@ export function Navbar() {
               </Button>
             </Link>
             <Link href="/qr">
-              <Button variant="ghost" size="sm" onClick={toggleMenu}>
+              <Button variant="ghost" size="sm">
                 <QrCode className="mr-2 h-4 w-4" />
                 QR Scan
               </Button>
@@ -57,7 +63,11 @@ export function Navbar() {
               </Button>
             </Link>
           </div>
-        </nav>
+
+          <Button variant="ghost" size="icon" className="sm:hidden" onClick={toggleMenu}>
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </Button>
+        </div>
       </div>
 
       {isOpen && (
@@ -69,16 +79,16 @@ export function Navbar() {
                 Attendance
               </Button>
             </Link>
+            <Link href="/manual">
+              <Button variant="ghost" size="sm" onClick={toggleMenu}>
+                <Clock className="mr-2 h-4 w-4" />
+                Manual Attendance
+              </Button>
+            </Link>
             <Link href="/qr">
               <Button variant="ghost" size="sm" onClick={toggleMenu}>
                 <QrCode className="mr-2 h-4 w-4" />
                 QR Scan
-              </Button>
-            </Link>
-            <Link href="/manual">
-              <Button variant="ghost" size="sm" onClick={toggleMenu}>
-                <Clock className="mr-2 h-4 w-4" />
-                Manual Attendance (Beta)
               </Button>
             </Link>
             <Link href="/docs">
