@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Shield, Sun, Moon, Menu, X, ClipboardList, FileText, User, Clock } from 'lucide-react';
+import { Shield, Sun, Moon, Menu, X, ClipboardList, FileText, User, Clock, QrCode } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from './button';
 
@@ -36,6 +36,12 @@ export function Navbar() {
               <Button variant="ghost" size="sm">
                 <Clock className="mr-2 h-4 w-4" />
                 Manual Attendance
+              </Button>
+            </Link>
+            <Link href="/qr">
+              <Button variant="ghost" size="sm" onClick={toggleMenu}>
+                <QrCode className="mr-2 h-4 w-4" />
+                QR
               </Button>
             </Link>
             <Link href="/docs">
@@ -82,6 +88,18 @@ export function Navbar() {
                 Attendance
               </Button>
             </Link>
+            <Link href="/qr">
+              <Button variant="ghost" size="sm" onClick={toggleMenu}>
+                <QrCode className="mr-2 h-4 w-4" />
+                QR
+              </Button>
+            </Link>
+            <Link href="/manual">
+              <Button variant="ghost" size="sm" onClick={toggleMenu}>
+                <Clock className="mr-2 h-4 w-4" />
+                Manual Attendance (Beta)
+              </Button>
+            </Link>
             <Link href="/docs">
               <Button variant="ghost" size="sm" onClick={toggleMenu}>
                 <FileText className="mr-2 h-4 w-4" />
@@ -92,12 +110,6 @@ export function Navbar() {
               <Button variant="ghost" size="sm" onClick={toggleMenu}>
                 <User className="mr-2 h-4 w-4" />
                 Admin
-              </Button>
-            </Link>
-            <Link href="/manual">
-              <Button variant="ghost" size="sm" onClick={toggleMenu}>
-                <Clock className="mr-2 h-4 w-4" />
-                Manual Attendance (Beta)
               </Button>
             </Link>
           </nav>
