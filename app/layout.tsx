@@ -1,7 +1,6 @@
 'use client';
 
 import './globals.css';
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { useState, useEffect } from 'react';
 import { Providers } from './providers';
@@ -9,35 +8,10 @@ import { Navbar } from '@/components/ui/navbar';
 import { Footer } from '@/components/ui/footer';
 import { ParticlesBackground } from '@/components/ui/particles';
 import { FloatingClock } from '@/components/ui/floating-clock';
+import { metadata } from './metadata';
 import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'Prefect Board Attendance System',
-  description: 'Modern attendance tracking system for school prefects',
-  openGraph: {
-    images: [
-      {
-        url: '/Version2.png',
-        width: 800,
-        height: 600,
-        alt: 'Prefect Board Attendance System',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Prefect Board Attendance System',
-    description: 'Modern attendance tracking system for school prefects',
-    images: [
-      {
-        url: '/Version2.png',
-        alt: 'Prefect Board Attendance System',
-      },
-    ],
-  },
-};
 
 export default function RootLayout({
   children,
@@ -57,6 +31,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="https://cdn.imrishmika.site/images/v2.png" />
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+        {/* Add other metadata tags as needed */}
       </head>
       <body className={inter.className}>
         <Providers>
@@ -71,7 +48,7 @@ export default function RootLayout({
               <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
                 <div className="relative">
                   <img
-                    src="./public/version12.png"
+                    src="/version12.png"
                     alt="New Version Announcement"
                     className="w-96 h-auto"
                   />
