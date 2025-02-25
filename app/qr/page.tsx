@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { saveAttendance } from '@/lib/attendance';
 import { PrefectRole } from '@/lib/types';
-import { QrCode, Scan, Download, Shield, Printer, Loader, RefreshCw } from 'lucide-react';
+import { QrCode, ScanLine, Download, Shield, Printer, Loader, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const roles: PrefectRole[] = [
@@ -226,7 +226,7 @@ export default function QRCodePage() {
             Generate QR Code
           </TabsTrigger>
           <TabsTrigger value="scan" className="flex items-center gap-2">
-            <Scan className="h-4 w-4" />
+            <ScanLine className="h-4 w-4" />
             Scan QR Code
           </TabsTrigger>
         </TabsList>
