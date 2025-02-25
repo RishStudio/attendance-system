@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5QrcodeSupportedFormats, Html5Qrcode } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { saveAttendance } from '@/lib/attendance';
 import { PrefectRole } from '@/lib/types';
-import { QrCode, Scan, Download, Shield, Printer } from 'lucide-react';
+import { QrCode, Scan, Download, Shield, Printer, Upload } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const roles: PrefectRole[] = [
@@ -34,6 +34,7 @@ export default function QRCodePage() {
   const [cameraAvailable, setCameraAvailable] = useState<boolean | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const generateQRCode = () => {
     if (!prefectNumber || !role) {
@@ -67,7 +68,11 @@ export default function QRCodePage() {
     setIsDownloading(true);
     setTimeout(() => {
       const svgElement = document.querySelector('svg');
-      if (!svgElement) return;
+      if (!svgElement) {
+        toast.error('No SVG element found for QR code');
+        setIsDownloading(false);
+        return;
+      }
 
       const svgData = new XMLSerializer().serializeToString(svgElement);
       const canvas = document.createElement('canvas');
@@ -122,6 +127,39 @@ export default function QRCodePage() {
       printWindow.document.write(`<img src="${imgDataUrl}" alt="QR Code" />`);
       printWindow.document.close();
       printWindow.print();
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result as string;
+        
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            
+            const html5QrCode = new Html5Qrcode('');
+            html5QrCode.scanImage(imgData, Html5QrcodeSupportedFormats.QR_CODE)
+              .then(onScanSuccess)
+              .catch(onScanError)
+              .finally(() => setIsUploading(false));
+          } else {
+            toast.error('Failed to process image');
+            setIsUploading(false);
+          }
+        };
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -290,6 +328,19 @@ export default function QRCodePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="space-y-4">
+                <Button as="label" htmlFor="upload" className="w-full gap-2" disabled={isUploading}>
+                  <Upload className="h-4 w-4" />
+                  {isUploading ? 'Uploading...' : 'Upload QR Code'}
+                </Button>
+                <Input
+                  type="file"
+                  id="upload"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </div>
               {cameraAvailable === false && (
                 <p className="text-center text-sm text-muted-foreground">
                   No camera detected. Please connect a camera and refresh the page.
