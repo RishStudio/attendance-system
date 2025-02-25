@@ -66,24 +66,35 @@ export default function QRCodePage() {
 
     setIsDownloading(true);
     setTimeout(() => {
-      const canvas = document.querySelector('canvas');
-      if (!canvas) return;
+      const svgElement = document.querySelector('svg');
+      if (!svgElement) return;
 
-      const pngUrl = canvas
-        .toDataURL('image/png')
-        .replace('image/png', 'image/octet-stream');
-      
-      const downloadLink = document.createElement('a');
-      downloadLink.href = pngUrl;
-      downloadLink.download = `prefect_qr_${prefectNumber}.png`;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
-      toast.success('QR Code Downloaded', {
-        description: 'The QR code has been saved to your device',
-      });
-      setIsDownloading(false);
+      const img = new Image();
+      img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.fillStyle = '#FFFFFF'; // Set background to white
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+
+        const pngUrl = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+        const downloadLink = document.createElement('a');
+        downloadLink.href = pngUrl;
+        downloadLink.download = `prefect_qr_${prefectNumber}.png`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        toast.success('QR Code Downloaded', {
+          description: 'The QR code has been saved to your device',
+        });
+        setIsDownloading(false);
+      };
     }, 1000);
   };
 
@@ -243,6 +254,8 @@ export default function QRCodePage() {
                       size={300}
                       level="H"
                       includeMargin
+                      bgColor="#FFFFFF"
+                      fgColor="#000000"
                     />
                   </div>
                   <Button onClick={downloadQRCode} variant="outline" className="gap-2" disabled={isDownloading}>
