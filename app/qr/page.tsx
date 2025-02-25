@@ -327,7 +327,7 @@ export default function QRCodePage() {
             No camera detected. Please connect a camera and refresh the page.
           </p>
           <button
-            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition"
+            className="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark transition"
             onClick={() => window.location.reload()}
           >
             Retry
