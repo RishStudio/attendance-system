@@ -41,13 +41,13 @@ export function Navbar() {
             <Link href="/qr">
               <Button variant="ghost" size="sm" onClick={toggleMenu}>
                 <QrCode className="mr-2 h-4 w-4" />
-                QR
+                QR Scan
               </Button>
             </Link>
             <Link href="/docs">
               <Button variant="ghost" size="sm">
                 <FileText className="mr-2 h-4 w-4" />
-                Documentation
+                Docs
               </Button>
             </Link>
             <Link href="/admin">
@@ -72,7 +72,7 @@ export function Navbar() {
             <Link href="/qr">
               <Button variant="ghost" size="sm" onClick={toggleMenu}>
                 <QrCode className="mr-2 h-4 w-4" />
-                QR
+                QR Scan
               </Button>
             </Link>
             <Link href="/manual">
@@ -84,7 +84,7 @@ export function Navbar() {
             <Link href="/docs">
               <Button variant="ghost" size="sm" onClick={toggleMenu}>
                 <FileText className="mr-2 h-4 w-4" />
-                Documentation
+                Docs
               </Button>
             </Link>
             <Link href="/admin">
