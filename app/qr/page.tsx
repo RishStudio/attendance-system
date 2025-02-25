@@ -95,10 +95,17 @@ export default function QRCodePage() {
       return;
     }
 
+    const canvas = document.querySelector('canvas');
+    if (!canvas) return;
+
+    const imgDataUrl = canvas.toDataURL();
+
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<img src="${document.querySelector('canvas').toDataURL()}" alt="QR Code" />`);
-    printWindow.document.close();
-    printWindow.print();
+    if (printWindow) {
+      printWindow.document.write(`<img src="${imgDataUrl}" alt="QR Code" />`);
+      printWindow.document.close();
+      printWindow.print();
+    }
   };
 
   useEffect(() => {
