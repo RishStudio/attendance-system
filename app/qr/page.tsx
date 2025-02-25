@@ -92,7 +92,7 @@ export default function QRCodePage() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
 
-        const pngUrl = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+        const pngUrl = canvas.toDataURL('image/png');
         const downloadLink = document.createElement('a');
         downloadLink.href = pngUrl;
         downloadLink.download = `prefect_qr_${prefectNumber}.png`;
@@ -303,7 +303,7 @@ export default function QRCodePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="scan">
+<TabsContent value="scan">
   <Card>
     <CardHeader>
       <CardTitle>Scan Attendance QR Code</CardTitle>
@@ -341,7 +341,6 @@ export default function QRCodePage() {
     </CardContent>
   </Card>
 </TabsContent>
-
       </Tabs>
     </div>
   );
