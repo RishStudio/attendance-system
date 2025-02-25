@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,7 @@ export default function QRCodePage() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [qrData, setQrData] = useState('');
   const [scannerInitialized, setScannerInitialized] = useState(false);
+  const [cameraAvailable, setCameraAvailable] = useState<boolean | null>(null);
 
   const generateQRCode = () => {
     if (!prefectNumber || !role) {
@@ -76,16 +77,27 @@ export default function QRCodePage() {
   };
 
   useEffect(() => {
-    if (!scannerInitialized) {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(() => {
+        setCameraAvailable(true);
+      })
+      .catch(() => {
+        setCameraAvailable(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (cameraAvailable && !scannerInitialized) {
       const qrReaderElement = document.getElementById('qr-reader');
       if (qrReaderElement) {
         const scanner = new Html5QrcodeScanner('qr-reader', {
+          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
           qrbox: {
-            width: 250,
-            height: 250,
+            width: 300,
+            height: 300,
           },
           fps: 10,
-        }, false); // Adding the verbose argument
+        });
 
         scanner.render(onScanSuccess, onScanError);
         setScannerInitialized(true);
@@ -95,7 +107,7 @@ export default function QRCodePage() {
         };
       }
     }
-  }, [scannerInitialized]);
+  }, [cameraAvailable, scannerInitialized]);
 
   const onScanSuccess = (decodedText: string) => {
     try {
@@ -193,7 +205,7 @@ export default function QRCodePage() {
                   <div className="p-4 bg-white rounded-lg">
                     <QRCodeSVG
                       value={qrData}
-                      size={256}
+                      size={300}
                       level="H"
                       includeMargin
                     />
@@ -220,7 +232,19 @@ export default function QRCodePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div id="qr-reader" className="mx-auto max-w-sm" />
+              {cameraAvailable === false && (
+                <p className="text-center text-sm text-muted-foreground">
+                  No camera detected. Please connect a camera and refresh the page.
+                </p>
+              )}
+              {cameraAvailable === true && (
+                <div id="qr-reader" className="mx-auto max-w-sm" />
+              )}
+              {cameraAvailable === null && (
+                <p className="text-center text-sm text-muted-foreground mt-4">
+                  Checking for camera availability...
+                </p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
