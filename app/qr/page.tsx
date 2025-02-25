@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { saveAttendance } from '@/lib/attendance';
 import { PrefectRole } from '@/lib/types';
-import { QrCode, Scan, Download, Shield, Printer } from 'lucide-react';
+import { QrCode, Scan, Download, Shield, Printer, Loader, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const roles: PrefectRole[] = [
@@ -265,7 +265,7 @@ export default function QRCodePage() {
                 </div>
                 <Button onClick={generateQRCode} className="w-full gap-2" disabled={isGenerating}>
                   <Shield className="h-4 w-4" />
-                  {isGenerating ? 'Generating...' : 'Generate QR Code'}
+                  {isGenerating ? <Loader className="h-4 w-4 animate-spin" /> : 'Generate QR Code'}
                 </Button>
               </div>
 
@@ -288,7 +288,7 @@ export default function QRCodePage() {
                   </div>
                   <Button onClick={downloadQRCode} variant="outline" className="gap-2" disabled={isDownloading}>
                     <Download className="h-4 w-4" />
-                    {isDownloading ? 'Downloading...' : 'Download QR Code'}
+                    {isDownloading ? <Loader className="h-4 w-4 animate-spin" /> : 'Download QR Code'}
                   </Button>
                   <Button onClick={printQRCode} variant="outline" className="gap-2">
                     <Printer className="h-4 w-4" />
@@ -303,44 +303,42 @@ export default function QRCodePage() {
           </Card>
         </TabsContent>
 
-<TabsContent value="scan">
-  <Card>
-    <CardHeader>
-      <CardTitle>Scan Attendance QR Code</CardTitle>
-      <CardDescription>
-        Scan the QR code to mark your attendance
-      </CardDescription>
-    </CardHeader>
-    <CardContent>
-      {cameraAvailable === null && (
-        <div className="flex flex-col items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary mb-4"></div>
-          <p className="text-center text-sm text-muted-foreground">
-            Checking for camera availability...
-          </p>
-        </div>
-      )}
+        <TabsContent value="scan">
+          <Card>
+            <CardHeader>
+              <CardTitle>Scan Attendance QR Code</CardTitle>
+              <CardDescription>
+                Scan the QR code to mark your attendance
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {cameraAvailable === null && (
+                <div className="flex flex-col items-center justify-center">
+                  <Loader className="animate-spin h-8 w-8 mb-4" />
+                  <p className="text-center text-sm text-muted-foreground">
+                    Checking for camera availability...
+                  </p>
+                </div>
+              )}
 
-      {cameraAvailable === false && (
-        <div className="flex flex-col items-center">
-          <p className="text-center text-sm text-muted-foreground mb-4">
-            No camera detected. Please connect a camera and refresh the page.
-          </p>
-          <button
-            className="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark transition"
-            onClick={() => window.location.reload()}
-          >
-            Retry
-          </button>
-        </div>
-      )}
+              {cameraAvailable === false && (
+                <div className="flex flex-col items-center">
+                  <p className="text-center text-sm text-muted-foreground mb-4">
+                    No camera detected. Please connect a camera and refresh the page.
+                  </p>
+                  <Button onClick={() => window.location.reload()} className="gap-2">
+                    <RefreshCw className="h-4 w-4" />
+                    Retry
+                  </Button>
+                </div>
+              )}
 
-      {cameraAvailable === true && (
-        <div id="qr-reader" className="mx-auto max-w-sm transition-opacity duration-500 opacity-100" />
-      )}
-    </CardContent>
-  </Card>
-</TabsContent>
+              {cameraAvailable === true && (
+                <div id="qr-reader" className="mx-auto max-w-sm transition-opacity duration-500 opacity-100" />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
