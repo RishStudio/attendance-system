@@ -43,8 +43,7 @@ export default function QRCodePage() {
       type: 'prefect_attendance',
       prefectNumber,
       role,
-      timestamp: new Date().getTime(),
-      hash: btoa(`${prefectNumber}_${role}_${new Date().getTime()}`),
+      hash: btoa(`${prefectNumber}_${role}`),
     };
     setQrData(JSON.stringify(data));
   };
@@ -104,14 +103,6 @@ export default function QRCodePage() {
       
       if (!data || data.type !== 'prefect_attendance') {
         throw new Error('Invalid QR code type');
-      }
-
-      const timestamp = new Date(data.timestamp);
-      const now = new Date();
-      const diffMinutes = Math.abs(now.getTime() - timestamp.getTime()) / 60000;
-
-      if (diffMinutes > 5) {
-        throw new Error('QR code has expired');
       }
 
       // Save attendance
@@ -212,7 +203,7 @@ export default function QRCodePage() {
                     Download QR Code
                   </Button>
                   <p className="text-sm text-muted-foreground text-center">
-                    QR code is valid for 5 minutes after generation
+                    QR code is valid for a lifetime
                   </p>
                 </div>
               )}
