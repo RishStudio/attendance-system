@@ -73,6 +73,12 @@ export default function QRCodePage() {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
+      if (!ctx) {
+        toast.error('Failed to create canvas context');
+        setIsDownloading(false);
+        return;
+      }
+
       const img = new Image();
       img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
       img.onload = () => {
