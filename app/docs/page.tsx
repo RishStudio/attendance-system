@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ClipboardCheck, Keyboard, Star, Info, Code, Users } from 'lucide-react';
+import { ClipboardCheck, Keyboard, Star, Info, Code, Users, QrCode } from 'lucide-react';
 import Image from 'next/image';
 
 export default function Documentation() {
@@ -16,38 +16,30 @@ export default function Documentation() {
             <TabsTrigger value="new-version"><Code className="mr-2 h-4 w-4" />New Version</TabsTrigger>
             <TabsTrigger value="overview"><Info className="mr-2 h-4 w-4" />Overview</TabsTrigger>
             <TabsTrigger value="features"><Star className="mr-2 h-4 w-4" />Features</TabsTrigger>
+            <TabsTrigger value="qr"><QrCode className="mr-2 h-4 w-4" />QR Code</TabsTrigger>
             <TabsTrigger value="shortcuts"><Keyboard className="mr-2 h-4 w-4" />Keyboard Shortcuts</TabsTrigger>
           </TabsList>
           
           <TabsContent value="new-version">
             <Card>
               <CardHeader>
-                <CardTitle>🚀 Version 5.0.7 Release Notes</CardTitle>
+                <CardTitle>🟢 Version 5.1.2 Beta Release Notes</CardTitle>
                 <CardDescription>Enhanced performance, new features, and fixes</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 mt-4">
-                <Image src="/version7.png" alt="Version 5.0.7" width={800} height={400} className="w-full h-auto rounded-lg shadow-lg" />
+                <Image src="/version12.png" alt="Version 5.1.2" width={800} height={400} className="w-full h-auto rounded-lg shadow-lg" />
                 <p>
-                  The latest update, <span className="font-semibold">Version 5.0.7</span>, introduces improved performance, additional role management options, and UI enhancements.
+                  The latest update, <span className="font-semibold">Version 5.1.2</span>, introduces improved performance, additional role management options, and UI enhancements.
                 </p>
                 <h3 className="text-lg font-semibold">🆕 New Features</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Advanced Role Management</li>
-                  <li>Manual Time Entry (Beta)</li>
-                  <li>Enhanced Visual Elements</li>
-                  <li>Clock & Manual Time Entry Enhancements</li>
-                  <li>Admin Panel Password Protection</li>
-                  <li>Games Captain Role</li>
+                  <li>Qr Code Based Attendnace Marking ( Beta )</li>
+                  <li>UI Enhancement and Bug Fixes</li>
                 </ul>
                 <h3 className="text-lg font-semibold">🐞 Fixes & Improvements</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Precision Timestamp Fix</li>
                   <li>Mobile UI Enhancements</li>
                   <li>Performance Boost</li>
-                  <li>Fixed Broken Documentation Links</li>
-                  <li>Memory Leak Fixes</li>
-                  <li>Clearer Error Messages</li>
-                  <li>Improved Keyboard Shortcuts</li>
                 </ul>
               </CardContent>
             </Card>
@@ -84,6 +76,7 @@ export default function Documentation() {
                   <li>Automatic timestamps</li>
                   <li>Late arrival detection</li>
                   <li>Real-time notifications</li>
+                  <li>QR Code Based Attendnace Marking ( Beta )</li>
                 </ul>
                 <h3 className="font-semibold">🔧 Admin Controls</h3>
                 <ul className="list-disc pl-6 space-y-2">
@@ -94,6 +87,23 @@ export default function Documentation() {
               </CardContent>
             </Card>
           </TabsContent>
+
+
+          <TabsContent value="qr">
+            <Card>
+              <CardHeader>
+                <CardTitle>📷 QR Code</CardTitle>
+                <CardDescription>Generate and Scan QR Codes</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <h3 className="font-semibold">📥 Generate QR Code</h3>
+                <p>To generate a QR code, navigate to the "Generate" tab and fill in the required details.</p>
+                <h3 className="font-semibold">📤 Scan QR Code</h3>
+                <p>To scan a QR code, navigate to the "Scan" tab and use your device's camera.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           
           <TabsContent value="shortcuts">
             <Card>
@@ -117,6 +127,7 @@ export default function Documentation() {
               </CardContent>
             </Card>
           </TabsContent>
+
         </Tabs>
       </div>
     </div>
