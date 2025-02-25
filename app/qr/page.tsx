@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,30 +25,11 @@ const roles: PrefectRole[] = [
   'Apprentice'
 ];
 
-const DEVELOPER_PASSWORD = 'devSecret123'; // Developer password
-const devTesting = true; // Toggle password protection
-
 export default function QRCodePage() {
   const [prefectNumber, setPrefectNumber] = useState('');
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [qrData, setQrData] = useState('');
   const [scannerInitialized, setScannerInitialized] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [cameraError, setCameraError] = useState('');
-
-  const handlePasswordSubmit = () => {
-    if (password === DEVELOPER_PASSWORD) {
-      setIsAuthenticated(true);
-      toast.success('Access Granted', {
-        description: 'You have successfully accessed the QR code page',
-      });
-    } else {
-      toast.error('Access Denied', {
-        description: 'Invalid password',
-      });
-    }
-  };
 
   const generateQRCode = () => {
     if (!prefectNumber || !role) {
@@ -104,7 +85,6 @@ export default function QRCodePage() {
             height: 250,
           },
           fps: 10,
-          supportedScanTypes: [Html5QrcodeScanType.QR_CODE],
         }, false); // Adding the verbose argument
 
         scanner.render(onScanSuccess, onScanError);
@@ -116,18 +96,6 @@ export default function QRCodePage() {
       }
     }
   }, [scannerInitialized]);
-
-  useEffect(() => {
-    // Check for camera availability
-    navigator.mediaDevices.enumerateDevices().then(devices => {
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-      if (videoDevices.length === 0) {
-        setCameraError('No camera found. Please connect a camera to use the QR scanner.');
-      }
-    }).catch(error => {
-      setCameraError('Error accessing devices: ' + error.message);
-    });
-  }, []);
 
   const onScanSuccess = (decodedText: string) => {
     try {
@@ -167,30 +135,6 @@ export default function QRCodePage() {
       description: 'Failed to scan QR code. Please try again.',
     });
   };
-
-  if (!isAuthenticated && devTesting) {
-    return (
-      <div className="container py-10">
-        <Card className="max-w-md mx-auto">
-          <CardHeader>
-            <CardTitle>Developer Access</CardTitle>
-            <CardDescription>Please enter the developer password to proceed</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Input
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button onClick={handlePasswordSubmit} className="w-full">
-              Submit
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="container py-10">
@@ -276,11 +220,7 @@ export default function QRCodePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {cameraError ? (
-                <p className="text-red-500 text-center">{cameraError}</p>
-              ) : (
-                <div id="qr-reader" className="mx-auto max-w-sm" />
-              )}
+              <div id="qr-reader" className="mx-auto max-w-sm" />
             </CardContent>
           </Card>
         </TabsContent>
