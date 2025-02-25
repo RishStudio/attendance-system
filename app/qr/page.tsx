@@ -334,7 +334,7 @@ export default function QRCodePage() {
               )}
 
               {cameraAvailable === true && (
-                <div id="qr-reader" className="mx-auto max-w-sm transition-opacity duration-500 opacity-100" />
+                <div id="qr-reader" className="mx-auto max-w-sm transition-opacity duration-500 opacity-100"></div>
               )}
             </CardContent>
           </Card>
