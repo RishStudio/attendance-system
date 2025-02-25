@@ -25,7 +25,7 @@ const roles: PrefectRole[] = [
   'Apprentice'
 ];
 
-const DEVELOPER_PASSWORD = 'devSecret123'; // Developer password
+const DEVELOPER_PASSWORD = 'rishbro'; // Developer password
 const devTesting = true; // Toggle password protection
 
 export default function QRCodePage() {
