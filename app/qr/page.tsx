@@ -78,20 +78,23 @@ export default function QRCodePage() {
 
   useEffect(() => {
     if (!scannerInitialized) {
-      const scanner = new Html5QrcodeScanner('qr-reader', {
-        qrbox: {
-          width: 250,
-          height: 250,
-        },
-        fps: 10,
-      }, false); // Adding the verbose argument
+      const qrReaderElement = document.getElementById('qr-reader');
+      if (qrReaderElement) {
+        const scanner = new Html5QrcodeScanner('qr-reader', {
+          qrbox: {
+            width: 250,
+            height: 250,
+          },
+          fps: 10,
+        }, false); // Adding the verbose argument
 
-      scanner.render(onScanSuccess, onScanError);
-      setScannerInitialized(true);
+        scanner.render(onScanSuccess, onScanError);
+        setScannerInitialized(true);
 
-      return () => {
-        scanner.clear();
-      };
+        return () => {
+          scanner.clear();
+        };
+      }
     }
   }, [scannerInitialized]);
 
@@ -99,7 +102,7 @@ export default function QRCodePage() {
     try {
       const data = JSON.parse(decodedText);
       
-      if (data.type !== 'prefect_attendance') {
+      if (!data || data.type !== 'prefect_attendance') {
         throw new Error('Invalid QR code type');
       }
 
