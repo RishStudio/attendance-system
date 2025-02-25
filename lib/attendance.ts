@@ -8,7 +8,7 @@ const FAILED_ATTEMPTS_KEY = 'admin_failed_attempts';
 const LOCKOUT_TIME_KEY = 'admin_lockout_time';
 const MAX_FAILED_ATTEMPTS = 3;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
-const ADMIN_PIN = '12345'; // In a production environment, this should be properly secured
+const ADMIN_PIN = 'apple'; // In a production environment, this should be properly secured
 
 export function checkDuplicateAttendance(prefectNumber: string, role: PrefectRole, date: string): boolean {
   const records = getAttendanceRecords();
