@@ -60,7 +60,7 @@ export default function Home() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowPopup(false);
-    }, 5000);
+    }, 10000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -128,14 +128,14 @@ export default function Home() {
     <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center py-8">
       {showPopup && (
         <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="relative bg-white p-4 rounded-lg shadow-lg">
+          <div className="relative bg-white p-4 rounded-lg shadow-lg border-2 border-gray-900">
             <button
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
               onClick={() => setShowPopup(false)}
             >
               <X className="w-6 h-6" />
             </button>
-            <img src="https://sys.imrishmika.site/version12.png" alt="New Version" className="w-full h-auto" />
+            <img src="https://sys.imrishmika.site/version12.png" alt="New Version" className="w-48 h-auto" />
           </div>
         </div>
       )}
