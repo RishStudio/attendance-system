@@ -9,7 +9,6 @@ import { Footer } from '@/components/ui/footer';
 import { ParticlesBackground } from '@/components/ui/particles';
 import { FloatingClock } from '@/components/ui/floating-clock';
 import { metadata } from './metadata';
-import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
 
