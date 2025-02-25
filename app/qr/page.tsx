@@ -11,7 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { saveAttendance } from '@/lib/attendance';
 import { PrefectRole } from '@/lib/types';
-import { QrCode, Scan, Download, Shield } from 'lucide-react';
+import { QrCode, Scan, Download, Shield, Printer } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -31,6 +32,8 @@ export default function QRCodePage() {
   const [qrData, setQrData] = useState('');
   const [scannerInitialized, setScannerInitialized] = useState(false);
   const [cameraAvailable, setCameraAvailable] = useState<boolean | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const generateQRCode = () => {
     if (!prefectNumber || !role) {
@@ -40,13 +43,17 @@ export default function QRCodePage() {
       return;
     }
 
-    const data = {
-      type: 'prefect_attendance',
-      prefectNumber,
-      role,
-      hash: btoa(`${prefectNumber}_${role}`),
-    };
-    setQrData(JSON.stringify(data));
+    setIsGenerating(true);
+    setTimeout(() => {
+      const data = {
+        type: 'prefect_attendance',
+        prefectNumber,
+        role,
+        hash: btoa(`${prefectNumber}_${role}`),
+      };
+      setQrData(JSON.stringify(data));
+      setIsGenerating(false);
+    }, 1000);
   };
 
   const downloadQRCode = () => {
@@ -57,23 +64,41 @@ export default function QRCodePage() {
       return;
     }
 
-    const canvas = document.querySelector('canvas');
-    if (!canvas) return;
+    setIsDownloading(true);
+    setTimeout(() => {
+      const canvas = document.querySelector('canvas');
+      if (!canvas) return;
 
-    const pngUrl = canvas
-      .toDataURL('image/png')
-      .replace('image/png', 'image/octet-stream');
-    
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pngUrl;
-    downloadLink.download = `prefect_qr_${prefectNumber}.png`;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+      const pngUrl = canvas
+        .toDataURL('image/png')
+        .replace('image/png', 'image/octet-stream');
+      
+      const downloadLink = document.createElement('a');
+      downloadLink.href = pngUrl;
+      downloadLink.download = `prefect_qr_${prefectNumber}.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
 
-    toast.success('QR Code Downloaded', {
-      description: 'The QR code has been saved to your device',
-    });
+      toast.success('QR Code Downloaded', {
+        description: 'The QR code has been saved to your device',
+      });
+      setIsDownloading(false);
+    }, 1000);
+  };
+
+  const printQRCode = () => {
+    if (!qrData) {
+      toast.error('No QR Code', {
+        description: 'Please generate a QR code first',
+      });
+      return;
+    }
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`<img src="${document.querySelector('canvas').toDataURL()}" alt="QR Code" />`);
+    printWindow.document.close();
+    printWindow.print();
   };
 
   useEffect(() => {
@@ -97,7 +122,7 @@ export default function QRCodePage() {
             height: 300,
           },
           fps: 10,
-        }, false); // Adding the verbose argument
+        }, false);
 
         scanner.render(onScanSuccess, onScanError);
         setScannerInitialized(true);
@@ -117,7 +142,6 @@ export default function QRCodePage() {
         throw new Error('Invalid QR code type');
       }
 
-      // Save attendance
       const record = saveAttendance(data.prefectNumber, data.role);
       const time = new Date(record.timestamp);
       const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
@@ -140,7 +164,6 @@ export default function QRCodePage() {
   };
 
   const onScanError = (error: any) => {
-    // Only show errors that aren't related to normal scanning process
     if (error?.message?.includes('No QR code found')) return;
     
     toast.error('Scan Error', {
@@ -194,14 +217,19 @@ export default function QRCodePage() {
                     onChange={(e) => setPrefectNumber(e.target.value)}
                   />
                 </div>
-                <Button onClick={generateQRCode} className="w-full gap-2">
+                <Button onClick={generateQRCode} className="w-full gap-2" disabled={isGenerating}>
                   <Shield className="h-4 w-4" />
-                  Generate QR Code
+                  {isGenerating ? 'Generating...' : 'Generate QR Code'}
                 </Button>
               </div>
 
               {qrData && (
-                <div className="flex flex-col items-center space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="flex flex-col items-center space-y-4"
+                >
                   <div className="p-4 bg-white rounded-lg shadow-lg">
                     <QRCodeSVG
                       value={qrData}
@@ -210,14 +238,18 @@ export default function QRCodePage() {
                       includeMargin
                     />
                   </div>
-                  <Button onClick={downloadQRCode} variant="outline" className="gap-2">
+                  <Button onClick={downloadQRCode} variant="outline" className="gap-2" disabled={isDownloading}>
                     <Download className="h-4 w-4" />
-                    Download QR Code
+                    {isDownloading ? 'Downloading...' : 'Download QR Code'}
+                  </Button>
+                  <Button onClick={printQRCode} variant="outline" className="gap-2">
+                    <Printer className="h-4 w-4" />
+                    Print QR Code
                   </Button>
                   <p className="text-sm text-muted-foreground text-center">
                     QR code is valid for a lifetime
                   </p>
-                </div>
+                </motion.div>
               )}
             </CardContent>
           </Card>
