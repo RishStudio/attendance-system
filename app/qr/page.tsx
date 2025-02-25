@@ -97,7 +97,7 @@ export default function QRCodePage() {
             height: 300,
           },
           fps: 10,
-        });
+        }, false); // Adding the verbose argument
 
         scanner.render(onScanSuccess, onScanError);
         setScannerInitialized(true);
@@ -202,7 +202,7 @@ export default function QRCodePage() {
 
               {qrData && (
                 <div className="flex flex-col items-center space-y-4">
-                  <div className="p-4 bg-white rounded-lg">
+                  <div className="p-4 bg-white rounded-lg shadow-lg">
                     <QRCodeSVG
                       value={qrData}
                       size={300}
