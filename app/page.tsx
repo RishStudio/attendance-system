@@ -128,7 +128,7 @@ export default function Home() {
     <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center py-8">
       {showPopup && (
         <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="relative bg-white p-4 rounded-lg shadow-lg border-4 border-gray-900 max-w-md w-full">
+          <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
             <button
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
               onClick={() => setShowPopup(false)}
