@@ -84,7 +84,7 @@ export default function QRCodePage() {
           height: 250,
         },
         fps: 10,
-      });
+      }, false); // Adding the verbose argument
 
       scanner.render(onScanSuccess, onScanError);
       setScannerInitialized(true);
