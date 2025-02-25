@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,7 @@ const roles: PrefectRole[] = [
   'Apprentice'
 ];
 
-const DEVELOPER_PASSWORD = 'rishbro'; // Developer password
+const DEVELOPER_PASSWORD = 'devSecret123'; // Developer password
 const devTesting = true; // Toggle password protection
 
 export default function QRCodePage() {
@@ -104,7 +104,7 @@ export default function QRCodePage() {
             height: 250,
           },
           fps: 10,
-          supportedScanTypes: ['QR_CODE'],
+          supportedScanTypes: [Html5QrcodeScanType.QR_CODE],
         }, false); // Adding the verbose argument
 
         scanner.render(onScanSuccess, onScanError);
