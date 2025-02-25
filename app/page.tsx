@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Keyboard, Bell, AlertTriangle, CheckCircle, Info, Code } from 'lucide-react';
+import { Shield, Keyboard, Bell, AlertTriangle, CheckCircle, Info, Code, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -29,6 +29,7 @@ export default function Home() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -54,6 +55,14 @@ export default function Home() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPopup(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -117,6 +126,19 @@ export default function Home() {
 
   return (
     <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center py-8">
+      {showPopup && (
+        <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="relative bg-white p-4 rounded-lg shadow-lg">
+            <button
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+              onClick={() => setShowPopup(false)}
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <img src="https://sys.imrishmika.site/version12.png" alt="New Version" className="w-full h-auto" />
+          </div>
+        </div>
+      )}
       <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
