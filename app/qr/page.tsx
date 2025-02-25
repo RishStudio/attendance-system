@@ -148,7 +148,7 @@ export default function QRCodePage() {
             ctx.drawImage(img, 0, 0, img.width, img.height);
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             
-            const html5QrCode = new Html5Qrcode('');
+            const html5QrCode = new Html5Qrcode('qr-reader');
             html5QrCode.scanImage(imgData, Html5QrcodeSupportedFormats.QR_CODE)
               .then(onScanSuccess)
               .catch(onScanError)
