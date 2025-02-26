@@ -90,7 +90,7 @@ export default function QRCodePage() {
     });
   }, []);
 
-  // Enhance QR code generator by adding a system identifier
+  // Generate QR Code with our system identifier
   const generateQRCode = useCallback(() => {
     if (!prefectNumber || !role) {
       toast.error('Missing Information', {
@@ -98,7 +98,6 @@ export default function QRCodePage() {
       });
       return;
     }
-
     setIsGenerating(true);
     try {
       const qrSecret = process.env.NEXT_PUBLIC_QR_SECRET || 'secret';
@@ -106,7 +105,7 @@ export default function QRCodePage() {
         type: 'prefect_attendance',
         prefectNumber,
         role,
-        system: 'our_app', // identifier for our system QR
+        system: 'our_app', // system identifier used to ensure authenticity
         hash: btoa(`${prefectNumber}_${role}_${qrSecret}`),
       };
       setQrData(JSON.stringify(data));
@@ -178,6 +177,7 @@ export default function QRCodePage() {
     }
   }, [qrData, getQRCodeImageData]);
 
+  // Initialize camera and update available status
   const initializeCamera = useCallback(async () => {
     try {
       const devices = await Html5Qrcode.getCameras();
@@ -186,7 +186,7 @@ export default function QRCodePage() {
       if (devices.length > 0) {
         setSelectedCamera(devices[0].id);
       } else {
-        // If no camera, we still allow file upload for scanning
+        // No camera available; file upload will be used for scanning.
         setCameraAvailable(false);
       }
     } catch (error) {
@@ -195,11 +195,11 @@ export default function QRCodePage() {
     }
   }, []);
 
-  // Process scan result without showing error alerts to the user
+  // Process scan result and mark attendance if valid QR code
   const onScanSuccess = useCallback((decodedText: string) => {
     try {
       const data = JSON.parse(decodedText);
-      // Ensure that the QR code is from our system
+      // Validate that QR code is from our system
       if (!data || data.type !== 'prefect_attendance' || data.system !== 'our_app') {
         throw new Error('Unrecognized QR code');
       }
@@ -221,11 +221,12 @@ export default function QRCodePage() {
       }
       setIsWaitingForScan(false);
     } catch (error) {
-      console.debug('Scan ignored:', error);
+      // Silently ignore errors, but log for debugging.
+      console.debug('Scan processing error (ignored):', error);
     }
   }, []);
 
-  // Do not show scanning error messages to the user
+  // Silently ignore scan errors without disrupting the user experience.
   const onScanError = useCallback((error: any) => {
     console.debug('Scan error (ignored):', error);
     setIsWaitingForScan(true);
@@ -269,6 +270,7 @@ export default function QRCodePage() {
           html5QrCodeRef.current = new Html5Qrcode('qr-reader');
         }
         const result = await html5QrCodeRef.current.scanFile(file, true);
+        // If scanning via file upload is successful, mark attendance.
         onScanSuccess(result);
       } catch (error) {
         console.error('File upload scan error:', error);
@@ -302,7 +304,9 @@ export default function QRCodePage() {
           <Card>
             <CardHeader>
               <CardTitle>Generate Attendance QR Code</CardTitle>
-              <CardDescription>Create a QR code for prefect attendance</CardDescription>
+              <CardDescription>
+                Create a QR code for prefect attendance
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
@@ -406,7 +410,9 @@ export default function QRCodePage() {
             <CardHeader>
               <CardTitle>Scan Attendance QR Code</CardTitle>
               <CardDescription>
-                {cameraAvailable ? 'Scan the QR code using your camera' : 'Upload your QR code image to mark attendance'}
+                {cameraAvailable
+                  ? 'Scan the QR code using your camera'
+                  : 'Upload your QR code image to mark attendance'}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -492,7 +498,7 @@ export default function QRCodePage() {
               ) : (
                 <div className="space-y-4">
                   <p className="text-center text-sm text-muted-foreground mb-4">
-                    No camera detected. You can upload your QR code image to mark attendance.
+                    No camera detected. Please upload your QR code image to mark attendance.
                   </p>
                   <div className="flex justify-center">
                     <input
