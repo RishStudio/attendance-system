@@ -60,6 +60,7 @@ export default function QRCodePage() {
   const [isWaitingForScan, setIsWaitingForScan] = useState(false);
   const [selectedCamera, setSelectedCamera] = useState('');
   const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
@@ -265,6 +266,7 @@ export default function QRCodePage() {
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file) return;
+      setIsUploading(true);
       try {
         if (!html5QrCodeRef.current) {
           html5QrCodeRef.current = new Html5Qrcode('qr-reader');
@@ -274,6 +276,8 @@ export default function QRCodePage() {
         onScanSuccess(result);
       } catch (error) {
         console.error('File upload scan error:', error);
+      } finally {
+        setIsUploading(false);
       }
     },
     [onScanSuccess]
@@ -285,6 +289,22 @@ export default function QRCodePage() {
       stopScanner();
     };
   }, [initializeCamera, stopScanner]);
+
+  const handleKeyPress = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        startScanner();
+      }
+    },
+    [startScanner]
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   return (
     <div className="container py-10">
@@ -489,9 +509,17 @@ export default function QRCodePage() {
                       variant="outline"
                       onClick={() => fileInputRef.current?.click()}
                       className="gap-2"
+                      disabled={isUploading}
                     >
                       <Upload className="h-4 w-4" />
-                      Upload QR Code Image
+                      {isUploading ? (
+                        <>
+                          <Loader className="h-4 w-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        'Upload QR Code Image'
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -512,9 +540,17 @@ export default function QRCodePage() {
                       variant="outline"
                       onClick={() => fileInputRef.current?.click()}
                       className="gap-2"
+                      disabled={isUploading}
                     >
                       <Upload className="h-4 w-4" />
-                      Upload QR Code Image
+                      {isUploading ? (
+                        <>
+                          <Loader className="h-4 w-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        'Upload QR Code Image'
+                      )}
                     </Button>
                   </div>
                 </div>
