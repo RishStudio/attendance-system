@@ -2,16 +2,39 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Html5QrcodeScanner, Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { saveAttendance } from '@/lib/attendance';
 import { PrefectRole } from '@/lib/types';
-import { QrCode, ScanLine, Download, Shield, Printer, Loader, RefreshCw, Upload, Camera, CameraOff } from 'lucide-react';
+import {
+  QrCode,
+  ScanLine,
+  Download,
+  Shield,
+  Printer,
+  Loader,
+  RefreshCw,
+  Upload,
+  Camera,
+  CameraOff
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const roles: PrefectRole[] = [
@@ -34,21 +57,22 @@ export default function QRCodePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isWaitingForScan, setIsWaitingForScan] = useState(false);
   const [selectedCamera, setSelectedCamera] = useState('');
   const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const qrContainerRef = useRef<HTMLDivElement>(null);
 
-  // Helper: Generate PNG data URL from the QR's SVG element.
+  // Helper: Convert QRCode SVG to PNG data URL
   const getQRCodeImageData = useCallback(async (): Promise<string> => {
     const svgElement = qrContainerRef.current?.querySelector('svg');
     if (!svgElement) throw new Error('QR code element not found');
-
     const svgData = new XMLSerializer().serializeToString(svgElement);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Failed to create canvas context');
+    if (!ctx) throw new Error('Could not create canvas context');
 
     const img = new Image();
     img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
@@ -57,7 +81,6 @@ export default function QRCodePage() {
       img.onload = () => {
         canvas.width = img.width;
         canvas.height = img.height;
-        // Fill white background
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
@@ -67,10 +90,11 @@ export default function QRCodePage() {
     });
   }, []);
 
+  // Enhance QR code generator by adding a system identifier field
   const generateQRCode = useCallback(() => {
     if (!prefectNumber || !role) {
       toast.error('Missing Information', {
-        description: 'Please enter prefect number and select role',
+        description: 'Please enter prefect number and select role'
       });
       return;
     }
@@ -82,16 +106,16 @@ export default function QRCodePage() {
         type: 'prefect_attendance',
         prefectNumber,
         role,
-        hash: btoa(`${prefectNumber}_${role}_${qrSecret}`),
+        system: 'our_app', // system identifier for our QR
+        hash: btoa(`${prefectNumber}_${role}_${qrSecret}`)
       };
       setQrData(JSON.stringify(data));
       toast.success('QR Code Generated', {
-        description: 'Your attendance QR code is ready',
+        description: 'Your attendance QR code is ready'
       });
     } catch (error) {
-      toast.error('Generation Failed', {
-        description: 'Failed to generate QR code. Please try again.',
-      });
+      // Silently fail here or log to console
+      console.error('QR generation failed:', error);
     } finally {
       setIsGenerating(false);
     }
@@ -100,11 +124,10 @@ export default function QRCodePage() {
   const downloadQRCode = useCallback(async () => {
     if (!qrData) {
       toast.error('No QR Code', {
-        description: 'Please generate a QR code first',
+        description: 'Please generate a QR code first'
       });
       return;
     }
-
     setIsDownloading(true);
     try {
       const pngUrl = await getQRCodeImageData();
@@ -114,14 +137,11 @@ export default function QRCodePage() {
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
-
       toast.success('QR Code Downloaded', {
-        description: 'The QR code has been saved to your device',
+        description: 'The QR code has been saved to your device'
       });
     } catch (error) {
-      toast.error('Download Failed', {
-        description: 'Failed to download QR code. Please try again.',
-      });
+      console.error('Download error:', error);
     } finally {
       setIsDownloading(false);
     }
@@ -130,16 +150,14 @@ export default function QRCodePage() {
   const printQRCode = useCallback(async () => {
     if (!qrData) {
       toast.error('No QR Code', {
-        description: 'Please generate a QR code first',
+        description: 'Please generate a QR code first'
       });
       return;
     }
-
     try {
       const pngUrl = await getQRCodeImageData();
       const printWindow = window.open('', '_blank');
       if (!printWindow) throw new Error('Failed to open print window');
-
       printWindow.document.write(`
         <html>
           <head>
@@ -157,9 +175,7 @@ export default function QRCodePage() {
       printWindow.document.close();
       printWindow.print();
     } catch (error) {
-      toast.error('Print Failed', {
-        description: 'Failed to print QR code. Please try again.',
-      });
+      console.error('Print error:', error);
     }
   }, [qrData, getQRCodeImageData]);
 
@@ -173,59 +189,54 @@ export default function QRCodePage() {
       }
     } catch (error) {
       setCameraAvailable(false);
-      toast.error('Camera Error', {
-        description: 'Failed to access camera. Please check permissions.',
-      });
+      console.error('Camera initialization error:', error);
     }
   }, []);
 
+  // Process scan result without showing error to user on failure.
   const onScanSuccess = useCallback((decodedText: string) => {
     try {
       const data = JSON.parse(decodedText);
-      if (!data || data.type !== 'prefect_attendance') {
-        throw new Error('Invalid QR code type');
+      // Verify that the QR code is from our system
+      if (!data || data.type !== 'prefect_attendance' || data.system !== 'our_app') {
+        throw new Error('Unrecognized QR code');
       }
-      // Validate hash
       const qrSecret = process.env.NEXT_PUBLIC_QR_SECRET || 'secret';
       const expectedHash = btoa(`${data.prefectNumber}_${data.role}_${qrSecret}`);
       if (data.hash !== expectedHash) {
-        throw new Error('Invalid QR code signature');
+        throw new Error('QR code signature mismatch');
       }
-
       const record = saveAttendance(data.prefectNumber, data.role);
       const time = new Date(record.timestamp);
       const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
-
       toast.success('Attendance Marked Successfully', {
-        description: `${data.role} ${data.prefectNumber} marked at ${time.toLocaleTimeString()}`,
+        description: `${data.role} ${data.prefectNumber} marked at ${time.toLocaleTimeString()}`
       });
-
       if (isLate) {
         toast.warning('Late Arrival Detected', {
-          description: 'Your attendance has been marked as late (after 7:00 AM)',
+          description: 'Your attendance has been marked as late (after 7:00 AM)'
         });
       }
+      setIsWaitingForScan(false);
     } catch (error) {
-      toast.error('Invalid QR Code', {
-        description: error instanceof Error ? error.message : 'Failed to process QR code',
-      });
+      // Silently ignore scan errors from unrecognized/invalid QR codes
+      console.debug('Scan ignored:', error);
     }
   }, []);
 
+  // Do not show errors while scanning unless they are critical
   const onScanError = useCallback((error: any) => {
-    if (error?.message?.includes('No QR code found')) return;
-    toast.error('Scan Error', {
-      description: 'Failed to scan QR code. Please try again.',
-    });
+    // Do not notify the user with error messages during scanning; just log silently.
+    console.debug('Scan error (ignored):', error);
+    setIsWaitingForScan(true);
   }, []);
 
   const startScanner = useCallback(async () => {
     if (!selectedCamera) return;
-
     try {
       const html5QrCode = new Html5Qrcode('qr-reader');
       html5QrCodeRef.current = html5QrCode;
-
+      setIsWaitingForScan(true);
       await html5QrCode.start(
         selectedCamera,
         {
@@ -235,12 +246,9 @@ export default function QRCodePage() {
         onScanSuccess,
         onScanError
       );
-
       setIsCameraActive(true);
     } catch (error) {
-      toast.error('Scanner Error', {
-        description: 'Failed to start QR scanner. Please try again.',
-      });
+      console.error('Failed to start scanner:', error);
     }
   }, [selectedCamera, onScanSuccess, onScanError]);
 
@@ -248,13 +256,13 @@ export default function QRCodePage() {
     if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
       await html5QrCodeRef.current.stop();
       setIsCameraActive(false);
+      setIsWaitingForScan(false);
     }
   }, []);
 
   const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     try {
       if (!html5QrCodeRef.current) {
         html5QrCodeRef.current = new Html5Qrcode('qr-reader');
@@ -262,16 +270,13 @@ export default function QRCodePage() {
       const result = await html5QrCodeRef.current.scanFile(file, true);
       onScanSuccess(result);
     } catch (error) {
-      toast.error('Upload Error', {
-        description: 'Failed to read QR code from image. Please try again.',
-      });
+      console.error('File upload scan error:', error);
     }
   }, [onScanSuccess]);
 
   useEffect(() => {
     initializeCamera();
     return () => {
-      // Ensure the scanner stops on unmount
       stopScanner();
     };
   }, [initializeCamera, stopScanner]);
@@ -294,7 +299,9 @@ export default function QRCodePage() {
           <Card>
             <CardHeader>
               <CardTitle>Generate Attendance QR Code</CardTitle>
-              <CardDescription>Create a QR code for prefect attendance</CardDescription>
+              <CardDescription>
+                Create a QR code for prefect attendance
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
@@ -426,6 +433,13 @@ export default function QRCodePage() {
                   </div>
 
                   <div id="qr-reader" className="overflow-hidden rounded-lg bg-black/5" />
+
+                  {isWaitingForScan && (
+                    <div className="flex flex-col items-center mt-4">
+                      <Loader className="animate-spin h-8 w-8 mb-2" />
+                      <span className="text-sm text-muted-foreground">Waiting for QR scan...</span>
+                    </div>
+                  )}
 
                   <div className="flex items-center gap-2">
                     <div className="flex-1 border-t border-border" />
