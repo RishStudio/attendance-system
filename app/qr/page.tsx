@@ -9,7 +9,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
@@ -33,7 +33,7 @@ import {
   RefreshCw,
   Upload,
   Camera,
-  CameraOff
+  CameraOff,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -46,7 +46,7 @@ const roles: PrefectRole[] = [
   'Senior',
   'Junior',
   'Sub',
-  'Apprentice'
+  'Apprentice',
 ];
 
 export default function QRCodePage() {
@@ -60,7 +60,7 @@ export default function QRCodePage() {
   const [isWaitingForScan, setIsWaitingForScan] = useState(false);
   const [selectedCamera, setSelectedCamera] = useState('');
   const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const qrContainerRef = useRef<HTMLDivElement>(null);
@@ -90,11 +90,11 @@ export default function QRCodePage() {
     });
   }, []);
 
-  // Enhance QR code generator by adding a system identifier field
+  // Enhance QR code generator by adding a system identifier
   const generateQRCode = useCallback(() => {
     if (!prefectNumber || !role) {
       toast.error('Missing Information', {
-        description: 'Please enter prefect number and select role'
+        description: 'Please enter prefect number and select role',
       });
       return;
     }
@@ -106,15 +106,14 @@ export default function QRCodePage() {
         type: 'prefect_attendance',
         prefectNumber,
         role,
-        system: 'our_app', // system identifier for our QR
-        hash: btoa(`${prefectNumber}_${role}_${qrSecret}`)
+        system: 'our_app', // identifier for our system QR
+        hash: btoa(`${prefectNumber}_${role}_${qrSecret}`),
       };
       setQrData(JSON.stringify(data));
       toast.success('QR Code Generated', {
-        description: 'Your attendance QR code is ready'
+        description: 'Your attendance QR code is ready',
       });
     } catch (error) {
-      // Silently fail here or log to console
       console.error('QR generation failed:', error);
     } finally {
       setIsGenerating(false);
@@ -124,7 +123,7 @@ export default function QRCodePage() {
   const downloadQRCode = useCallback(async () => {
     if (!qrData) {
       toast.error('No QR Code', {
-        description: 'Please generate a QR code first'
+        description: 'Please generate a QR code first',
       });
       return;
     }
@@ -138,7 +137,7 @@ export default function QRCodePage() {
       downloadLink.click();
       document.body.removeChild(downloadLink);
       toast.success('QR Code Downloaded', {
-        description: 'The QR code has been saved to your device'
+        description: 'QR code has been saved to your device',
       });
     } catch (error) {
       console.error('Download error:', error);
@@ -150,7 +149,7 @@ export default function QRCodePage() {
   const printQRCode = useCallback(async () => {
     if (!qrData) {
       toast.error('No QR Code', {
-        description: 'Please generate a QR code first'
+        description: 'Please generate a QR code first',
       });
       return;
     }
@@ -182,10 +181,13 @@ export default function QRCodePage() {
   const initializeCamera = useCallback(async () => {
     try {
       const devices = await Html5Qrcode.getCameras();
-      setCameras(devices.map(device => ({ id: device.id, label: device.label })));
+      setCameras(devices.map((device) => ({ id: device.id, label: device.label })));
       setCameraAvailable(devices.length > 0);
       if (devices.length > 0) {
         setSelectedCamera(devices[0].id);
+      } else {
+        // If no camera, we still allow file upload for scanning
+        setCameraAvailable(false);
       }
     } catch (error) {
       setCameraAvailable(false);
@@ -193,11 +195,11 @@ export default function QRCodePage() {
     }
   }, []);
 
-  // Process scan result without showing error to user on failure.
+  // Process scan result without showing error alerts to the user
   const onScanSuccess = useCallback((decodedText: string) => {
     try {
       const data = JSON.parse(decodedText);
-      // Verify that the QR code is from our system
+      // Ensure that the QR code is from our system
       if (!data || data.type !== 'prefect_attendance' || data.system !== 'our_app') {
         throw new Error('Unrecognized QR code');
       }
@@ -210,23 +212,21 @@ export default function QRCodePage() {
       const time = new Date(record.timestamp);
       const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
       toast.success('Attendance Marked Successfully', {
-        description: `${data.role} ${data.prefectNumber} marked at ${time.toLocaleTimeString()}`
+        description: `${data.role} ${data.prefectNumber} marked at ${time.toLocaleTimeString()}`,
       });
       if (isLate) {
         toast.warning('Late Arrival Detected', {
-          description: 'Your attendance has been marked as late (after 7:00 AM)'
+          description: 'Attendance marked as late (after 7:00 AM)',
         });
       }
       setIsWaitingForScan(false);
     } catch (error) {
-      // Silently ignore scan errors from unrecognized/invalid QR codes
       console.debug('Scan ignored:', error);
     }
   }, []);
 
-  // Do not show errors while scanning unless they are critical
+  // Do not show scanning error messages to the user
   const onScanError = useCallback((error: any) => {
-    // Do not notify the user with error messages during scanning; just log silently.
     console.debug('Scan error (ignored):', error);
     setIsWaitingForScan(true);
   }, []);
@@ -241,7 +241,7 @@ export default function QRCodePage() {
         selectedCamera,
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 }
+          qrbox: { width: 250, height: 250 },
         },
         onScanSuccess,
         onScanError
@@ -260,19 +260,22 @@ export default function QRCodePage() {
     }
   }, []);
 
-  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      if (!html5QrCodeRef.current) {
-        html5QrCodeRef.current = new Html5Qrcode('qr-reader');
+  const handleFileUpload = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        if (!html5QrCodeRef.current) {
+          html5QrCodeRef.current = new Html5Qrcode('qr-reader');
+        }
+        const result = await html5QrCodeRef.current.scanFile(file, true);
+        onScanSuccess(result);
+      } catch (error) {
+        console.error('File upload scan error:', error);
       }
-      const result = await html5QrCodeRef.current.scanFile(file, true);
-      onScanSuccess(result);
-    } catch (error) {
-      console.error('File upload scan error:', error);
-    }
-  }, [onScanSuccess]);
+    },
+    [onScanSuccess]
+  );
 
   useEffect(() => {
     initializeCamera();
@@ -299,14 +302,15 @@ export default function QRCodePage() {
           <Card>
             <CardHeader>
               <CardTitle>Generate Attendance QR Code</CardTitle>
-              <CardDescription>
-                Create a QR code for prefect attendance
-              </CardDescription>
+              <CardDescription>Create a QR code for prefect attendance</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
+                  <Select
+                    value={role}
+                    onValueChange={(value) => setRole(value as PrefectRole)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select prefect role" />
                     </SelectTrigger>
@@ -327,7 +331,11 @@ export default function QRCodePage() {
                     onChange={(e) => setPrefectNumber(e.target.value)}
                   />
                 </div>
-                <Button onClick={generateQRCode} className="w-full gap-2" disabled={isGenerating}>
+                <Button
+                  onClick={generateQRCode}
+                  className="w-full gap-2"
+                  disabled={isGenerating}
+                >
                   <Shield className="h-4 w-4" />
                   {isGenerating ? (
                     <>
@@ -361,7 +369,12 @@ export default function QRCodePage() {
                       />
                     </div>
                     <div className="flex gap-2">
-                      <Button onClick={downloadQRCode} variant="outline" className="gap-2" disabled={isDownloading}>
+                      <Button
+                        onClick={downloadQRCode}
+                        variant="outline"
+                        className="gap-2"
+                        disabled={isDownloading}
+                      >
                         <Download className="h-4 w-4" />
                         {isDownloading ? (
                           <>
@@ -372,7 +385,11 @@ export default function QRCodePage() {
                           'Download'
                         )}
                       </Button>
-                      <Button onClick={printQRCode} variant="outline" className="gap-2">
+                      <Button
+                        onClick={printQRCode}
+                        variant="outline"
+                        className="gap-2"
+                      >
                         <Printer className="h-4 w-4" />
                         Print
                       </Button>
@@ -388,7 +405,9 @@ export default function QRCodePage() {
           <Card>
             <CardHeader>
               <CardTitle>Scan Attendance QR Code</CardTitle>
-              <CardDescription>Scan the QR code to mark your attendance</CardDescription>
+              <CardDescription>
+                {cameraAvailable ? 'Scan the QR code using your camera' : 'Upload your QR code image to mark attendance'}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {cameraAvailable === null ? (
@@ -401,7 +420,10 @@ export default function QRCodePage() {
               ) : cameraAvailable ? (
                 <div className="space-y-4">
                   <div className="flex gap-2">
-                    <Select value={selectedCamera} onValueChange={setSelectedCamera}>
+                    <Select
+                      value={selectedCamera}
+                      onValueChange={setSelectedCamera}
+                    >
                       <SelectTrigger className="flex-1">
                         <SelectValue placeholder="Select camera" />
                       </SelectTrigger>
@@ -437,7 +459,9 @@ export default function QRCodePage() {
                   {isWaitingForScan && (
                     <div className="flex flex-col items-center mt-4">
                       <Loader className="animate-spin h-8 w-8 mb-2" />
-                      <span className="text-sm text-muted-foreground">Waiting for QR scan...</span>
+                      <span className="text-sm text-muted-foreground">
+                        Waiting for QR scan...
+                      </span>
                     </div>
                   )}
 
@@ -466,15 +490,27 @@ export default function QRCodePage() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center p-8">
-                  <CameraOff className="h-12 w-12 text-muted-foreground mb-4" />
+                <div className="space-y-4">
                   <p className="text-center text-sm text-muted-foreground mb-4">
-                    No camera detected. Please connect a camera and refresh the page.
+                    No camera detected. You can upload your QR code image to mark attendance.
                   </p>
-                  <Button onClick={() => window.location.reload()} className="gap-2">
-                    <RefreshCw className="h-4 w-4" />
-                    Retry
-                  </Button>
+                  <div className="flex justify-center">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      ref={fileInputRef}
+                      onChange={handleFileUpload}
+                    />
+                    <Button
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="gap-2"
+                    >
+                      <Upload className="h-4 w-4" />
+                      Upload QR Code Image
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>
