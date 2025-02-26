@@ -189,22 +189,22 @@ export default function QRCodePage() {
 
   const startScanner = async () => {
     if (!selectedCamera) return;
-
+  
     try {
       const html5QrCode = new Html5Qrcode('qr-reader');
       html5QrCodeRef.current = html5QrCode;
-
+  
       await html5QrCode.start(
         selectedCamera,
         {
           fps: 10,
           qrbox: { width: 250, height: 250 },
-          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+          // Remove formatsToSupport as it's not a valid property
         },
         onScanSuccess,
         onScanError
       );
-
+  
       setIsCameraActive(true);
     } catch (error) {
       toast.error('Scanner Error', {
