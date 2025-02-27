@@ -3,10 +3,10 @@
 import { AttendanceRecord, DailyStats, PrefectRole } from './types';
 
 const STORAGE_KEY = 'prefect_attendance_records';
-const MAX_DAYS = 60;
+const MAX_DAYS = 120;
 const FAILED_ATTEMPTS_KEY = 'admin_failed_attempts';
 const LOCKOUT_TIME_KEY = 'admin_lockout_time';
-const MAX_FAILED_ATTEMPTS = 3;
+const MAX_FAILED_ATTEMPTS = 10;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
 const ADMIN_PIN = 'apple'; // In a production environment, this should be properly secured
 
