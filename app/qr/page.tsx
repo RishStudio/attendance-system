@@ -927,7 +927,7 @@ export default function QRCodePage() {
                     <div className="flex flex-col items-center mt-4">
                       <Loader className="animate-spin h-8 w-8 mb-2" />
                       <span className="text-sm text-muted-foreground">
-                        Waiting for QR scan...
+                        Waiting for QR scan..
                       </span>
                     </div>
                   )}
