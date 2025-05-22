@@ -1,6 +1,7 @@
 'use client';
 
 import { AttendanceRecord, DailyStats, PrefectRole } from './types';
+import { supabase } from './supabaseClient';
 
 const STORAGE_KEY = 'prefect_attendance_records';
 const MAX_DAYS = 120;
@@ -231,4 +232,76 @@ export function exportAttendance(date: string): string {
   }).join('\n');
 
   return `${header}\n${recordsCSV}`;
+}
+
+// Supabase Things
+///////////////////////////////////////////
+
+
+export async function backupToSupabase(): Promise<{ success: boolean; message: string }> {
+  try {
+    const records = getAttendanceRecords();
+    const backupDate = new Date().toISOString().split('T')[0];
+
+    // Delete existing backup for today if exists
+    await supabase
+      .from('attendance_backups')
+      .delete()
+      .eq('backup_date', backupDate);
+
+    // Insert new backup
+    const { error } = await supabase
+      .from('attendance_backups')
+      .insert({
+        backup_date: backupDate,
+        records: records,
+        total_records: records.length
+      });
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      message: `Successfully backed up ${records.length} records to Supabase`
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Backup failed'
+    };
+  }
+}
+
+export async function restoreFromSupabase(): Promise<{ success: boolean; message: string }> {
+  try {
+    const { data, error } = await supabase
+      .from('attendance_backups')
+      .select('*')
+      .order('backup_date', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+    if (!data) throw new Error('No backup found');
+
+    // Restore to localStorage
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data.records));
+
+    return {
+      success: true,
+      message: `Successfully restored ${data.records.length} records from ${data.backup_date}`
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Restore failed'
+    };
+  }
+}
+
+// Modify saveAttendance to automatically backup to Supabase
+export async function saveAttendance(prefectNumber: string, role: PrefectRole): Promise<AttendanceRecord> {
+  const record = saveManualAttendance(prefectNumber, role, new Date());
+  await backupToSupabase(); // Backup after saving
+  return record;
 }
