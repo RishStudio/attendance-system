@@ -151,7 +151,7 @@ export default function AdminPanel() {
         setShowPinDialog(false);
         toast.success('Access Granted', {
           description: 'Welcome to the admin panel',
-          icon: <ShieldAlert className="h-5 w-5 text-green-500" />,
+          icon: <ShieldAlert className="h-5 w-5 text-red-500" />,
         });
       }
     } catch (error) {
@@ -219,10 +219,10 @@ export default function AdminPanel() {
           <DialogContent className="sm:max-w-md backdrop-blur-xl bg-background/80 border border-white/10">
             <DialogHeader className="text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 backdrop-blur-sm">
-                <Shield className="h-6 w-6 text-primary" />
+                <Shield className="h-6 w-6 text-white" />
               </div>
               <DialogTitle className="text-2xl font-bold flex items-center justify-center gap-2">
-                <KeyRound className="h-5 w-5" />
+                <KeyRound className="h-5 w-5 text-white" />
                 Admin Access
               </DialogTitle>
               <DialogDescription className="text-center">
@@ -231,7 +231,7 @@ export default function AdminPanel() {
             </DialogHeader>
             <div className="flex flex-col items-center space-y-8">
               <div className="relative">
-                <Fingerprint className={`h-16 w-16 text-primary transition-opacity duration-500 ${isAuthenticating ? 'animate-pulse' : ''}`} />
+                <Fingerprint className={`h-16 w-16 text-white transition-opacity duration-500 ${isAuthenticating ? 'animate-pulse' : ''}`} />
                 <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
               </div>
               <form onSubmit={(e) => handlePinSubmit(e)} className="space-y-6 w-full">
@@ -261,11 +261,11 @@ export default function AdminPanel() {
                   >
                     {showPin ? (
                       <>
-                        <EyeOff className="h-4 w-4" /> Hide PIN
+                        <EyeOff className="h-4 w-4 text-white" /> Hide PIN
                       </>
                     ) : (
                       <>
-                        <Eye className="h-4 w-4" /> Show PIN
+                        <Eye className="h-4 w-4 text-white" /> Show PIN
                       </>
                     )}
                   </Button>
@@ -403,7 +403,7 @@ export default function AdminPanel() {
           <div className="flex items-center gap-4">
             <Link href="/">
               <Button variant="ghost" className="gap-2 backdrop-blur-sm bg-background/50 border border-white/10">
-                <ArrowLeft className="h-4 w-4" /> Back
+                <ArrowLeft className="h-4 w-4 text-white" /> Back
               </Button>
             </Link>
             <Button
@@ -413,15 +413,15 @@ export default function AdminPanel() {
               className="hidden sm:flex backdrop-blur-sm bg-background/50 border border-white/10"
             >
               {isFullScreen ? (
-                <Minimize className="h-4 w-4" />
+                <Minimize className="h-4 w-4 text-white" />
               ) : (
-                <Maximize className="h-4 w-4" />
+                <Maximize className="h-4 w-4 text-white" />
               )}
             </Button>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <div className="relative flex-1 sm:flex-initial">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white" />
               <Input
                 type="text"
                 placeholder="Search by prefect number..."
@@ -431,7 +431,7 @@ export default function AdminPanel() {
               />
             </div>
             <div className="relative flex-1 sm:flex-initial">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white" />
               <Input
                 type="date"
                 value={new Date(date).toISOString().split('T')[0]}
@@ -451,14 +451,14 @@ export default function AdminPanel() {
               </SelectContent>
             </Select>
             <Button onClick={handleExport} className="gap-2 w-full sm:w-auto bg-primary/90 hover:bg-primary backdrop-blur-sm">
-              <Download className="h-4 w-4" /> Export Records
+              <Download className="h-4 w-4 text-white" /> Export Records
             </Button>
             <Button 
               variant="destructive" 
               onClick={() => setShowClearDialog(true)}
               className="gap-2 w-full sm:w-auto backdrop-blur-sm"
             >
-              <Trash2 className="h-4 w-4" /> Clear Data
+              <Trash2 className="h-4 w-4 text-white" /> Clear Data
             </Button>
           </div>
         </div>
@@ -466,27 +466,27 @@ export default function AdminPanel() {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList className="backdrop-blur-sm bg-background/50 border border-white/10">
             <TabsTrigger value="overview" className="gap-2">
-              <BarChart className="h-4 w-4" />
+              <BarChart className="h-4 w-4 text-white" />
               Overview
             </TabsTrigger>
             <TabsTrigger value="search" className="gap-2">
-              <UserSearch className="h-4 w-4" />
+              <UserSearch className="h-4 w-4 text-white" />
               Search Prefect
             </TabsTrigger>
             <TabsTrigger value="bulk" className="gap-2">
-              <UsersIcon className="h-4 w-4" />
+              <UsersIcon className="h-4 w-4 text-white" />
               Bulk Entry
             </TabsTrigger>
             <TabsTrigger value="analytics" className="gap-2">
-              <BarChart className="h-4 w-4" />
+              <BarChart className="h-4 w-4 text-white" />
               Analytics
             </TabsTrigger>
             <TabsTrigger value="records" className="gap-2">
-              <FileText className="h-4 w-4" />
+              <FileText className="h-4 w-4 text-white" />
               Records
             </TabsTrigger>
             <TabsTrigger value="history" className="gap-2">
-              <Clock className="h-4 w-4" />
+              <Clock className="h-4 w-4 text-white" />
               History
             </TabsTrigger>
           </TabsList>
@@ -496,7 +496,7 @@ export default function AdminPanel() {
               <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5" />
+                    <Users className="h-5 w-5 text-white" />
                     Today's Overview
                   </CardTitle>
                   <CardDescription>{date}</CardDescription>
@@ -522,7 +522,7 @@ export default function AdminPanel() {
               <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <BarChart className="h-5 w-5" />
+                    <BarChart className="h-5 w-5 text-white" />
                     Role Distribution
                   </CardTitle>
                   <CardDescription>Attendance by role</CardDescription>
@@ -550,7 +550,7 @@ export default function AdminPanel() {
               <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
+                    <Clock className="h-5 w-5 text-white" />
                     Attendance Timeline
                   </CardTitle>
                   <CardDescription>Arrival pattern for {date}</CardDescription>
@@ -613,7 +613,7 @@ export default function AdminPanel() {
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
+                  <FileText className="h-5 w-5 text-white" />
                   Attendance Records
                 </CardTitle>
                 <CardDescription>All records for {date}</CardDescription>
@@ -668,14 +668,14 @@ export default function AdminPanel() {
                               onClick={() => setEditingRecord(null)}
                               className="backdrop-blur-sm"
                             >
-                              <X className="h-4 w-4" />
+                              <X className="h-4 w-4 text-white" />
                             </Button>
                             <Button
                               size="sm"
                               onClick={() => saveEdit(record.id)}
                               className="backdrop-blur-sm"
                             >
-                              <Save className="h-4 w-4" />
+                              <Save className="h-4 w-4 text-white" />
                             </Button>
                           </div>
                         </div>
@@ -704,7 +704,7 @@ export default function AdminPanel() {
                               onClick={() => startEditing(record)}
                               className="backdrop-blur-sm"
                             >
-                              <Edit2 className="h-4 w-4" />
+                              <Edit2 className="h-4 w-4 text-white" />
                             </Button>
                           </div>
                         </>
@@ -725,7 +725,7 @@ export default function AdminPanel() {
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5" />
+                  <Clock className="h-5 w-5 text-white" />
                   Previous Records
                 </CardTitle>
                 <CardDescription>View and export past attendance data</CardDescription>
