@@ -26,11 +26,6 @@ export function Navbar() {
           <span className="hidden sm:inline-block font-bold">Prefect Board Attendance</span>
         </Link>
 
-        <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="icon" onClick={handleThemeSwitch}>
-            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
-
           <div className="hidden sm:flex space-x-2">
             <Link href="/">
               <Button variant="ghost" size="sm">
@@ -44,12 +39,6 @@ export function Navbar() {
                 Manual Attendance
               </Button>
             </Link>
-            <Link href="/qr">
-              <Button variant="ghost" size="sm">
-                <QrCode className="mr-2 h-4 w-4" />
-                QR Scan
-              </Button>
-            </Link>
             <Link href="/docs">
               <Button variant="ghost" size="sm">
                 <FileText className="mr-2 h-4 w-4" />
@@ -59,7 +48,7 @@ export function Navbar() {
             <Link href="/admin">
               <Button variant="ghost" size="sm">
                 <User className="mr-2 h-4 w-4" />
-                Admin
+                Dashboard
               </Button>
             </Link>
           </div>
