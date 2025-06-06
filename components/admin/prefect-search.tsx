@@ -39,6 +39,20 @@ import { AttendanceRecord, PrefectRole } from '@/lib/types';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+// The valid roles are defined in types.ts. We use them in the dropdown.
+const VALID_ROLES: PrefectRole[] = [
+  "Head",
+  "Deputy",
+  "Senior Executive",
+  "Executive",
+  "Super Senior",
+  "Senior",
+  "Junior",
+  "Sub",
+  "Apprentice",
+  "Games Captain"
+];
+
 interface PrefectStats {
   totalDays: number;
   onTimeDays: number;
@@ -49,15 +63,15 @@ interface PrefectStats {
 }
 
 export function PrefectSearch() {
-  // Both the prefect number and role are required for a valid search.
+  // Prefect number input stays as text. Role input now is a dropdown.
   const [prefectNumber, setPrefectNumber] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
+  const [selectedRole, setSelectedRole] = useState<PrefectRole | "">("");
   const [searchResults, setSearchResults] = useState<AttendanceRecord[]>([]);
   const [prefectStats, setPrefectStats] = useState<PrefectStats | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Function to compute stats using the filtered records.
-  const computeStats = (records: AttendanceRecord[], role: string): PrefectStats => {
+  // Compute stats based on the filtered records.
+  const computeStats = (records: AttendanceRecord[]): PrefectStats => {
     const stats: PrefectStats = {
       totalDays: records.length,
       onTimeDays: 0,
@@ -66,14 +80,14 @@ export function PrefectSearch() {
       roles: {
         Head: 0,
         Deputy: 0,
-        'Senior Executive': 0,
+        "Senior Executive": 0,
         Executive: 0,
-        'Super Senior': 0,
+        "Super Senior": 0,
         Senior: 0,
         Junior: 0,
         Sub: 0,
         Apprentice: 0,
-        'Games Captain': 0,
+        "Games Captain": 0,
       },
       recentRecords: records.slice(0, 10),
     };
@@ -85,8 +99,8 @@ export function PrefectSearch() {
       } else {
         stats.lateDays++;
       }
-      // Count only the filtered role.
-      if (record.role.toLowerCase() === role.toLowerCase()) {
+      // Increment count only for proper role.
+      if (record.role in stats.roles) {
         stats.roles[record.role as PrefectRole]++;
       }
     });
@@ -95,30 +109,30 @@ export function PrefectSearch() {
   };
 
   const handleSearch = () => {
-    if (!prefectNumber.trim() || !roleFilter.trim()) {
-      toast.error('Please enter both the prefect ID and role for the search.');
+    if (!prefectNumber.trim() || !selectedRole) {
+      toast.error('Please enter both the prefect ID and select a role for the search.');
       return;
     }
 
     setIsSearching(true);
     try {
-      // Get all records matching the prefect number (case-insensitive, using searchPrefectRecords).
+      // Get records matching prefect number (case-insensitive) using searchPrefectRecords.
       const records = searchPrefectRecords(prefectNumber.trim());
-      // Filter to only include those records where the role exactly matches the requested role.
-      const filteredRecords = records.filter(record =>
-        record.role.toLowerCase() === roleFilter.trim().toLowerCase()
+      // Filter to include only records with an exact role match.
+      const filteredRecords = records.filter(
+        record => record.role.toLowerCase() === selectedRole.toLowerCase()
       );
 
       setSearchResults(filteredRecords);
 
       if (filteredRecords.length === 0) {
         toast.info('No Records Found', {
-          description: `No attendance records found for prefect ${prefectNumber.trim()} with role "${roleFilter.trim()}".`,
+          description: `No attendance records found for prefect ${prefectNumber.trim()} with role "${selectedRole}".`,
         });
         setPrefectStats(null);
       } else {
-        // Compute stats based on the filtered records.
-        const stats = computeStats(filteredRecords, roleFilter.trim());
+        // Compute stats only for the filtered records.
+        const stats = computeStats(filteredRecords);
         setPrefectStats(stats);
         toast.success('Search Complete', {
           description: `Found ${filteredRecords.length} attendance record${filteredRecords.length > 1 ? 's' : ''}.`,
@@ -134,15 +148,13 @@ export function PrefectSearch() {
   };
 
   const handleExportReport = () => {
-    if (!prefectNumber.trim() || !roleFilter.trim() || !searchResults.length) {
+    if (!prefectNumber.trim() || !selectedRole || !searchResults.length) {
       toast.error('No data to export');
       return;
     }
 
     try {
-      // Export report based on the prefect number.
-      // Note: exportPrefectReport in attendance.ts exports all records for the prefect number.
-      // If you need to export only filtered records you might have to update that function.
+      // Note: exportPrefectReport currently exports all records for the prefect number.
       const csv = exportPrefectReport(prefectNumber.trim());
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
@@ -209,7 +221,7 @@ export function PrefectSearch() {
             Search Prefect Attendance Records
           </CardTitle>
           <CardDescription>
-            Enter the prefect ID and role to display the specific attendance details.
+            Enter the prefect ID and select a role to display the specific attendance details.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -226,15 +238,20 @@ export function PrefectSearch() {
               />
             </div>
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Enter role (e.g., Head)"
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="pl-10 bg-background/50 border-white/20 backdrop-blur-sm"
-              />
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value as PrefectRole)}
+                className="w-full rounded-md border bg-background/50 border-white/20 py-2 pl-3 pr-10 text-base shadow-sm focus:outline-none backdrop-blur-sm"
+              >
+                <option value="" disabled>
+                  Select Role
+                </option>
+                {VALID_ROLES.map((role) => (
+                  <option key={role} value={role}>
+                    {role}
+                  </option>
+                ))}
+              </select>
             </div>
             <Button
               onClick={handleSearch}
@@ -266,7 +283,6 @@ export function PrefectSearch() {
                 </p>
               </CardContent>
             </Card>
-
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -278,10 +294,11 @@ export function PrefectSearch() {
                 <div className="text-2xl font-bold text-green-500">
                   {prefectStats.onTimeDays}
                 </div>
-                <p className="text-xs text-muted-foreground">Days on time</p>
+                <p className="text-xs text-muted-foreground">
+                  Days on time
+                </p>
               </CardContent>
             </Card>
-
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -293,10 +310,11 @@ export function PrefectSearch() {
                 <div className="text-2xl font-bold text-red-500">
                   {prefectStats.lateDays}
                 </div>
-                <p className="text-xs text-muted-foreground">Days late</p>
+                <p className="text-xs text-muted-foreground">
+                  Days late
+                </p>
               </CardContent>
             </Card>
-
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -308,11 +326,12 @@ export function PrefectSearch() {
                 <div className="text-2xl font-bold">
                   {prefectStats.attendanceRate.toFixed(1)}%
                 </div>
-                <p className="text-xs text-muted-foreground">On-time rate</p>
+                <p className="text-xs text-muted-foreground">
+                  On-time rate
+                </p>
               </CardContent>
             </Card>
           </div>
-
           <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
             <CardHeader>
               <CardTitle>Attendance Chart</CardTitle>
@@ -334,7 +353,7 @@ export function PrefectSearch() {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Prefect {prefectNumber.trim()} ({roleFilter.trim()}) - Detailed Attendance
+                  Prefect {prefectNumber.trim()} ({selectedRole}) - Detailed Attendance
                 </CardTitle>
                 <CardDescription>
                   {searchResults.length} record{searchResults.length !== 1 && "s"} found
