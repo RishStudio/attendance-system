@@ -4,7 +4,7 @@ import { useState } from 'react';
 import {
   Search,
   Download,
-  User,
+  User as UserIcon,
   Calendar,
   Clock,
   TrendingUp,
@@ -15,7 +15,6 @@ import {
   Briefcase,
   Clipboard,
   Star,
-  User as UserIcon,
   UserMinus,
   BookOpen,
   Gamepad,
@@ -250,10 +249,10 @@ export function PrefectSearch() {
           '#60a5fa',
           '#a78bfa',
           '#f472b6',
-          '#f87171',
-          '#fbbf24',
           '#34d399',
           '#60a5fa',
+          '#f87171',
+          '#fbbf24',
         ],
       },
     ],
@@ -391,7 +390,7 @@ export function PrefectSearch() {
             <div className="flex justify-between items-center">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-white" />
+                  <UserIcon className="h-5 w-5 text-white" />
                   Prefect {prefectNumber.trim()} ({selectedRole}) - Detailed Attendance
                 </CardTitle>
                 <CardDescription>
