@@ -23,23 +23,25 @@ export default function Documentation() {
           <TabsContent value="new-version">
             <Card>
               <CardHeader>
-                <CardTitle>🟢 Version 5.1.2 Beta Release Notes</CardTitle>
+                <CardTitle>🗃 Version 6.0.4 Release Notes</CardTitle>
                 <CardDescription>Enhanced performance, new features, and fixes</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 mt-4">
-                <Image src="/version12.png" alt="Version 5.1.2" width={800} height={400} className="w-full h-auto rounded-lg shadow-lg" />
+                <Image src="/version6.png" alt="Version 6.0.4" width={800} height={400} className="w-full h-auto rounded-lg shadow-lg" />
                 <p>
-                  The latest update, <span className="font-semibold">Version 5.1.2</span>, introduces improved performance, additional role management options, and UI enhancements.
+                  The latest update, <span className="font-semibold">Version 6.0.4</span>, introduces improved performance, additional role management options, and UI enhancements.
                 </p>
                 <h3 className="text-lg font-semibold">🆕 New Features</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Qr Code Based Attendnace Marking ( Beta )</li>
+                  <li>Export the Specific Prefect Data into the CSV File</li>
+                  <li>Bulk Attendance Marking System</li>
                   <li>UI Enhancement and Bug Fixes</li>
                 </ul>
                 <h3 className="text-lg font-semibold">🐞 Fixes & Improvements</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Mobile UI Enhancements</li>
                   <li>Performance Boost</li>
+                  <li>glassmorphism UI Enhnace</li>
                 </ul>
               </CardContent>
             </Card>
