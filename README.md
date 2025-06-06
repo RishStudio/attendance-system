@@ -16,6 +16,7 @@ An advanced web-based attendance management system built for the **Mahinda Rajap
 - 👤 Role-based system: Prefects and Admin
 - 💡 Minimal, fast, and user-friendly interface
 - 📱 Fully responsive on desktop, tablet, and mobile
+- ✅ Get full attendance report of the specific user
 
 ---
 
@@ -73,7 +74,7 @@ npm run dev
 
 ---
 
-## 📸 QR Attendance
+## 📸 QR Attendance ( Beta V0.9 )
 
 * Each student gets a unique QR code
 * Admin or Prefect can scan the code using a webcam/mobile camera
@@ -87,6 +88,7 @@ npm run dev
 * 📴 Works offline once loaded
 * 🔒 Data stays on device (no cloud required)
 * 📤 Easy to export manually if backup needed
+* 🧩 Easy Database Handel 
 
 ---
 
@@ -95,6 +97,8 @@ npm run dev
 * ✅ Sync with cloud backend (Firebase/Supabase)
 * ✅ Face recognition module (AI-based)
 * ✅ Enhanced security/auth layer
+* ✅ Google Sheet Connectable
+* ✅ Moderators Roles ( Developer, Admin, Attendance Marker )
 
 ---
 
