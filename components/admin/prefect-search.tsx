@@ -21,14 +21,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import {
-  searchPrefectRecords,
-  getPrefectStats,
-  exportPrefectReport,
-} from '@/lib/attendance';
-import { AttendanceRecord } from '@/lib/types';
-
-// Import chart components and required modules
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -39,6 +31,11 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import {
+  searchPrefectRecords,
+  exportPrefectReport,
+} from '@/lib/attendance';
+import { AttendanceRecord, PrefectRole } from '@/lib/types';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -47,48 +44,84 @@ interface PrefectStats {
   onTimeDays: number;
   lateDays: number;
   attendanceRate: number;
-  roles: Record<string, number>;
+  roles: Record<PrefectRole, number>;
   recentRecords: AttendanceRecord[];
 }
 
 export function PrefectSearch() {
-  // States for prefect number and role filtering
+  // Both the prefect number and role are required for a valid search.
   const [prefectNumber, setPrefectNumber] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [searchResults, setSearchResults] = useState<AttendanceRecord[]>([]);
   const [prefectStats, setPrefectStats] = useState<PrefectStats | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Function to compute stats using the filtered records.
+  const computeStats = (records: AttendanceRecord[], role: string): PrefectStats => {
+    const stats: PrefectStats = {
+      totalDays: records.length,
+      onTimeDays: 0,
+      lateDays: 0,
+      attendanceRate: 0,
+      roles: {
+        Head: 0,
+        Deputy: 0,
+        'Senior Executive': 0,
+        Executive: 0,
+        'Super Senior': 0,
+        Senior: 0,
+        Junior: 0,
+        Sub: 0,
+        Apprentice: 0,
+        'Games Captain': 0,
+      },
+      recentRecords: records.slice(0, 10),
+    };
+
+    records.forEach(record => {
+      const time = new Date(record.timestamp);
+      if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)) {
+        stats.onTimeDays++;
+      } else {
+        stats.lateDays++;
+      }
+      // Count only the filtered role.
+      if (record.role.toLowerCase() === role.toLowerCase()) {
+        stats.roles[record.role as PrefectRole]++;
+      }
+    });
+    stats.attendanceRate = stats.totalDays > 0 ? (stats.onTimeDays / stats.totalDays) * 100 : 0;
+    return stats;
+  };
+
   const handleSearch = () => {
-    if (!prefectNumber.trim()) {
-      toast.error('Please enter a prefect number to search');
+    if (!prefectNumber.trim() || !roleFilter.trim()) {
+      toast.error('Please enter both the prefect ID and role for the search.');
       return;
     }
 
     setIsSearching(true);
     try {
-      // Fetch records and stats based on the provided prefect number
+      // Get all records matching the prefect number (case-insensitive, using searchPrefectRecords).
       const records = searchPrefectRecords(prefectNumber.trim());
-      const stats = getPrefectStats(prefectNumber.trim());
-
-      // Filter based on role if provided
-      let filteredRecords = records;
-      if (roleFilter.trim()) {
-        filteredRecords = records.filter(record =>
-          record.role.toLowerCase().includes(roleFilter.trim().toLowerCase())
-        );
-      }
+      // Filter to only include those records where the role exactly matches the requested role.
+      const filteredRecords = records.filter(record =>
+        record.role.toLowerCase() === roleFilter.trim().toLowerCase()
+      );
 
       setSearchResults(filteredRecords);
-      setPrefectStats(stats);
 
       if (filteredRecords.length === 0) {
         toast.info('No Records Found', {
-          description: `No attendance records found for prefect ${prefectNumber.trim()}${roleFilter.trim() ? ` with role "${roleFilter.trim()}"` : ""}`,
+          description: `No attendance records found for prefect ${prefectNumber.trim()} with role "${roleFilter.trim()}".`,
         });
+        setPrefectStats(null);
       } else {
+        // Compute stats based on the filtered records.
+        const stats = computeStats(filteredRecords, roleFilter.trim());
+        setPrefectStats(stats);
         toast.success('Search Complete', {
-          description: `Found ${filteredRecords.length} attendance record${filteredRecords.length > 1 ? 's' : ''}`,
+          description: `Found ${filteredRecords.length} attendance record${filteredRecords.length > 1 ? 's' : ''}.`,
         });
       }
     } catch (error) {
@@ -101,13 +134,15 @@ export function PrefectSearch() {
   };
 
   const handleExportReport = () => {
-    if (!prefectNumber.trim() || !searchResults.length) {
+    if (!prefectNumber.trim() || !roleFilter.trim() || !searchResults.length) {
       toast.error('No data to export');
       return;
     }
 
     try {
-      // Export report based on the prefect number. Adjust your exportPrefectReport if role filtering is needed.
+      // Export report based on the prefect number.
+      // Note: exportPrefectReport in attendance.ts exports all records for the prefect number.
+      // If you need to export only filtered records you might have to update that function.
       const csv = exportPrefectReport(prefectNumber.trim());
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
@@ -118,7 +153,6 @@ export function PrefectSearch() {
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-
       toast.success('Report Exported', {
         description: 'Prefect attendance report has been downloaded',
       });
@@ -141,7 +175,6 @@ export function PrefectSearch() {
     return isLate ? 'Late' : 'On Time';
   };
 
-  // Prepare dataset for chart to show total days, on time and late days
   const chartData = {
     labels: ['Total Days', 'On Time', 'Late'],
     datasets: [
@@ -154,7 +187,7 @@ export function PrefectSearch() {
               prefectStats.lateDays,
             ]
           : [0, 0, 0],
-        backgroundColor: ['#4f46e5', '#10b981', '#ef4444'], // blue, green, red
+        backgroundColor: ['#4f46e5', '#10b981', '#ef4444'],
       },
     ],
   };
@@ -162,13 +195,8 @@ export function PrefectSearch() {
   const chartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: 'Prefect Attendance Overview',
-      },
+      legend: { position: 'top' as const },
+      title: { display: true, text: 'Prefect Attendance Overview' },
     },
   };
 
@@ -181,7 +209,7 @@ export function PrefectSearch() {
             Search Prefect Attendance Records
           </CardTitle>
           <CardDescription>
-            Enter the prefect index number and role to display the attendance details.
+            Enter the prefect ID and role to display the specific attendance details.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -190,7 +218,7 @@ export function PrefectSearch() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Enter prefect number (e.g., 64)"
+                placeholder="Enter prefect ID (e.g., 64)"
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -201,15 +229,15 @@ export function PrefectSearch() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Enter role (optional)"
+                placeholder="Enter role (e.g., Head)"
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 className="pl-10 bg-background/50 border-white/20 backdrop-blur-sm"
               />
             </div>
-            <Button 
-              onClick={handleSearch} 
+            <Button
+              onClick={handleSearch}
               disabled={isSearching}
               className="bg-primary/90 hover:bg-primary backdrop-blur-sm"
             >
@@ -250,9 +278,7 @@ export function PrefectSearch() {
                 <div className="text-2xl font-bold text-green-500">
                   {prefectStats.onTimeDays}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Days on time
-                </p>
+                <p className="text-xs text-muted-foreground">Days on time</p>
               </CardContent>
             </Card>
 
@@ -267,9 +293,7 @@ export function PrefectSearch() {
                 <div className="text-2xl font-bold text-red-500">
                   {prefectStats.lateDays}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Days late
-                </p>
+                <p className="text-xs text-muted-foreground">Days late</p>
               </CardContent>
             </Card>
 
@@ -284,19 +308,14 @@ export function PrefectSearch() {
                 <div className="text-2xl font-bold">
                   {prefectStats.attendanceRate.toFixed(1)}%
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  On-time rate
-                </p>
+                <p className="text-xs text-muted-foreground">On-time rate</p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Chart displaying attendance summary */}
           <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
             <CardHeader>
-              <CardTitle>
-                Attendance Chart
-              </CardTitle>
+              <CardTitle>Attendance Chart</CardTitle>
               <CardDescription>
                 A bar chart representation of the total, on time, and late days.
               </CardDescription>
@@ -315,11 +334,10 @@ export function PrefectSearch() {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Prefect {prefectNumber.trim()}
-                  {roleFilter.trim() && ` (${roleFilter.trim()})`} - Detailed Attendance
+                  Prefect {prefectNumber.trim()} ({roleFilter.trim()}) - Detailed Attendance
                 </CardTitle>
                 <CardDescription>
-                  {searchResults.length} total record{searchResults.length !== 1 && "s"} found
+                  {searchResults.length} record{searchResults.length !== 1 && "s"} found
                 </CardDescription>
               </div>
               <Button

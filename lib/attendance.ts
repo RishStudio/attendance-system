@@ -21,10 +21,10 @@ export function checkDuplicateAttendance(prefectNumber: string, role: PrefectRol
 
 export function checkAdminAccess(pin: string): boolean {
   const now = Date.now();
-  const lockoutTime = Number(localStorage.getItem(LOCKOUT_TIME_KEY) || '0');
+  const storedLockoutTime = Number(localStorage.getItem(LOCKOUT_TIME_KEY) || '0');
   
-  if (now < lockoutTime) {
-    const remainingMinutes = Math.ceil((lockoutTime - now) / 60000);
+  if (now < storedLockoutTime) {
+    const remainingMinutes = Math.ceil((storedLockoutTime - now) / 60000);
     throw new Error(`Account is locked. Please try again in ${remainingMinutes} minutes.`);
   }
 
@@ -38,8 +38,8 @@ export function checkAdminAccess(pin: string): boolean {
   localStorage.setItem(FAILED_ATTEMPTS_KEY, failedAttempts.toString());
 
   if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
-    const lockoutTime = now + LOCKOUT_DURATION;
-    localStorage.setItem(LOCKOUT_TIME_KEY, lockoutTime.toString());
+    const newLockoutTime = now + LOCKOUT_DURATION;
+    localStorage.setItem(LOCKOUT_TIME_KEY, newLockoutTime.toString());
     throw new Error(`Too many failed attempts. Account locked for ${LOCKOUT_DURATION / 60000} minutes.`);
   }
 
