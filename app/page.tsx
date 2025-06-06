@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Keyboard, Bell, AlertTriangle, CheckCircle, Info, Code, X } from 'lucide-react';
+import { Shield, Keyboard, Bell, AlertTriangle, CheckCircle, Code, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -29,7 +29,6 @@ export default function Home() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
   const [showShortcuts, setShowShortcuts] = useState(false);
-  const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -57,17 +56,9 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowPopup(false);
-    }, 10000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!role || !prefectNumber) {
       toast.error('Please fill in all fields', {
         icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
@@ -126,19 +117,6 @@ export default function Home() {
 
   return (
     <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center py-8 bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-3xl">
-      {showPopup && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-          <div className="relative bg-background/90 backdrop-blur-xl p-4 rounded-lg shadow-lg max-w-3xl w-full border border-white/10 mx-4">
-            <button
-              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setShowPopup(false)}
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <img src="https://sys.imrishmika.site/version12.png" alt="New Version" className="w-full h-auto rounded-lg" />
-          </div>
-        </div>
-      )}
       <Card className="w-full max-w-md mx-auto backdrop-blur-xl bg-background/80 border border-white/10 shadow-2xl">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center backdrop-blur-sm">
