@@ -125,23 +125,23 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center py-8">
+    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center py-8 bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-3xl">
       {showPopup && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-3xl w-full border border-black">
+        <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+          <div className="relative bg-background/90 backdrop-blur-xl p-4 rounded-lg shadow-lg max-w-3xl w-full border border-white/10 mx-4">
             <button
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground transition-colors"
               onClick={() => setShowPopup(false)}
             >
               <X className="w-6 h-6" />
             </button>
-            <img src="https://sys.imrishmika.site/version12.png" alt="New Version" className="w-full h-auto" />
+            <img src="https://sys.imrishmika.site/version12.png" alt="New Version" className="w-full h-auto rounded-lg" />
           </div>
         </div>
       )}
-      <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80">
+      <Card className="w-full max-w-md mx-auto backdrop-blur-xl bg-background/80 border border-white/10 shadow-2xl">
         <CardHeader className="text-center space-y-2">
-          <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
+          <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center backdrop-blur-sm">
             <Shield className="w-8 h-8 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">Prefect Attendance</CardTitle>
@@ -149,7 +149,7 @@ export default function Home() {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="mt-2"
+            className="mt-2 backdrop-blur-sm"
             onClick={() => setShowShortcuts(prev => !prev)}
           >
             <Keyboard className="w-4 h-4 mr-2" />
@@ -158,7 +158,7 @@ export default function Home() {
         </CardHeader>
         <CardContent>
           {showShortcuts && (
-            <div className="mb-6 p-4 rounded-lg bg-secondary/50">
+            <div className="mb-6 p-4 rounded-lg bg-secondary/30 backdrop-blur-sm border border-white/10">
               <h3 className="font-medium mb-2 flex items-center gap-2">
                 <Keyboard className="w-4 h-4" />
                 Keyboard Shortcuts
@@ -166,12 +166,12 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {Object.entries(roleShortcuts).map(([key, roleName]) => (
                   <div key={key} className="flex items-center gap-2">
-                    <kbd className="px-2 py-1 bg-background rounded text-xs">{key}</kbd>
+                    <kbd className="px-2 py-1 bg-background/50 rounded text-xs border border-white/20">{key}</kbd>
                     <span>{roleName}</span>
                   </div>
                 ))}
                 <div className="col-span-2 mt-2 flex items-center gap-2">
-                  <kbd className="px-2 py-1 bg-background rounded text-xs">?</kbd>
+                  <kbd className="px-2 py-1 bg-background/50 rounded text-xs border border-white/20">?</kbd>
                   <span>Toggle shortcuts</span>
                 </div>
               </div>
@@ -183,7 +183,7 @@ export default function Home() {
                 value={role} 
                 onValueChange={(value) => setRole(value as PrefectRole)}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full bg-background/50 border-white/20 backdrop-blur-sm">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -207,11 +207,11 @@ export default function Home() {
                 placeholder="Enter your prefect number"
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
-                className="w-full"
+                className="w-full bg-background/50 border-white/20 backdrop-blur-sm"
               />
             </div>
 
-            <Button type="submit" className="w-full text-base font-medium">
+            <Button type="submit" className="w-full text-base font-medium bg-primary/90 hover:bg-primary backdrop-blur-sm">
               Mark Attendance
             </Button>
           </form>

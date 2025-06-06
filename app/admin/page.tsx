@@ -25,6 +25,8 @@ import {
   EyeOff,
   Fingerprint,
   Shield,
+  UserSearch,
+  UsersIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -59,10 +61,9 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 
-
-
 import { AnalyticsSection } from '@/components/admin/analytics-section';
-
+import { PrefectSearch } from '@/components/admin/prefect-search';
+import { BulkAttendance } from '@/components/admin/bulk-attendance';
 
 const roles: PrefectRole[] = [
   'Head',
@@ -213,70 +214,72 @@ export default function AdminPanel() {
 
   if (!isAuthenticated) {
     return (
-      <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="text-center">
-            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Shield className="h-6 w-6 text-primary" />
-            </div>
-            <DialogTitle className="text-2xl font-bold flex items-center justify-center gap-2">
-              <KeyRound className="h-5 w-5" />
-              Admin Access
-            </DialogTitle>
-            <DialogDescription className="text-center">
-              Enter your 5-digit PIN to access the admin panel
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col items-center space-y-8">
-            <div className="relative">
-              <Fingerprint className={`h-16 w-16 text-primary transition-opacity duration-500 ${isAuthenticating ? 'animate-pulse' : ''}`} />
-              <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-            </div>
-            <form onSubmit={(e) => handlePinSubmit(e)} className="space-y-6 w-full">
-              <div className="flex justify-center gap-3">
-                {pinDigits.map((digit, index) => (
-                  <Input
-                    key={index}
-                    ref={el => inputRefs.current[index] = el}
-                    type={showPin ? "text" : "password"}
-                    value={digit}
-                    onChange={(e) => handlePinDigitChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-12 h-12 text-center text-2xl"
-                    maxLength={1}
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-3xl">
+        <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
+          <DialogContent className="sm:max-w-md backdrop-blur-xl bg-background/80 border border-white/10">
+            <DialogHeader className="text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 backdrop-blur-sm">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <DialogTitle className="text-2xl font-bold flex items-center justify-center gap-2">
+                <KeyRound className="h-5 w-5" />
+                Admin Access
+              </DialogTitle>
+              <DialogDescription className="text-center">
+                Enter your 5-digit PIN to access the admin panel
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col items-center space-y-8">
+              <div className="relative">
+                <Fingerprint className={`h-16 w-16 text-primary transition-opacity duration-500 ${isAuthenticating ? 'animate-pulse' : ''}`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+              </div>
+              <form onSubmit={(e) => handlePinSubmit(e)} className="space-y-6 w-full">
+                <div className="flex justify-center gap-3">
+                  {pinDigits.map((digit, index) => (
+                    <Input
+                      key={index}
+                      ref={el => inputRefs.current[index] = el}
+                      type={showPin ? "text" : "password"}
+                      value={digit}
+                      onChange={(e) => handlePinDigitChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(index, e)}
+                      className="w-12 h-12 text-center text-2xl bg-background/50 border-white/20 backdrop-blur-sm"
+                      maxLength={1}
+                      disabled={isAuthenticating}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPin(!showPin)}
+                    className="gap-2 backdrop-blur-sm"
                     disabled={isAuthenticating}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-center">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowPin(!showPin)}
-                  className="gap-2"
-                  disabled={isAuthenticating}
-                >
-                  {showPin ? (
-                    <>
-                      <EyeOff className="h-4 w-4" /> Hide PIN
-                    </>
-                  ) : (
-                    <>
-                      <Eye className="h-4 w-4" /> Show PIN
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </div>
-          <DialogFooter className="flex-col space-y-2">
-            <DialogDescription className="text-xs text-center text-muted-foreground">
-              Your session will be locked after 3 failed attempts
-            </DialogDescription>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                  >
+                    {showPin ? (
+                      <>
+                        <EyeOff className="h-4 w-4" /> Hide PIN
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="h-4 w-4" /> Show PIN
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+            <DialogFooter className="flex-col space-y-2">
+              <DialogDescription className="text-xs text-center text-muted-foreground">
+                Your session will be locked after 3 failed attempts
+              </DialogDescription>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     );
   }
 
@@ -393,13 +396,13 @@ export default function AdminPanel() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-8rem)] p-4 sm:p-8">
+    <div className="relative min-h-[calc(100vh-8rem)] p-4 sm:p-8 bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-3xl">
       <div className="absolute inset-0 -z-10" />
       <div className="relative max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" className="gap-2">
+              <Button variant="ghost" className="gap-2 backdrop-blur-sm bg-background/50 border border-white/10">
                 <ArrowLeft className="h-4 w-4" /> Back
               </Button>
             </Link>
@@ -407,7 +410,7 @@ export default function AdminPanel() {
               variant="outline"
               size="icon"
               onClick={toggleFullScreen}
-              className="hidden sm:flex"
+              className="hidden sm:flex backdrop-blur-sm bg-background/50 border border-white/10"
             >
               {isFullScreen ? (
                 <Minimize className="h-4 w-4" />
@@ -424,7 +427,7 @@ export default function AdminPanel() {
                 placeholder="Search by prefect number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-background/50 border-white/20 backdrop-blur-sm"
               />
             </div>
             <div className="relative flex-1 sm:flex-initial">
@@ -433,11 +436,11 @@ export default function AdminPanel() {
                 type="date"
                 value={new Date(date).toISOString().split('T')[0]}
                 onChange={handleDateChange}
-                className="pl-10"
+                className="pl-10 bg-background/50 border-white/20 backdrop-blur-sm"
               />
             </div>
             <Select value={roleFilter} onValueChange={(value) => setRoleFilter(value as PrefectRole | 'all')}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] bg-background/50 border-white/20 backdrop-blur-sm">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
@@ -447,13 +450,13 @@ export default function AdminPanel() {
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={handleExport} className="gap-2 w-full sm:w-auto">
+            <Button onClick={handleExport} className="gap-2 w-full sm:w-auto bg-primary/90 hover:bg-primary backdrop-blur-sm">
               <Download className="h-4 w-4" /> Export Records
             </Button>
             <Button 
               variant="destructive" 
               onClick={() => setShowClearDialog(true)}
-              className="gap-2 w-full sm:w-auto"
+              className="gap-2 w-full sm:w-auto backdrop-blur-sm"
             >
               <Trash2 className="h-4 w-4" /> Clear Data
             </Button>
@@ -461,10 +464,18 @@ export default function AdminPanel() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
+          <TabsList className="backdrop-blur-sm bg-background/50 border border-white/10">
             <TabsTrigger value="overview" className="gap-2">
               <BarChart className="h-4 w-4" />
               Overview
+            </TabsTrigger>
+            <TabsTrigger value="search" className="gap-2">
+              <UserSearch className="h-4 w-4" />
+              Search Prefect
+            </TabsTrigger>
+            <TabsTrigger value="bulk" className="gap-2">
+              <UsersIcon className="h-4 w-4" />
+              Bulk Entry
             </TabsTrigger>
             <TabsTrigger value="analytics" className="gap-2">
               <BarChart className="h-4 w-4" />
@@ -482,7 +493,7 @@ export default function AdminPanel() {
 
           <TabsContent value="overview">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="backdrop-blur-sm bg-background/80">
+              <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Users className="h-5 w-5" />
@@ -492,15 +503,15 @@ export default function AdminPanel() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg backdrop-blur-sm">
                       <span>Total Prefects</span>
                       <span className="font-bold text-lg">{stats?.total || 0}</span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg backdrop-blur-sm border border-green-500/20">
                       <span>On Time</span>
                       <span className="font-bold text-lg text-green-500">{stats?.onTime || 0}</span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-red-500/10 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-red-500/10 rounded-lg backdrop-blur-sm border border-red-500/20">
                       <span>Late</span>
                       <span className="font-bold text-lg text-red-500">{stats?.late || 0}</span>
                     </div>
@@ -508,7 +519,7 @@ export default function AdminPanel() {
                 </CardContent>
               </Card>
 
-              <Card className="backdrop-blur-sm bg-background/80">
+              <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BarChart className="h-5 w-5" />
@@ -521,7 +532,7 @@ export default function AdminPanel() {
                     {stats && Object.entries(stats.byRole)
                       .filter(([_, count]) => count > 0)
                       .map(([role, count]) => (
-                        <div key={role} className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg">
+                        <div key={role} className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg backdrop-blur-sm">
                           <span>{role}</span>
                           <span className="font-bold">{count}</span>
                         </div>
@@ -536,7 +547,7 @@ export default function AdminPanel() {
                 </CardContent>
               </Card>
 
-              <Card className="backdrop-blur-sm bg-background/80">
+              <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="h-5 w-5" />
@@ -554,8 +565,8 @@ export default function AdminPanel() {
                         return (
                           <div
                             key={record.id}
-                            className={`p-3 rounded-lg ${
-                              isLate ? 'bg-red-500/10' : 'bg-green-500/10'
+                            className={`p-3 rounded-lg backdrop-blur-sm border ${
+                              isLate ? 'bg-red-500/10 border-red-500/20' : 'bg-green-500/10 border-green-500/20'
                             }`}
                           >
                             <div className="flex justify-between items-center">
@@ -586,15 +597,20 @@ export default function AdminPanel() {
             </div>
           </TabsContent>
 
+          <TabsContent value="search">
+            <PrefectSearch />
+          </TabsContent>
 
+          <TabsContent value="bulk">
+            <BulkAttendance />
+          </TabsContent>
 
           <TabsContent value="analytics">
             <AnalyticsSection records={allRecords} />
           </TabsContent>
 
-
           <TabsContent value="records">
-            <Card className="backdrop-blur-sm bg-background/80">
+            <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
@@ -605,7 +621,7 @@ export default function AdminPanel() {
               <CardContent>
                 <div className="space-y-3 max-h-[600px] overflow-y-auto">
                   {filteredRecords.map(record => (
-                    <div key={record.id} className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg">
+                    <div key={record.id} className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg backdrop-blur-sm border border-white/10">
                       {editingRecord === record.id ? (
                         <div className="w-full space-y-3">
                           <div className="flex gap-3">
@@ -613,12 +629,13 @@ export default function AdminPanel() {
                               value={editForm.prefectNumber}
                               onChange={(e) => setEditForm(prev => ({ ...prev, prefectNumber: e.target.value }))}
                               placeholder="Prefect Number"
+                              className="bg-background/50 border-white/20 backdrop-blur-sm"
                             />
                             <Select
                               value={editForm.role}
                               onValueChange={(value) => setEditForm(prev => ({ ...prev, role: value as PrefectRole }))}
                             >
-                              <SelectTrigger>
+                              <SelectTrigger className="bg-background/50 border-white/20 backdrop-blur-sm">
                                 <SelectValue placeholder="Role" />
                               </SelectTrigger>
                               <SelectContent>
@@ -635,11 +652,13 @@ export default function AdminPanel() {
                               type="date"
                               value={editForm.date}
                               onChange={(e) => setEditForm(prev => ({ ...prev, date: e.target.value }))}
+                              className="bg-background/50 border-white/20 backdrop-blur-sm"
                             />
                             <Input
                               type="time"
                               value={editForm.time}
                               onChange={(e) => setEditForm(prev => ({ ...prev, time: e.target.value }))}
+                              className="bg-background/50 border-white/20 backdrop-blur-sm"
                             />
                           </div>
                           <div className="flex justify-end gap-2">
@@ -647,12 +666,14 @@ export default function AdminPanel() {
                               size="sm"
                               variant="ghost"
                               onClick={() => setEditingRecord(null)}
+                              className="backdrop-blur-sm"
                             >
                               <X className="h-4 w-4" />
                             </Button>
                             <Button
                               size="sm"
                               onClick={() => saveEdit(record.id)}
+                              className="backdrop-blur-sm"
                             >
                               <Save className="h-4 w-4" />
                             </Button>
@@ -681,6 +702,7 @@ export default function AdminPanel() {
                               size="sm"
                               variant="ghost"
                               onClick={() => startEditing(record)}
+                              className="backdrop-blur-sm"
                             >
                               <Edit2 className="h-4 w-4" />
                             </Button>
@@ -700,7 +722,7 @@ export default function AdminPanel() {
           </TabsContent>
 
           <TabsContent value="history">
-            <Card className="backdrop-blur-sm bg-background/80">
+            <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5" />
@@ -715,7 +737,7 @@ export default function AdminPanel() {
                     return (
                       <div
                         key={recordDate}
-                        className="p-4 rounded-lg border bg-card hover:bg-accent cursor-pointer transition-colors"
+                        className="p-4 rounded-lg border bg-card hover:bg-accent cursor-pointer transition-colors backdrop-blur-sm bg-background/50 border-white/10"
                         onClick={() => setDate(recordDate)}
                       >
                         <p className="font-medium">{recordDate}</p>
@@ -749,7 +771,7 @@ export default function AdminPanel() {
       </div>
 
       <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="backdrop-blur-xl bg-background/80 border border-white/10">
           <AlertDialogHeader>
             <AlertDialogTitle>Clear All Data?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -757,8 +779,8 @@ export default function AdminPanel() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleClearData} className="bg-destructive text-destructive-foreground">
+            <AlertDialogCancel className="backdrop-blur-sm">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearData} className="bg-destructive text-destructive-foreground backdrop-blur-sm">
               Clear Data
             </AlertDialogAction>
           </AlertDialogFooter>

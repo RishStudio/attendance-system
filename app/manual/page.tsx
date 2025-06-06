@@ -82,10 +82,10 @@ export default function ManualAttendance() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4 sm:p-6">
-      <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-background/80">
+    <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-3xl">
+      <Card className="w-full max-w-md mx-auto backdrop-blur-xl bg-background/80 border border-white/10 shadow-2xl">
         <CardHeader className="text-center space-y-2">
-          <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center">
+          <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center backdrop-blur-sm">
             <ClockIcon className="w-8 h-8 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">Manual Attendance</CardTitle>
@@ -95,7 +95,7 @@ export default function ManualAttendance() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-background/50 border-white/20 backdrop-blur-sm">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -114,6 +114,7 @@ export default function ManualAttendance() {
                 placeholder="Enter your prefect number"
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
+                className="bg-background/50 border-white/20 backdrop-blur-sm"
               />
             </div>
 
@@ -122,13 +123,18 @@ export default function ManualAttendance() {
                 type="datetime-local"
                 value={dateTime}
                 onChange={(e) => setDateTime(e.target.value)}
+                className="bg-background/50 border-white/20 backdrop-blur-sm"
               />
             </div>
 
-            <Button type="submit" className="w-full text-base font-medium">
+            <Button type="submit" className="w-full text-base font-medium bg-primary/90 hover:bg-primary backdrop-blur-sm">
               Mark Manual Attendance
             </Button>
-            <Button type="button" className="w-full text-base font-medium mt-2 flex items-center justify-center" onClick={handleResetDateTime}>
+            <Button 
+              type="button" 
+              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-secondary/90 hover:bg-secondary backdrop-blur-sm" 
+              onClick={handleResetDateTime}
+            >
               <RefreshCw className="w-4 h-4 mr-2" />
               Reset to Current Date/Time
             </Button>

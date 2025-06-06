@@ -80,6 +80,40 @@ export function saveManualAttendance(
   return record;
 }
 
+export function saveBulkAttendance(
+  attendanceData: Array<{ prefectNumber: string; role: PrefectRole }>,
+  timestamp?: Date
+): { success: AttendanceRecord[]; errors: Array<{ prefectNumber: string; role: PrefectRole; error: string }> } {
+  const now = timestamp || new Date();
+  const date = now.toLocaleDateString();
+  const success: AttendanceRecord[] = [];
+  const errors: Array<{ prefectNumber: string; role: PrefectRole; error: string }> = [];
+
+  attendanceData.forEach(({ prefectNumber, role }) => {
+    try {
+      if (checkDuplicateAttendance(prefectNumber, role, date)) {
+        errors.push({
+          prefectNumber,
+          role,
+          error: `Already registered for ${role} today`
+        });
+        return;
+      }
+
+      const record = saveManualAttendance(prefectNumber, role, now);
+      success.push(record);
+    } catch (error) {
+      errors.push({
+        prefectNumber,
+        role,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  return { success, errors };
+}
+
 export function updateAttendance(
   id: string,
   updates: Partial<AttendanceRecord>
@@ -129,6 +163,105 @@ export function deleteAttendance(id: string): void {
 export function getAttendanceRecords(): AttendanceRecord[] {
   const records = localStorage.getItem(STORAGE_KEY);
   return records ? JSON.parse(records) : [];
+}
+
+export function searchPrefectRecords(prefectNumber: string): AttendanceRecord[] {
+  const records = getAttendanceRecords();
+  return records
+    .filter(record => record.prefectNumber.toLowerCase().includes(prefectNumber.toLowerCase()))
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+}
+
+export function getPrefectStats(prefectNumber: string): {
+  totalDays: number;
+  onTimeDays: number;
+  lateDays: number;
+  attendanceRate: number;
+  roles: Record<PrefectRole, number>;
+  recentRecords: AttendanceRecord[];
+} {
+  const records = searchPrefectRecords(prefectNumber);
+  const stats = {
+    totalDays: records.length,
+    onTimeDays: 0,
+    lateDays: 0,
+    attendanceRate: 0,
+    roles: {
+      Head: 0,
+      Deputy: 0,
+      'Senior Executive': 0,
+      Executive: 0,
+      'Super Senior': 0,
+      Senior: 0,
+      Junior: 0,
+      Sub: 0,
+      Apprentice: 0,
+      'Games Captain': 0,
+    } as Record<PrefectRole, number>,
+    recentRecords: records.slice(0, 10)
+  };
+
+  records.forEach(record => {
+    const time = new Date(record.timestamp);
+    if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)) {
+      stats.onTimeDays++;
+    } else {
+      stats.lateDays++;
+    }
+    stats.roles[record.role]++;
+  });
+
+  stats.attendanceRate = stats.totalDays > 0 ? (stats.onTimeDays / stats.totalDays) * 100 : 0;
+
+  return stats;
+}
+
+export function exportPrefectReport(prefectNumber: string): string {
+  const records = searchPrefectRecords(prefectNumber);
+  const stats = getPrefectStats(prefectNumber);
+
+  const header = [
+    `# Prefect Attendance Report - ${prefectNumber}`,
+    `Generated: ${new Date().toLocaleString()}`,
+    '',
+    '## Summary Statistics',
+    `Total Attendance Days: ${stats.totalDays}`,
+    `On Time Days: ${stats.onTimeDays}`,
+    `Late Days: ${stats.lateDays}`,
+    `Attendance Rate: ${stats.attendanceRate.toFixed(1)}%`,
+    '',
+    '## Role Distribution',
+    ...Object.entries(stats.roles)
+      .filter(([_, count]) => count > 0)
+      .map(([role, count]) => `${role}: ${count} days`),
+    '',
+    '## Detailed Records',
+    ['Date', 'Role', 'Time', 'Status', 'Notes'].join(',')
+  ].join('\n');
+
+  const recordsCSV = records.map(record => {
+    const time = new Date(record.timestamp);
+    const status = time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0) 
+      ? 'On Time' 
+      : 'Late';
+    const timeFormatted = time.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+    const notes = status === 'Late' 
+      ? `Arrived ${time.getHours() - 7}h ${time.getMinutes()}m late`
+      : 'Regular attendance';
+    return [
+      record.date,
+      record.role,
+      timeFormatted,
+      status,
+      notes
+    ].join(',');
+  }).join('\n');
+
+  return `${header}\n${recordsCSV}`;
 }
 
 export function getDailyStats(date: string): DailyStats {
