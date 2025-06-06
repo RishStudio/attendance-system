@@ -1,13 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Download, User, Calendar, Clock, TrendingUp, FileText } from 'lucide-react';
+import {
+  Search,
+  Download,
+  User,
+  Calendar,
+  Clock,
+  TrendingUp,
+  FileText,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { searchPrefectRecords, getPrefectStats, exportPrefectReport } from '@/lib/attendance';
+import {
+  searchPrefectRecords,
+  getPrefectStats,
+  exportPrefectReport,
+} from '@/lib/attendance';
 import { AttendanceRecord } from '@/lib/types';
 
 interface PrefectStats {
@@ -20,32 +38,43 @@ interface PrefectStats {
 }
 
 export function PrefectSearch() {
-  const [searchQuery, setSearchQuery] = useState('');
+  // States for prefect number and role filtering; role is optional
+  const [prefectNumber, setPrefectNumber] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
   const [searchResults, setSearchResults] = useState<AttendanceRecord[]>([]);
   const [prefectStats, setPrefectStats] = useState<PrefectStats | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = () => {
-    if (!searchQuery.trim()) {
+    if (!prefectNumber.trim()) {
       toast.error('Please enter a prefect number to search');
       return;
     }
 
     setIsSearching(true);
     try {
-      const records = searchPrefectRecords(searchQuery.trim());
-      const stats = getPrefectStats(searchQuery.trim());
-      
-      setSearchResults(records);
+      // Fetch records and stats based on the provided prefect number
+      const records = searchPrefectRecords(prefectNumber.trim());
+      const stats = getPrefectStats(prefectNumber.trim());
+
+      // If a role is provided, filter the records and adjust stats
+      let filteredRecords = records;
+      if (roleFilter.trim()) {
+        filteredRecords = records.filter(record =>
+          record.role.toLowerCase().includes(roleFilter.trim().toLowerCase())
+        );
+      }
+
+      setSearchResults(filteredRecords);
       setPrefectStats(stats);
 
-      if (records.length === 0) {
+      if (filteredRecords.length === 0) {
         toast.info('No Records Found', {
-          description: `No attendance records found for prefect ${searchQuery}`,
+          description: `No attendance records found for prefect ${prefectNumber.trim()}${roleFilter.trim() ? ` with role "${roleFilter.trim()}"` : ""}`,
         });
       } else {
         toast.success('Search Complete', {
-          description: `Found ${records.length} attendance records`,
+          description: `Found ${filteredRecords.length} attendance record${filteredRecords.length > 1 ? 's' : ''}`,
         });
       }
     } catch (error) {
@@ -58,23 +87,25 @@ export function PrefectSearch() {
   };
 
   const handleExportReport = () => {
-    if (!searchQuery.trim() || !searchResults.length) {
+    if (!prefectNumber.trim() || !searchResults.length) {
       toast.error('No data to export');
       return;
     }
 
     try {
-      const csv = exportPrefectReport(searchQuery.trim());
+      // Export report based on the prefect number. If role filtering is applied,
+      // assume exportPrefectReport will consider that or you may need to filter CSV content further.
+      const csv = exportPrefectReport(prefectNumber.trim());
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `prefect_${searchQuery.trim()}_report.csv`;
+      a.download = `prefect_${prefectNumber.trim()}_report.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-      
+
       toast.success('Report Exported', {
         description: 'Prefect attendance report has been downloaded',
       });
@@ -103,21 +134,32 @@ export function PrefectSearch() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Search className="h-5 w-5" />
-            Search Prefect Records
+            Search Prefect Attendance Records
           </CardTitle>
           <CardDescription>
-            Search for a specific prefect's attendance history and generate detailed reports
+            Search for a specific prefect's attendance history and generate detailed reports.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 md:flex-row">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Enter prefect number (e.g., 64)"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={prefectNumber}
+                onChange={(e) => setPrefectNumber(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                className="pl-10 bg-background/50 border-white/20 backdrop-blur-sm"
+              />
+            </div>
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Enter role (optional)"
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 className="pl-10 bg-background/50 border-white/20 backdrop-blur-sm"
               />
@@ -182,7 +224,9 @@ export function PrefectSearch() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{prefectStats.attendanceRate.toFixed(1)}%</div>
+              <div className="text-2xl font-bold">
+                {prefectStats.attendanceRate.toFixed(1)}%
+              </div>
               <p className="text-xs text-muted-foreground">On-time rate</p>
             </CardContent>
           </Card>
@@ -196,10 +240,11 @@ export function PrefectSearch() {
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Prefect {searchQuery} - Attendance Records
+                  Prefect {prefectNumber.trim()}
+                  {roleFilter.trim() && ` (${roleFilter.trim()})`} - Attendance Records
                 </CardTitle>
                 <CardDescription>
-                  {searchResults.length} total records found
+                  {searchResults.length} total record{searchResults.length !== 1 && "s"} found
                 </CardDescription>
               </div>
               <Button 
