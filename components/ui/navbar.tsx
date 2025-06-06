@@ -26,6 +26,8 @@ export function Navbar() {
           <span className="hidden sm:inline-block font-bold">Prefect Board Attendance</span>
         </Link>
 
+        <div className="flex items-center space-x-2">
+
           <div className="hidden sm:flex space-x-2">
             <Link href="/">
               <Button variant="ghost" size="sm">
