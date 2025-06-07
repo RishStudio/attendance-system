@@ -1,10 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Clock as ClockIcon, RefreshCw } from 'lucide-react';
+import { Shield, Clock as ClockIcon, User, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
@@ -27,11 +39,24 @@ export default function ManualAttendance() {
   const [role, setRole] = useState<PrefectRole | ''>('');
   const [prefectNumber, setPrefectNumber] = useState('');
   const [dateTime, setDateTime] = useState('');
+  const [isDateTimeFocused, setIsDateTimeFocused] = useState(false);
 
+  // Set initial current time without seconds
   useEffect(() => {
     const currentDateTime = new Date().toISOString().slice(0, 16);
     setDateTime(currentDateTime);
   }, []);
+
+  // Update time in real time every minute when not focused
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!isDateTimeFocused) {
+        const currentDateTime = new Date().toISOString().slice(0, 16);
+        setDateTime(currentDateTime);
+      }
+    }, 60000); // update every minute
+    return () => clearInterval(interval);
+  }, [isDateTimeFocused]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +75,7 @@ export default function ManualAttendance() {
         throw new Error('Invalid date/time format');
       }
 
-      const record = await saveManualAttendance(prefectNumber, role, timestamp);
+      await saveManualAttendance(prefectNumber, role, timestamp);
       const isLate = timestamp.getHours() >= 7 && timestamp.getMinutes() > 0;
 
       toast.success('Manual Attendance Marked', {
@@ -88,8 +113,13 @@ export default function ManualAttendance() {
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center backdrop-blur-sm">
             <ClockIcon className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">Manual Attendance</CardTitle>
-          <CardDescription className="text-sm">Enter attendance with custom date/time</CardDescription>
+          <CardTitle className="flex justify-center items-center text-2xl font-bold space-x-2">
+            <Shield className="w-6 h-6 text-primary" />
+            <span>Manual Attendance</span>
+          </CardTitle>
+          <CardDescription className="text-sm">
+            Enter attendance with custom date/time (updating live)
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -99,40 +129,51 @@ export default function ManualAttendance() {
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
-                  {roles.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
+                  {roles.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {r}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
-              <Input
-                type="text"
-                placeholder="Enter your prefect number"
-                value={prefectNumber}
-                onChange={(e) => setPrefectNumber(e.target.value)}
-                className="bg-background/50 border-white/20 backdrop-blur-sm"
-              />
+              <div className="flex items-center bg-background/50 border border-white/20 backdrop-blur-sm rounded-md p-2">
+                <User className="w-5 h-5 text-muted mr-2" />
+                <Input
+                  type="text"
+                  placeholder="Enter your prefect number"
+                  value={prefectNumber}
+                  onChange={(e) => setPrefectNumber(e.target.value)}
+                  className="bg-transparent outline-none flex-1"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
-              <Input
-                type="datetime-local"
-                value={dateTime}
-                onChange={(e) => setDateTime(e.target.value)}
-                className="bg-background/50 border-white/20 backdrop-blur-sm"
-              />
+              <div className="flex items-center bg-background/50 border border-white/20 backdrop-blur-sm rounded-md p-2">
+                <ClockIcon className="w-5 h-5 text-muted mr-2" />
+                <Input
+                  type="datetime-local"
+                  value={dateTime}
+                  onChange={(e) => setDateTime(e.target.value)}
+                  onFocus={() => setIsDateTimeFocused(true)}
+                  onBlur={() => setIsDateTimeFocused(false)}
+                  className="bg-transparent outline-none flex-1"
+                />
+              </div>
             </div>
 
-            <Button type="submit" className="w-full text-base font-medium bg-primary/90 hover:bg-primary backdrop-blur-sm">
+            <Button
+              type="submit"
+              className="w-full text-base font-medium bg-primary/90 hover:bg-primary backdrop-blur-sm"
+            >
               Mark Manual Attendance
             </Button>
-            <Button 
-              type="button" 
-              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-secondary/90 hover:bg-secondary backdrop-blur-sm" 
+            <Button
+              type="button"
+              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-secondary/90 hover:bg-secondary backdrop-blur-sm"
               onClick={handleResetDateTime}
             >
               <RefreshCw className="w-4 h-4 mr-2" />
