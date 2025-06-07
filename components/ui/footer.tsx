@@ -119,7 +119,7 @@ export function Footer() {
         <div className="mt-8 pt-6 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-muted-foreground text-center md:text-left">
-              © {new Date().getFullYear()} <a href="https://rylix.imrishmika.site" className="text-foreground hover:text-primary transition-colors duration-200">Rylix Solution</a> & <a href="https://imrishmika.site" className="text-foreground hover:text-primary transition-colors duration-200">ImRishmika</a>. All rights reserved.
+              © {new Date().getFullYear()} <a href="https://rylix.imrishmika.site" className="text-foreground hover:text-primary transition-colors duration-200">Rylix Solution</a> & <a href="https://imrishmika.site" className=\"text-foreground hover:text-primary transition-colors duration-200">ImRishmika</a>. All rights reserved.
             </div>
             <div className="text-sm text-muted-foreground text-center md:text-right">
               Made with ❤️ for MRCM Prefect Board
