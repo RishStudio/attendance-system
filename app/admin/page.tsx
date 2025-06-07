@@ -27,10 +27,12 @@ import {
   Shield,
   UserSearch,
   UsersIcon,
+  Database,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { BackupManager } from '@/components/ui/backup-manager';
 import { toast } from 'sonner';
 import { AttendanceRecord, DailyStats, PrefectRole } from '@/lib/types';
 import { getAttendanceRecords, getDailyStats, exportAttendance, updateAttendance, checkAdminAccess } from '@/lib/attendance';
@@ -481,6 +483,10 @@ export default function AdminPanel() {
               <BarChart className="h-4 w-4 text-white" />
               Analytics
             </TabsTrigger>
+            <TabsTrigger value="backup" className="gap-2">
+              <Database className="h-4 w-4 text-white" />
+              Backup & Sync
+            </TabsTrigger>
             <TabsTrigger value="records" className="gap-2">
               <FileText className="h-4 w-4 text-white" />
               Records
@@ -607,6 +613,10 @@ export default function AdminPanel() {
 
           <TabsContent value="analytics">
             <AnalyticsSection records={allRecords} />
+          </TabsContent>
+
+          <TabsContent value="backup">
+            <BackupManager />
           </TabsContent>
 
           <TabsContent value="records">
