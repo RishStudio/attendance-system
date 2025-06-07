@@ -1,10 +1,31 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Keyboard, Bell, AlertTriangle, CheckCircle, Code, X } from 'lucide-react';
+import {
+  Shield,
+  Keyboard,
+  Bell,
+  AlertTriangle,
+  CheckCircle,
+  Code,
+  User,
+  Hash,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PrefectRole } from '@/lib/types';
@@ -32,23 +53,23 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      // Only handle number keys when not typing in the prefect number input
+      // Only handle number keys when not typing into the prefect number input
       if (document.activeElement?.tagName !== 'INPUT') {
         const selectedRole = roleShortcuts[e.key];
         if (selectedRole) {
           setRole(selectedRole);
           toast.success('Role Selected', {
             icon: <CheckCircle className="w-6 h-6 text-green-500" />,
-            description: `${selectedRole} role selected using keyboard shortcut (${e.key})`,
+            description: `${selectedRole} selected using keyboard shortcut (${e.key})`,
             duration: 2000,
           });
         }
       }
 
-      // Toggle shortcuts visibility with '?' key
+      // Toggle shortcut visibility with '?' key or Shift + '/'
       if (e.key === '?' || (e.key === '/' && e.shiftKey)) {
         e.preventDefault();
-        setShowShortcuts(prev => !prev);
+        setShowShortcuts((prev) => !prev);
       }
     };
 
@@ -69,7 +90,13 @@ export default function Home() {
     }
 
     try {
-      if (checkDuplicateAttendance(prefectNumber, role, new Date().toLocaleDateString())) {
+      if (
+        checkDuplicateAttendance(
+          prefectNumber,
+          role,
+          new Date().toLocaleDateString()
+        )
+      ) {
         toast.error('Duplicate Entry', {
           icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
           description: `A prefect with number ${prefectNumber} has already registered for role ${role} today.`,
@@ -91,7 +118,8 @@ export default function Home() {
       if (prefectNumber === '64' && role === 'Sub') {
         toast.info('Developer Notice', {
           icon: <Code className="w-6 h-6 text-purple-500" />,
-          description: 'Sub 64 is the mastermind behind this attendance system. Please report any issues or bugs directly to them.',
+          description:
+            'Sub 64 is the mastermind behind this attendance system. Please report any issues or bugs directly to them.',
           duration: 5000,
         });
       }
@@ -99,7 +127,8 @@ export default function Home() {
       if (isLate) {
         toast.warning('Late Arrival Detected', {
           icon: <Bell className="w-6 h-6 text-yellow-500" />,
-          description: 'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
+          description:
+            'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
           duration: 5000,
         });
       }
@@ -109,7 +138,8 @@ export default function Home() {
     } catch (error) {
       toast.error('Error', {
         icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
-        description: error instanceof Error ? error.message : 'Failed to mark attendance',
+        description:
+          error instanceof Error ? error.message : 'Failed to mark attendance',
         duration: 4000,
       });
     }
@@ -123,12 +153,14 @@ export default function Home() {
             <Shield className="w-8 h-8 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">Prefect Attendance</CardTitle>
-          <CardDescription className="text-sm">Mark your daily attendance</CardDescription>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <CardDescription className="text-sm">
+            Mark your daily attendance with ease
+          </CardDescription>
+          <Button
+            variant="ghost"
+            size="sm"
             className="mt-2 backdrop-blur-sm"
-            onClick={() => setShowShortcuts(prev => !prev)}
+            onClick={() => setShowShortcuts((prev) => !prev)}
           >
             <Keyboard className="w-4 h-4 mr-2" />
             {showShortcuts ? 'Hide Shortcuts' : 'Show Shortcuts'}
@@ -144,12 +176,16 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {Object.entries(roleShortcuts).map(([key, roleName]) => (
                   <div key={key} className="flex items-center gap-2">
-                    <kbd className="px-2 py-1 bg-background/50 rounded text-xs border border-white/20">{key}</kbd>
+                    <kbd className="px-2 py-1 bg-background/50 rounded text-xs border border-white/20">
+                      {key}
+                    </kbd>
                     <span>{roleName}</span>
                   </div>
                 ))}
                 <div className="col-span-2 mt-2 flex items-center gap-2">
-                  <kbd className="px-2 py-1 bg-background/50 rounded text-xs border border-white/20">?</kbd>
+                  <kbd className="px-2 py-1 bg-background/50 rounded text-xs border border-white/20">
+                    ?
+                  </kbd>
                   <span>Toggle shortcuts</span>
                 </div>
               </div>
@@ -157,12 +193,13 @@ export default function Home() {
           )}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Select 
-                value={role} 
-                onValueChange={(value) => setRole(value as PrefectRole)}
-              >
+              <div className="flex items-center gap-2">
+                <User className="w-5 h-5 text-primary" />
+                <span className="font-medium">Select Your Role</span>
+              </div>
+              <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
                 <SelectTrigger className="w-full bg-background/50 border-white/20 backdrop-blur-sm">
-                  <SelectValue placeholder="Select your role" />
+                  <SelectValue placeholder="Choose your role" />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((roleName, index) => (
@@ -178,8 +215,12 @@ export default function Home() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Hash className="w-5 h-5 text-primary" />
+                <span className="font-medium">Prefect Number</span>
+              </div>
               <Input
                 type="text"
                 placeholder="Enter your prefect number"
@@ -189,7 +230,11 @@ export default function Home() {
               />
             </div>
 
-            <Button type="submit" className="w-full text-base font-medium bg-primary/90 hover:bg-primary backdrop-blur-sm">
+            <Button
+              type="submit"
+              className="w-full text-base font-medium bg-primary/90 hover:bg-primary backdrop-blur-sm flex items-center justify-center gap-2"
+            >
+              <CheckCircle className="w-5 h-5" />
               Mark Attendance
             </Button>
           </form>
