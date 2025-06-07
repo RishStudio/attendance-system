@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Clock as ClockIcon, User, RefreshCw } from 'lucide-react';
+import { Clock as ClockIcon, User, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -54,7 +54,7 @@ export default function ManualAttendance() {
         const currentDateTime = new Date().toISOString().slice(0, 16);
         setDateTime(currentDateTime);
       }
-    }, 60000); // update every minute
+    }, 60000);
     return () => clearInterval(interval);
   }, [isDateTimeFocused]);
 
@@ -111,13 +111,12 @@ export default function ManualAttendance() {
       <Card className="w-full max-w-md mx-auto backdrop-blur-xl bg-background/80 border border-white/10 shadow-2xl">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center backdrop-blur-sm">
-            <ClockIcon className="w-8 h-8 text-primary" />
+            <ClockIcon className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="flex justify-center items-center text-2xl font-bold space-x-2">
-            <Shield className="w-6 h-6 text-primary" />
-            <span>Manual Attendance</span>
+          <CardTitle className="flex justify-center items-center text-3xl font-extrabold text-white">
+            Manual Attendance
           </CardTitle>
-          <CardDescription className="text-sm">
+          <CardDescription className="text-sm text-white/90">
             Enter attendance with custom date/time (updating live)
           </CardDescription>
         </CardHeader>
@@ -125,7 +124,7 @@ export default function ManualAttendance() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Select value={role} onValueChange={(value) => setRole(value as PrefectRole)}>
-                <SelectTrigger className="bg-background/50 border-white/20 backdrop-blur-sm">
+                <SelectTrigger className="bg-background/50 border-white/20 backdrop-blur-sm text-white">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -140,43 +139,43 @@ export default function ManualAttendance() {
 
             <div className="space-y-2">
               <div className="flex items-center bg-background/50 border border-white/20 backdrop-blur-sm rounded-md p-2">
-                <User className="w-5 h-5 text-muted mr-2" />
+                <User className="w-5 h-5 text-white mr-2" />
                 <Input
                   type="text"
                   placeholder="Enter your prefect number"
                   value={prefectNumber}
                   onChange={(e) => setPrefectNumber(e.target.value)}
-                  className="bg-transparent outline-none flex-1"
+                  className="bg-transparent outline-none flex-1 text-white placeholder-white/70"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center bg-background/50 border border-white/20 backdrop-blur-sm rounded-md p-2">
-                <ClockIcon className="w-5 h-5 text-muted mr-2" />
+                <ClockIcon className="w-5 h-5 text-white mr-2" />
                 <Input
                   type="datetime-local"
                   value={dateTime}
                   onChange={(e) => setDateTime(e.target.value)}
                   onFocus={() => setIsDateTimeFocused(true)}
                   onBlur={() => setIsDateTimeFocused(false)}
-                  className="bg-transparent outline-none flex-1"
+                  className="bg-transparent outline-none flex-1 text-white"
                 />
               </div>
             </div>
 
             <Button
               type="submit"
-              className="w-full text-base font-medium bg-primary/90 hover:bg-primary backdrop-blur-sm"
+              className="w-full text-base font-medium bg-primary/90 hover:bg-primary backdrop-blur-sm text-white"
             >
               Mark Manual Attendance
             </Button>
             <Button
               type="button"
-              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-secondary/90 hover:bg-secondary backdrop-blur-sm"
+              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-blue-600 hover:bg-blue-700 backdrop-blur-sm text-white"
               onClick={handleResetDateTime}
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-2 text-white" />
               Reset to Current Date/Time
             </Button>
           </form>
