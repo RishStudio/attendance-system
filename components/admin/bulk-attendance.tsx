@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, Download, Plus, Trash2, Users, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,31 @@ import { saveBulkAttendance } from '@/lib/attendance';
 import { PrefectRole } from '@/lib/types';
 import { roles } from '@/lib/constants';
 
+// Simple modal/popup component
+function WarningModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="bg-background rounded-lg shadow-xl p-8 max-w-md w-full border border-red-500">
+        <div className="flex flex-col items-center gap-4">
+          <AlertCircle className="text-red-500 h-10 w-10" />
+          <h2 className="text-lg font-bold text-red-600 text-center">
+            Warning: Testing Option
+          </h2>
+          <p className="text-sm text-center text-red-500">
+            This is a <b>testing</b> feature. My developer <b>does NOT recommend</b> using it. 
+            If you use this, <span className="font-semibold">your attendance data may get corrupted</span> at any time.<br /><br />
+            <b>Proceed with extreme caution!</b>
+          </p>
+          <Button onClick={onClose} className="mt-2 w-full bg-red-600 hover:bg-red-700 text-white">
+            I Understand, Continue Anyway
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface BulkEntry {
   id: string;
   prefectNumber: string;
@@ -19,6 +44,8 @@ interface BulkEntry {
 }
 
 export function BulkAttendance() {
+  const [showWarning, setShowWarning] = useState(true);
+
   const [entries, setEntries] = useState<BulkEntry[]>([
     { id: crypto.randomUUID(), prefectNumber: '', role: '' }
   ]);
@@ -27,6 +54,16 @@ export function BulkAttendance() {
     success: Array<{ prefectNumber: string; role: string }>;
     errors: Array<{ prefectNumber: string; role: string; error: string }>;
   } | null>(null);
+
+  // Prevent accidental closing (optional, for dramatic effect)
+  useEffect(() => {
+    if (showWarning) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [showWarning]);
 
   const addEntry = () => {
     setEntries([...entries, { id: crypto.randomUUID(), prefectNumber: '', role: '' }]);
@@ -158,6 +195,7 @@ export function BulkAttendance() {
 
   return (
     <div className="space-y-6">
+      <WarningModal open={showWarning} onClose={() => setShowWarning(false)} />
       <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
