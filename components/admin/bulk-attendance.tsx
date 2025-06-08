@@ -184,7 +184,7 @@ export function BulkAttendance() {
         }
         return null;
       })
-      .filter((entry): entry is BulkEntry => entry !== null);
+      .filter((entry: BulkEntry | null): entry is BulkEntry => entry !== null);
 
     if (newEntries.length > 0) {
       setEntries(newEntries);
