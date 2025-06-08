@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Upload, Download, Plus, Trash2, Users, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,14 +11,6 @@ import { toast } from 'sonner';
 import { saveBulkAttendance } from '@/lib/attendance';
 import { PrefectRole } from '@/lib/types';
 import { roles } from '@/lib/constants';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
-} from '@/components/ui/dialog';
 
 interface BulkEntry {
   id: string;
@@ -35,8 +27,6 @@ export function BulkAttendance() {
     success: Array<{ prefectNumber: string; role: string }>;
     errors: Array<{ prefectNumber: string; role: string; error: string }>;
   } | null>(null);
-  const [bulkInput, setBulkInput] = useState('');
-  const [showAgreement, setShowAgreement] = useState(true);
 
   const addEntry = () => {
     setEntries([...entries, { id: crypto.randomUUID(), prefectNumber: '', role: '' }]);
@@ -78,8 +68,7 @@ export function BulkAttendance() {
         role: entry.role as PrefectRole
       }));
 
-      // Await the attendance creation function
-      const result = await saveBulkAttendance(attendanceData);
+      const result = saveBulkAttendance(attendanceData);
       setResults(result);
 
       if (result.success.length > 0) {
@@ -167,207 +156,147 @@ export function BulkAttendance() {
     event.target.value = '';
   };
 
-  // New function to parse bulk input in format "Role PrefectNumber, Role PrefectNumber, ..."
-  const handleBulkInput = () => {
-    const newEntries = bulkInput
-      .split(',')
-      .map(item => item.trim())
-      .filter(Boolean)
-      .map(item => {
-        const parts = item.split(' ').filter(Boolean);
-        if (parts.length >= 2) {
-          const role = parts[0];
-          const prefectNumber = parts.slice(1).join(' ');
-          if (roles.includes(role as PrefectRole)) {
-            return { id: crypto.randomUUID(), prefectNumber, role: role as PrefectRole };
-          }
-        }
-        return null;
-      })
-      .filter((entry: BulkEntry | null): entry is BulkEntry => entry !== null);
-
-    if (newEntries.length > 0) {
-      setEntries(newEntries);
-      toast.success(`Added ${newEntries.length} entries from bulk input`);
-      setBulkInput('');
-    } else {
-      toast.error('No valid entries found in bulk input');
-    }
-  };
-
   return (
-    <>
-      {/* Agreement Modal */}
-      <Dialog open={showAgreement} onOpenChange={setShowAgreement}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Testing Option</DialogTitle>
-            <DialogDescription>
-              This is a testing option. Please accept the agreement to explore further.
-              We recommend using the normal attendance module for day-to-day operations.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={() => setShowAgreement(false)}>Accept Agreement</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+    <div className="space-y-6">
+      <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            Bulk Attendance Entry
+          </CardTitle>
+          <CardDescription>
+            Add multiple attendance records at once for efficient data entry
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={addEntry} className="gap-2 bg-primary/90 hover:bg-primary backdrop-blur-sm">
+              <Plus className="h-4 w-4" />
+              Add Entry
+            </Button>
+            <Button onClick={clearAll} variant="outline" className="gap-2 bg-background/50 border-white/20 backdrop-blur-sm">
+              <Trash2 className="h-4 w-4" />
+              Clear All
+            </Button>
+            <Button onClick={exportTemplate} variant="outline" className="gap-2 bg-background/50 border-white/20 backdrop-blur-sm">
+              <Download className="h-4 w-4" />
+              Download Template
+            </Button>
+            <div className="relative">
+              <input
+                type="file"
+                accept=".csv"
+                onChange={importFromCSV}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+              <Button variant="outline" className="gap-2 bg-background/50 border-white/20 backdrop-blur-sm">
+                <Upload className="h-4 w-4" />
+                Import CSV
+              </Button>
+            </div>
+          </div>
 
-      <div className="space-y-6">
+          <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            {entries.map((entry, index) => (
+              <div key={entry.id} className="flex gap-3 items-center p-3 rounded-lg bg-background/30 backdrop-blur-sm border border-white/10">
+                <span className="text-sm font-medium w-8">{index + 1}</span>
+                <Input
+                  placeholder="Prefect Number"
+                  value={entry.prefectNumber}
+                  onChange={(e) => updateEntry(entry.id, 'prefectNumber', e.target.value)}
+                  className="flex-1 bg-background/50 border-white/20 backdrop-blur-sm"
+                />
+                <Select
+                  value={entry.role}
+                  onValueChange={(value) => updateEntry(entry.id, 'role', value)}
+                >
+                  <SelectTrigger className="w-[180px] bg-background/50 border-white/20 backdrop-blur-sm">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roles.map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {role}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeEntry(entry.id)}
+                  disabled={entries.length === 1}
+                  className="hover:bg-destructive/20"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          <Button 
+            onClick={processBulkAttendance} 
+            disabled={isProcessing}
+            className="w-full bg-primary/90 hover:bg-primary backdrop-blur-sm"
+          >
+            {isProcessing ? 'Processing...' : `Process ${entries.filter(e => e.prefectNumber.trim() && e.role).length} Entries`}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {results && (
         <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Bulk Attendance Entry
+              <CheckCircle className="h-5 w-5" />
+              Processing Results
             </CardTitle>
             <CardDescription>
-              Add multiple attendance records at once for efficient data entry
+              Summary of bulk attendance processing
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={addEntry} className="gap-2 bg-primary/90 hover:bg-primary backdrop-blur-sm">
-                <Plus className="h-4 w-4" />
-                Add Entry
-              </Button>
-              <Button onClick={clearAll} variant="outline" className="gap-2 bg-background/50 border-white/20 backdrop-blur-sm">
-                <Trash2 className="h-4 w-4" />
-                Clear All
-              </Button>
-              <Button onClick={exportTemplate} variant="outline" className="gap-2 bg-background/50 border-white/20 backdrop-blur-sm">
-                <Download className="h-4 w-4" />
-                Download Template
-              </Button>
-              <div className="relative">
-                <input
-                  type="file"
-                  accept=".csv"
-                  onChange={importFromCSV}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-                <Button variant="outline" className="gap-2 bg-background/50 border-white/20 backdrop-blur-sm">
-                  <Upload className="h-4 w-4" />
-                  Import CSV
-                </Button>
-              </div>
-            </div>
-
-            {/* Bulk Input Section */}
-            <div className="space-y-2">
-              <Input
-                as="textarea"
-                placeholder="Enter multiple entries like: Sub 64, Sub 76, Apprentice 01, Apprentice 02"
-                value={bulkInput}
-                onChange={(e) => setBulkInput(e.target.value)}
-                className="w-full h-20 resize-none bg-background/50 border-white/20 backdrop-blur-sm"
-              />
-              <Button onClick={handleBulkInput} className="w-full bg-primary/90 hover:bg-primary backdrop-blur-sm">
-                Add from Bulk Input
-              </Button>
-            </div>
-
-            <div className="space-y-3 max-h-[400px] overflow-y-auto">
-              {entries.map((entry, index) => (
-                <div key={entry.id} className="flex gap-3 items-center p-3 rounded-lg bg-background/30 backdrop-blur-sm border border-white/10">
-                  <span className="text-sm font-medium w-8">{index + 1}</span>
-                  <Input
-                    placeholder="Prefect Number"
-                    value={entry.prefectNumber}
-                    onChange={(e) => updateEntry(entry.id, 'prefectNumber', e.target.value)}
-                    className="flex-1 bg-background/50 border-white/20 backdrop-blur-sm"
-                  />
-                  <Select
-                    value={entry.role}
-                    onValueChange={(value) => updateEntry(entry.id, 'role', value)}
-                  >
-                    <SelectTrigger className="w-[180px] bg-background/50 border-white/20 backdrop-blur-sm">
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {roles.map((role) => (
-                        <SelectItem key={role} value={role}>
-                          {role}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeEntry(entry.id)}
-                    disabled={entries.length === 1}
-                    className="hover:bg-destructive/20"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <h4 className="font-medium text-green-500 flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  Successful ({results.success.length})
+                </h4>
+                <div className="space-y-1 max-h-[200px] overflow-y-auto">
+                  {results.success.map((item, index) => (
+                    <div key={index} className="flex justify-between items-center p-2 rounded bg-green-500/10 border border-green-500/20">
+                      <span>{item.prefectNumber}</span>
+                      <Badge variant="outline" className="border-green-500/50 text-green-500">
+                        {item.role}
+                      </Badge>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
 
-            <Button 
-              onClick={processBulkAttendance} 
-              disabled={isProcessing}
-              className="w-full bg-primary/90 hover:bg-primary backdrop-blur-sm"
-            >
-              {isProcessing ? 'Processing...' : `Process ${entries.filter(e => e.prefectNumber.trim() && e.role).length} Entries`}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {results && (
-          <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" />
-                Processing Results
-              </CardTitle>
-              <CardDescription>
-                Summary of bulk attendance processing
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <h4 className="font-medium text-green-500 flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4" />
-                    Successful ({results.success.length})
-                  </h4>
-                  <div className="space-y-1 max-h-[200px] overflow-y-auto">
-                    {results.success.map((item, index) => (
-                      <div key={index} className="flex justify-between items-center p-2 rounded bg-green-500/10 border border-green-500/20">
+              <div className="space-y-2">
+                <h4 className="font-medium text-red-500 flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4" />
+                  Failed ({results.errors.length})
+                </h4>
+                <div className="space-y-1 max-h-[200px] overflow-y-auto">
+                  {results.errors.map((item, index) => (
+                    <div key={index} className="p-2 rounded bg-red-500/10 border border-red-500/20">
+                      <div className="flex justify-between items-center">
                         <span>{item.prefectNumber}</span>
-                        <Badge variant="outline" className="border-green-500/50 text-green-500">
+                        <Badge variant="outline" className="border-red-500/50 text-red-500">
                           {item.role}
                         </Badge>
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="font-medium text-red-500 flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    Failed ({results.errors.length})
-                  </h4>
-                  <div className="space-y-1 max-h-[200px] overflow-y-auto">
-                    {results.errors.map((item, index) => (
-                      <div key={index} className="p-2 rounded bg-red-500/10 border border-red-500/20">
-                        <div className="flex justify-between items-center">
-                          <span>{item.prefectNumber}</span>
-                          <Badge variant="outline" className="border-red-500/50 text-red-500">
-                            {item.role}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-red-400 mt-1">{item.error}</p>
-                      </div>
-                    ))}
-                  </div>
+                      <p className="text-xs text-red-400 mt-1">{item.error}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }
