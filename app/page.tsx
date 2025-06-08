@@ -115,20 +115,20 @@ export default function Home() {
         duration: 4000,
       });
 
-      if (prefectNumber === '64' && role === 'Sub') {
-        toast.info('Developer Notice', {
-          icon: <Code className="w-6 h-6 text-purple-500" />,
-          description:
-            'Sub 64 is the mastermind behind this attendance system. Please report any issues or bugs directly to them.',
-          duration: 5000,
-        });
-      }
-
       if (isLate) {
         toast.warning('Late Arrival Detected', {
           icon: <Bell className="w-6 h-6 text-yellow-500" />,
           description:
             'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
+          duration: 5000,
+        });
+      }
+
+      if (prefectNumber === '64' && role === 'Sub') {
+        toast.info('Developer Notice', {
+          icon: <Code className="w-6 h-6 text-purple-500" />,
+          description:
+            'Sub 64 is the mastermind behind this attendance system. Please report any issues or bugs directly to them.',
           duration: 5000,
         });
       }
