@@ -17,6 +17,7 @@ import {
   UserMinus,
   BookOpen,
   Gamepad,
+  Info,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,7 +30,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Bar, Pie, Line } from 'react-chartjs-2';
+import { Bar, Pie, Line, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -101,6 +102,7 @@ export function PrefectSearch() {
   const [searchResults, setSearchResults] = useState<AttendanceRecord[]>([]);
   const [prefectStats, setPrefectStats] = useState<PrefectStats | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   const computeStats = (records: AttendanceRecord[]): PrefectStats => {
     const stats: PrefectStats = {
@@ -201,7 +203,6 @@ export function PrefectSearch() {
 
   const getStatusColor = (timestamp: string) => {
     const time = new Date(timestamp);
-    // "On Time" is before 7:01 (i.e., 7:00 or earlier)
     if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)) {
       return 'default';
     }
@@ -216,19 +217,13 @@ export function PrefectSearch() {
     return 'Late';
   };
 
-  // Chart data
+  // Analytics / Chart data
   const chartData = {
     labels: ['Total Days', 'On Time', 'Late'],
     datasets: [
       {
         label: 'Attendance Summary',
-        data: prefectStats
-          ? [
-              prefectStats.totalDays,
-              prefectStats.onTimeDays,
-              prefectStats.lateDays,
-            ]
-          : [0, 0, 0],
+        data: prefectStats ? [prefectStats.totalDays, prefectStats.onTimeDays, prefectStats.lateDays] : [0, 0, 0],
         backgroundColor: ['#4f46e5', '#10b981', '#ef4444'],
       },
     ],
@@ -243,14 +238,13 @@ export function PrefectSearch() {
   };
 
   // Pie Chart: Role Distribution
-  const pieChartLabels = Object.keys(prefectStats ? prefectStats.roles : {}) as PrefectRole[];
+  const pieChartLabels = prefectStats ? (Object.keys(prefectStats.roles) as PrefectRole[]) : [];
   const pieChartData = {
     labels: pieChartLabels.filter((role) => (prefectStats?.roles[role] || 0) > 0),
     datasets: [
       {
         label: 'Role Distribution',
-        data: pieChartLabels
-          .filter((role) => (prefectStats?.roles[role] || 0) > 0)
+        data: pieChartLabels.filter((role) => (prefectStats?.roles[role] || 0) > 0)
           .map((role) => prefectStats?.roles[role] ?? 0),
         backgroundColor: [
           '#f87171',
@@ -271,7 +265,7 @@ export function PrefectSearch() {
   // Line Chart: Daily On-Time Trend
   const dailyOnTimeCounts: Record<string, number> = {};
   searchResults.forEach((record) => {
-    const dateKey = record.date; // Assuming .date is a YYYY-MM-DD string
+    const dateKey = record.date; // expecting YYYY-MM-DD format
     const time = new Date(record.timestamp);
     if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)) {
       dailyOnTimeCounts[dateKey] = (dailyOnTimeCounts[dateKey] || 0) + 1;
@@ -291,13 +285,63 @@ export function PrefectSearch() {
     ],
   };
 
+  // Doughnut Chart: On Time vs Late
+  const doughnutChartData = {
+    labels: ['On Time', 'Late'],
+    datasets: [
+      {
+        data: prefectStats ? [prefectStats.onTimeDays, prefectStats.lateDays] : [0, 0],
+        backgroundColor: ['#10b981', '#ef4444'],
+      },
+    ],
+  };
+
+  const doughnutChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' },
+      title: { display: true, text: 'On Time vs Late Distribution' },
+    },
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Info Modal */}
+      {showInfoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <Card className="max-w-md">
+            <CardHeader>
+              <CardTitle>About This Page</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4">
+                This page allows admins to search for prefect attendance records. Here you can view detailed statistics, analytics charts (including attendance overview, role distributions, daily on time trends, and on time vs late distributions), and export reports.
+              </p>
+              <p>
+                Use the search bar to enter a prefect ID and select a role. The analytics below provide insights into attendance behavior.
+              </p>
+            </CardContent>
+            <div className="flex justify-end p-4">
+              <Button onClick={() => setShowInfoModal(false)}>Close</Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Header with Info Button */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-white">Prefect Attendance Dashboard</h2>
+        <Button onClick={() => setShowInfoModal(true)} className="flex items-center gap-2 bg-secondary/80 hover:bg-secondary">
+          <Info className="h-5 w-5 text-white" />
+          Info
+        </Button>
+      </div>
+
       {/* Search Card */}
       <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white">
-            <Search className="h-5 w-5" />
+            <Search className="h-5 w-5 text-white" />
             Search Prefect Attendance Records
           </CardTitle>
           <CardDescription className="text-white">
@@ -334,22 +378,17 @@ export function PrefectSearch() {
               </select>
               <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white" />
             </div>
-            <Button
-              onClick={handleSearch}
-              disabled={isSearching}
-              className="bg-primary/90 hover:bg-primary backdrop-blur-sm"
-            >
+            <Button onClick={handleSearch} disabled={isSearching} className="bg-primary/90 hover:bg-primary backdrop-blur-sm">
               {isSearching ? 'Searching...' : 'Search'}
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Stats & Charts */}
+      {/* Analytics Charts */}
       {prefectStats && (
         <>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {/* Total Days */}
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
@@ -362,7 +401,6 @@ export function PrefectSearch() {
                 <p className="text-xs text-muted-foreground">Attendance records</p>
               </CardContent>
             </Card>
-            {/* On Time */}
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
@@ -375,7 +413,6 @@ export function PrefectSearch() {
                 <p className="text-xs text-muted-foreground">Days on time</p>
               </CardContent>
             </Card>
-            {/* Late */}
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
@@ -388,7 +425,6 @@ export function PrefectSearch() {
                 <p className="text-xs text-muted-foreground">Days late</p>
               </CardContent>
             </Card>
-            {/* On-time Rate */}
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
@@ -404,22 +440,24 @@ export function PrefectSearch() {
               </CardContent>
             </Card>
           </div>
-          {/* Attendance Bar Chart */}
           <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
             <CardHeader>
               <CardTitle className="text-white">Attendance Chart</CardTitle>
-              <CardDescription className="text-white">A bar chart representation of the total, on time, and late days.</CardDescription>
+              <CardDescription className="text-white">
+                A bar chart representation of the total, on time, and late days.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Bar data={chartData} options={chartOptions} />
             </CardContent>
           </Card>
-          {/* Pie and Line Chart */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader>
                 <CardTitle className="text-white">Role Distribution Chart</CardTitle>
-                <CardDescription className="text-white">A smaller pie chart of role distribution.</CardDescription>
+                <CardDescription className="text-white">
+                  A pie chart of role distribution.
+                </CardDescription>
               </CardHeader>
               <CardContent className="h-64">
                 <Pie data={pieChartData} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
@@ -428,10 +466,23 @@ export function PrefectSearch() {
             <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader>
                 <CardTitle className="text-white">Daily On-Time Trend</CardTitle>
-                <CardDescription className="text-white">A line chart showing on-time attendance counts per day.</CardDescription>
+                <CardDescription className="text-white">
+                  A line chart showing on-time attendance counts per day.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Line data={lineChartData} options={{ responsive: true, plugins: { legend: { position: 'top' } } }} />
+              </CardContent>
+            </Card>
+            <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white">On Time vs Late</CardTitle>
+                <CardDescription className="text-white">
+                  A doughnut chart showing the distribution between on time and late days.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-64">
+                <Doughnut data={doughnutChartData} options={doughnutChartOptions} />
               </CardContent>
             </Card>
           </div>
@@ -452,10 +503,7 @@ export function PrefectSearch() {
                   {searchResults.length} record{searchResults.length !== 1 && 's'} found
                 </CardDescription>
               </div>
-              <Button
-                onClick={handleExportReport}
-                className="gap-2 bg-primary/90 hover:bg-primary backdrop-blur-sm"
-              >
+              <Button onClick={handleExportReport} className="gap-2 bg-primary/90 hover:bg-primary backdrop-blur-sm">
                 <Download className="h-4 w-4 text-white" />
                 Export Full Report
               </Button>
