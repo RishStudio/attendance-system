@@ -8,7 +8,6 @@ import {
   Calendar,
   Clock,
   TrendingUp,
-  FileText,
   ChevronDown,
   Crown,
   UserCheck,
@@ -30,13 +29,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar, Pie, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
   ArcElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
@@ -47,34 +48,42 @@ import {
 } from '@/lib/attendance';
 import { AttendanceRecord, PrefectRole } from '@/lib/types';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-// Valid roles from types.ts
 const VALID_ROLES: PrefectRole[] = [
-  "Head",
-  "Deputy",
-  "Senior Executive",
-  "Executive",
-  "Super Senior",
-  "Senior",
-  "Junior",
-  "Sub",
-  "Apprentice",
-  "Games Captain"
+  'Head',
+  'Deputy',
+  'Senior Executive',
+  'Executive',
+  'Super Senior',
+  'Senior',
+  'Junior',
+  'Sub',
+  'Apprentice',
+  'Games Captain',
 ];
 
-// Optional icons mapped for each role
 const roleIcons: Record<PrefectRole, JSX.Element> = {
   Head: <Crown className="h-4 w-4 text-white" />,
   Deputy: <UserCheck className="h-4 w-4 text-white" />,
-  "Senior Executive": <Briefcase className="h-4 w-4 text-white" />,
+  'Senior Executive': <Briefcase className="h-4 w-4 text-white" />,
   Executive: <Clipboard className="h-4 w-4 text-white" />,
-  "Super Senior": <Star className="h-4 w-4 text-white" />,
+  'Super Senior': <Star className="h-4 w-4 text-white" />,
   Senior: <UserIcon className="h-4 w-4 text-white" />,
   Junior: <UserIcon className="h-4 w-4 text-white" />,
   Sub: <UserMinus className="h-4 w-4 text-white" />,
   Apprentice: <BookOpen className="h-4 w-4 text-white" />,
-  "Games Captain": <Gamepad className="h-4 w-4 text-white" />,
+  'Games Captain': <Gamepad className="h-4 w-4 text-white" />,
 };
 
 interface PrefectStats {
@@ -87,14 +96,12 @@ interface PrefectStats {
 }
 
 export function PrefectSearch() {
-  // Prefect number input and role selection
   const [prefectNumber, setPrefectNumber] = useState('');
-  const [selectedRole, setSelectedRole] = useState<PrefectRole | "">("");
+  const [selectedRole, setSelectedRole] = useState<PrefectRole | ''>('');
   const [searchResults, setSearchResults] = useState<AttendanceRecord[]>([]);
   const [prefectStats, setPrefectStats] = useState<PrefectStats | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Compute stats based on filtered records.
   const computeStats = (records: AttendanceRecord[]): PrefectStats => {
     const stats: PrefectStats = {
       totalDays: records.length,
@@ -104,20 +111,21 @@ export function PrefectSearch() {
       roles: {
         Head: 0,
         Deputy: 0,
-        "Senior Executive": 0,
+        'Senior Executive': 0,
         Executive: 0,
-        "Super Senior": 0,
+        'Super Senior': 0,
         Senior: 0,
         Junior: 0,
         Sub: 0,
         Apprentice: 0,
-        "Games Captain": 0,
+        'Games Captain': 0,
       },
       recentRecords: records.slice(0, 10),
     };
 
-    records.forEach(record => {
+    records.forEach((record) => {
       const time = new Date(record.timestamp);
+      // On time if before or at 7:00
       if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)) {
         stats.onTimeDays++;
       } else {
@@ -136,14 +144,12 @@ export function PrefectSearch() {
       toast.error('Please enter both the prefect ID and select a role for the search.');
       return;
     }
-
     setIsSearching(true);
     try {
-      const records = searchPrefectRecords(prefectNumber.trim());
-      const filteredRecords = records.filter(
-        record => record.role.toLowerCase() === selectedRole.toLowerCase()
+      const allRecords = searchPrefectRecords(prefectNumber.trim());
+      const filteredRecords = allRecords.filter(
+        (record) => record.role.toLowerCase() === selectedRole.toLowerCase()
       );
-
       setSearchResults(filteredRecords);
 
       if (filteredRecords.length === 0) {
@@ -172,14 +178,13 @@ export function PrefectSearch() {
       toast.error('No data to export');
       return;
     }
-
     try {
       const csv = exportPrefectReport(prefectNumber.trim());
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `prefect_${prefectNumber.trim()}_report.csv`;
+      a.download = `prefect_${selectedRole}_${prefectNumber.trim()}_report.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -196,17 +201,22 @@ export function PrefectSearch() {
 
   const getStatusColor = (timestamp: string) => {
     const time = new Date(timestamp);
-    const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
-    return isLate ? 'destructive' : 'default';
+    // "On Time" is before 7:01 (i.e., 7:00 or earlier)
+    if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)) {
+      return 'default';
+    }
+    return 'destructive';
   };
 
   const getStatusText = (timestamp: string) => {
     const time = new Date(timestamp);
-    const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
-    return isLate ? 'Late' : 'On Time';
+    if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)) {
+      return 'On Time';
+    }
+    return 'Late';
   };
 
-  // Bar Chart data for attendance summary
+  // Chart data
   const chartData = {
     labels: ['Total Days', 'On Time', 'Late'],
     datasets: [
@@ -232,16 +242,16 @@ export function PrefectSearch() {
     },
   };
 
-  // Pie Chart for role distribution
+  // Pie Chart: Role Distribution
   const pieChartLabels = Object.keys(prefectStats ? prefectStats.roles : {}) as PrefectRole[];
   const pieChartData = {
-    labels: pieChartLabels.filter(role => (prefectStats?.roles[role] || 0) > 0),
+    labels: pieChartLabels.filter((role) => (prefectStats?.roles[role] || 0) > 0),
     datasets: [
       {
         label: 'Role Distribution',
         data: pieChartLabels
-          .filter(role => (prefectStats?.roles[role] || 0) > 0)
-          .map(role => prefectStats?.roles[role] ?? 0),
+          .filter((role) => (prefectStats?.roles[role] || 0) > 0)
+          .map((role) => prefectStats?.roles[role] ?? 0),
         backgroundColor: [
           '#f87171',
           '#fbbf24',
@@ -258,16 +268,40 @@ export function PrefectSearch() {
     ],
   };
 
+  // Line Chart: Daily On-Time Trend
+  const dailyOnTimeCounts: Record<string, number> = {};
+  searchResults.forEach((record) => {
+    const dateKey = record.date; // Assuming .date is a YYYY-MM-DD string
+    const time = new Date(record.timestamp);
+    if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() === 0)) {
+      dailyOnTimeCounts[dateKey] = (dailyOnTimeCounts[dateKey] || 0) + 1;
+    }
+  });
+  const sortedDates = Object.keys(dailyOnTimeCounts).sort();
+  const lineChartData = {
+    labels: sortedDates,
+    datasets: [
+      {
+        label: 'Daily On-Time Count',
+        data: sortedDates.map((date) => dailyOnTimeCounts[date]),
+        fill: false,
+        borderColor: '#10b981',
+        tension: 0.1,
+      },
+    ],
+  };
+
   return (
     <div className="space-y-6">
+      {/* Search Card */}
       <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Search className="h-5 w-5 text-white" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <Search className="h-5 w-5" />
             Search Prefect Attendance Records
           </CardTitle>
-          <CardDescription>
-            Enter the prefect ID and select a role to display the specific attendance details.
+          <CardDescription className="text-white">
+            Enter the prefect ID and select a role to display specific attendance details.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -279,7 +313,7 @@ export function PrefectSearch() {
                 placeholder="Enter prefect ID (e.g., 64)"
                 value={prefectNumber}
                 onChange={(e) => setPrefectNumber(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 className="pl-10 bg-background/50 border-white/20 backdrop-blur-sm text-white"
               />
             </div>
@@ -311,25 +345,28 @@ export function PrefectSearch() {
         </CardContent>
       </Card>
 
+      {/* Stats & Charts */}
       {prefectStats && (
         <>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {/* Total Days */}
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-white" />
+                <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+                  <Calendar className="h-4 w-4" />
                   Total Days
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{prefectStats.totalDays}</div>
+                <div className="text-2xl font-bold text-white">{prefectStats.totalDays}</div>
                 <p className="text-xs text-muted-foreground">Attendance records</p>
               </CardContent>
             </Card>
+            {/* On Time */}
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-white" />
+                <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+                  <Clock className="h-4 w-4" />
                   On Time
                 </CardTitle>
               </CardHeader>
@@ -338,10 +375,11 @@ export function PrefectSearch() {
                 <p className="text-xs text-muted-foreground">Days on time</p>
               </CardContent>
             </Card>
+            {/* Late */}
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-white" />
+                <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+                  <Clock className="h-4 w-4" />
                   Late
                 </CardTitle>
               </CardHeader>
@@ -350,51 +388,68 @@ export function PrefectSearch() {
                 <p className="text-xs text-muted-foreground">Days late</p>
               </CardContent>
             </Card>
+            {/* On-time Rate */}
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-white" />
+                <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+                  <TrendingUp className="h-4 w-4" />
                   Rate
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{prefectStats.attendanceRate.toFixed(1)}%</div>
+                <div className="text-2xl font-bold text-white">
+                  {prefectStats.attendanceRate.toFixed(1)}%
+                </div>
                 <p className="text-xs text-muted-foreground">On-time rate</p>
               </CardContent>
             </Card>
           </div>
+          {/* Attendance Bar Chart */}
           <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
             <CardHeader>
-              <CardTitle>Attendance Chart</CardTitle>
-              <CardDescription>A bar chart representation of the total, on time, and late days.</CardDescription>
+              <CardTitle className="text-white">Attendance Chart</CardTitle>
+              <CardDescription className="text-white">A bar chart representation of the total, on time, and late days.</CardDescription>
             </CardHeader>
             <CardContent>
               <Bar data={chartData} options={chartOptions} />
             </CardContent>
           </Card>
-          <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
-            <CardHeader>
-              <CardTitle>Role Distribution Chart</CardTitle>
-              <CardDescription>A pie chart of role distribution based on attendance records.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Pie data={pieChartData} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
-            </CardContent>
-          </Card>
+          {/* Pie and Line Chart */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white">Role Distribution Chart</CardTitle>
+                <CardDescription className="text-white">A smaller pie chart of role distribution.</CardDescription>
+              </CardHeader>
+              <CardContent className="h-64">
+                <Pie data={pieChartData} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+              </CardContent>
+            </Card>
+            <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white">Daily On-Time Trend</CardTitle>
+                <CardDescription className="text-white">A line chart showing on-time attendance counts per day.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Line data={lineChartData} options={{ responsive: true, plugins: { legend: { position: 'top' } } }} />
+              </CardContent>
+            </Card>
+          </div>
         </>
       )}
 
+      {/* Search Results */}
       {searchResults.length > 0 && (
         <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
-                <CardTitle className="flex items-center gap-2">
-                  <UserIcon className="h-5 w-5 text-white" />
-                  Prefect {prefectNumber.trim()} ({selectedRole}) - Detailed Attendance
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <UserIcon className="h-5 w-5" />
+                  Prefect {prefectNumber.trim()} ({selectedRole})
                 </CardTitle>
-                <CardDescription>
-                  {searchResults.length} record{searchResults.length !== 1 && "s"} found
+                <CardDescription className="text-white">
+                  {searchResults.length} record{searchResults.length !== 1 && 's'} found
                 </CardDescription>
               </div>
               <Button
@@ -415,7 +470,7 @@ export function PrefectSearch() {
                 >
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{record.role}</span>
+                      <span className="font-medium text-white">{record.role}</span>
                       <Badge variant={getStatusColor(record.timestamp)}>
                         {getStatusText(record.timestamp)}
                       </Badge>
@@ -423,7 +478,7 @@ export function PrefectSearch() {
                     <span className="text-sm text-muted-foreground">{record.date}</span>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">
+                    <div className="font-medium text-white">
                       {new Date(record.timestamp).toLocaleTimeString()}
                     </div>
                     <div className="text-sm text-muted-foreground">
