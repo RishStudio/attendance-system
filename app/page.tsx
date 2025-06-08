@@ -90,13 +90,8 @@ export default function Home() {
     }
 
     try {
-      if (
-        checkDuplicateAttendance(
-          prefectNumber,
-          role,
-          new Date().toLocaleDateString()
-        )
-      ) {
+      const today = new Date().toLocaleDateString();
+      if (checkDuplicateAttendance(prefectNumber, role, today)) {
         toast.error('Duplicate Entry', {
           icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
           description: `A prefect with number ${prefectNumber} has already registered for role ${role} today.`,
@@ -107,28 +102,36 @@ export default function Home() {
 
       const record = saveAttendance(prefectNumber, role);
       const time = new Date(record.timestamp);
-      const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
+      const isLate = time.getHours() > 7 || (time.getHours() === 7 && time.getMinutes() > 0);
 
-      toast.success('Attendance Marked Successfully', {
-        icon: <CheckCircle className="w-6 h-6 text-green-500" />,
-        description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
-        duration: 4000,
-      });
+      // Special notifications
+      if (role === 'Head' && (prefectNumber === '01' || prefectNumber === '02')) {
+        toast.info('Head Prefect Are marked Thier Attendance', {
+          position: 'top-center',
+          icon: <User className="w-6 h-6 text-blue-500" />,
+          duration: 5000,
+        });
+      } else if (role === 'Sub' && prefectNumber === '64') {
+        toast.info('Sub 64 Attendance Marked', {
+          position: 'top-center',
+          icon: <Code className="w-6 h-6 text-purple-500" />,
+          description:
+            'Sub 64 is the mastermind behind this attendance system. Please report any issues or bugs directly to them.',
+          duration: 5000,
+        });
+      } else {
+        toast.success('Attendance Marked Successfully', {
+          icon: <CheckCircle className="w-6 h-6 text-green-500" />,
+          description: `${role} ${prefectNumber} marked at ${time.toLocaleTimeString()}`,
+          duration: 4000,
+        });
+      }
 
       if (isLate) {
         toast.warning('Late Arrival Detected', {
           icon: <Bell className="w-6 h-6 text-yellow-500" />,
           description:
             'Your attendance has been marked as late (after 7:00 AM). Please ensure timely arrival.',
-          duration: 5000,
-        });
-      }
-
-      if (prefectNumber === '64' && role === 'Sub') {
-        toast.info('Developer Notice', {
-          icon: <Code className="w-6 h-6 text-purple-500" />,
-          description:
-            'Sub 64 is the mastermind behind this attendance system. Please report any issues or bugs directly to them.',
           duration: 5000,
         });
       }
