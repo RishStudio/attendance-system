@@ -39,9 +39,9 @@ import {
   ArcElement,
   PointElement,
   LineElement,
-  Title,
+  Title as ChartTitle,
   Tooltip,
-  Legend,
+  Legend as ChartLegend,
 } from 'chart.js';
 import {
   searchPrefectRecords,
@@ -49,6 +49,7 @@ import {
 } from '@/lib/attendance';
 import { AttendanceRecord, PrefectRole } from '@/lib/types';
 
+// Register chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -56,9 +57,9 @@ ChartJS.register(
   ArcElement,
   PointElement,
   LineElement,
-  Title,
+  ChartTitle,
   Tooltip,
-  Legend
+  ChartLegend
 );
 
 const VALID_ROLES: PrefectRole[] = [
@@ -296,10 +297,13 @@ export function PrefectSearch() {
     ],
   };
 
+  // ---- FIX: Strict type for Doughnut options ----
+  // Chart.js types for legend.position are not just 'string', but a stricter set.
+  // So, use the union: "top" | "bottom" | "center" | "left" | "right" | "chartArea" | ...
   const doughnutChartOptions = {
     responsive: true,
     plugins: {
-      legend: { position: 'bottom' },
+      legend: { position: 'bottom' as const }, // Fix: use 'bottom' as const
       title: { display: true, text: 'On Time vs Late Distribution' },
     },
   };
@@ -460,7 +464,7 @@ export function PrefectSearch() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="h-64">
-                <Pie data={pieChartData} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+                <Pie data={pieChartData} options={{ responsive: true, plugins: { legend: { position: 'bottom' as const } } }} />
               </CardContent>
             </Card>
             <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
@@ -471,7 +475,7 @@ export function PrefectSearch() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Line data={lineChartData} options={{ responsive: true, plugins: { legend: { position: 'top' } } }} />
+                <Line data={lineChartData} options={{ responsive: true, plugins: { legend: { position: 'top' as const } } }} />
               </CardContent>
             </Card>
             <Card className="mt-6 backdrop-blur-sm bg-background/80 border border-white/10">
