@@ -17,8 +17,6 @@ import {
   Clock,
   Users,
   BarChart,
-  Filter,
-  Lock,
   KeyRound,
   ShieldAlert,
   Eye,
@@ -30,12 +28,24 @@ import {
   Database,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { BackupManager } from '@/components/ui/backup-manager';
 import { toast } from 'sonner';
 import { AttendanceRecord, DailyStats, PrefectRole } from '@/lib/types';
-import { getAttendanceRecords, getDailyStats, exportAttendance, updateAttendance, checkAdminAccess } from '@/lib/attendance';
+import {
+  getAttendanceRecords,
+  getDailyStats,
+  exportAttendance,
+  updateAttendance,
+  checkAdminAccess,
+} from '@/lib/attendance';
 import Link from 'next/link';
 import {
   AlertDialog,
@@ -76,7 +86,7 @@ const roles: PrefectRole[] = [
   'Senior',
   'Junior',
   'Sub',
-  'Apprentice'
+  'Apprentice',
 ];
 
 export default function AdminPanel() {
@@ -117,12 +127,12 @@ export default function AdminPanel() {
     newPinDigits[index] = value;
     setPinDigits(newPinDigits);
 
-    if (value && index < 4) {
+    if (value && index < newPinDigits.length - 1) {
       setActiveDigit(index + 1);
       inputRefs.current[index + 1]?.focus();
     }
     
-    if (index === 4 && value) {
+    if (index === newPinDigits.length - 1 && value) {
       handlePinSubmit(undefined, newPinDigits.join(''));
     }
   };
@@ -134,7 +144,7 @@ export default function AdminPanel() {
     } else if (e.key === 'ArrowLeft' && index > 0) {
       setActiveDigit(index - 1);
       inputRefs.current[index - 1]?.focus();
-    } else if (e.key === 'ArrowRight' && index < 4) {
+    } else if (e.key === 'ArrowRight' && index < pinDigits.length - 1) {
       setActiveDigit(index + 1);
       inputRefs.current[index + 1]?.focus();
     }
@@ -146,7 +156,7 @@ export default function AdminPanel() {
 
     setIsAuthenticating(true);
     const finalPin = submittedPin || pinDigits.join('');
-    
+
     try {
       if (checkAdminAccess(finalPin)) {
         setIsAuthenticated(true);
@@ -155,6 +165,8 @@ export default function AdminPanel() {
           description: 'Welcome to the admin panel',
           icon: <ShieldAlert className="h-5 w-5 text-red-500" />,
         });
+      } else {
+        throw new Error('Invalid PIN');
       }
     } catch (error) {
       toast.error('Access Denied', {
@@ -178,7 +190,7 @@ export default function AdminPanel() {
     setFilteredRecords(todayRecords);
     setStats(getDailyStats(date));
 
-    const dates = [...new Set(records.map(r => r.date))].sort((a, b) => 
+    const dates = [...new Set(records.map(r => r.date))].sort((a, b) =>
       new Date(b).getTime() - new Date(a).getTime()
     );
     setUniqueDates(dates);
@@ -186,7 +198,8 @@ export default function AdminPanel() {
     const lastExport = localStorage.getItem('last_export_date');
     if (lastExport !== date) {
       toast('Daily Export Reminder', {
-        description: 'Please remember to export today\'s attendance records before end of day.',
+        description:
+          "Please remember to export today's attendance records before end of day.",
         icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
         duration: 5000,
       });
@@ -197,7 +210,9 @@ export default function AdminPanel() {
     if (!isAuthenticated) return;
 
     const filtered = allRecords.filter(record => {
-      const matchesSearch = record.prefectNumber.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = record.prefectNumber
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
       const matchesDate = record.date === date;
       const matchesRole = roleFilter === 'all' || record.role === roleFilter;
       return matchesSearch && matchesDate && matchesRole;
@@ -211,7 +226,8 @@ export default function AdminPanel() {
     };
 
     document.addEventListener('fullscreenchange', handleFullScreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+    return () =>
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
   }, []);
 
   if (!isAuthenticated) {
@@ -233,18 +249,27 @@ export default function AdminPanel() {
             </DialogHeader>
             <div className="flex flex-col items-center space-y-8">
               <div className="relative">
-                <Fingerprint className={`h-16 w-16 text-white transition-opacity duration-500 ${isAuthenticating ? 'animate-pulse' : ''}`} />
+                <Fingerprint
+                  className={`h-16 w-16 text-white transition-opacity duration-500 ${
+                    isAuthenticating ? 'animate-pulse' : ''
+                  }`}
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
               </div>
-              <form onSubmit={(e) => handlePinSubmit(e)} className="space-y-6 w-full">
+              <form
+                onSubmit={(e) => handlePinSubmit(e)}
+                className="space-y-6 w-full"
+              >
                 <div className="flex justify-center gap-3">
                   {pinDigits.map((digit, index) => (
                     <Input
                       key={index}
-                      ref={el => inputRefs.current[index] = el}
-                      type={showPin ? "text" : "password"}
+                      ref={(el) => (inputRefs.current[index] = el)}
+                      type={showPin ? 'text' : 'password'}
                       value={digit}
-                      onChange={(e) => handlePinDigitChange(index, e.target.value)}
+                      onChange={(e) =>
+                        handlePinDigitChange(index, e.target.value)
+                      }
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       className="w-12 h-12 text-center text-2xl bg-background/50 border-white/20 backdrop-blur-sm"
                       maxLength={1}
@@ -304,10 +329,11 @@ export default function AdminPanel() {
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
-    
+
     localStorage.setItem('last_export_date', date);
     toast.success('Export Successful', {
-      description: 'Attendance records have been exported to CSV format.',
+      description:
+        'Attendance records have been exported to CSV format.',
       duration: 4000,
     });
   };
@@ -336,7 +362,8 @@ export default function AdminPanel() {
     setUniqueDates([]);
     setShowClearDialog(false);
     toast.success('Data Cleared', {
-      description: 'All attendance records have been cleared successfully.',
+      description:
+        'All attendance records have been cleared successfully.',
     });
   };
 
@@ -384,15 +411,21 @@ export default function AdminPanel() {
         date: timestamp.toLocaleDateString(),
       });
 
-      setAllRecords(prev => prev.map(r => r.id === id ? updatedRecord : r));
+      setAllRecords(prev =>
+        prev.map(r => (r.id === id ? updatedRecord : r))
+      );
       setEditingRecord(null);
-      
+
       toast.success('Record Updated', {
-        description: 'The attendance record has been updated successfully.',
+        description:
+          'The attendance record has been updated successfully.',
       });
     } catch (error) {
       toast.error('Update Failed', {
-        description: error instanceof Error ? error.message : 'Failed to update the record.',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Failed to update the record.',
       });
     }
   };
@@ -404,7 +437,10 @@ export default function AdminPanel() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" className="gap-2 backdrop-blur-sm bg-background/50 border border-white/10">
+              <Button
+                variant="ghost"
+                className="gap-2 backdrop-blur-sm bg-background/50 border border-white/10"
+              >
                 <ArrowLeft className="h-4 w-4 text-white" /> Back
               </Button>
             </Link>
@@ -441,22 +477,32 @@ export default function AdminPanel() {
                 className="pl-10 bg-background/50 border-white/20 backdrop-blur-sm"
               />
             </div>
-            <Select value={roleFilter} onValueChange={(value) => setRoleFilter(value as PrefectRole | 'all')}>
+            <Select
+              value={roleFilter}
+              onValueChange={(value) =>
+                setRoleFilter(value as PrefectRole | 'all')
+              }
+            >
               <SelectTrigger className="w-[180px] bg-background/50 border-white/20 backdrop-blur-sm">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
                 {roles.map((role) => (
-                  <SelectItem key={role} value={role}>{role}</SelectItem>
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={handleExport} className="gap-2 w-full sm:w-auto bg-primary/90 hover:bg-primary backdrop-blur-sm">
+            <Button
+              onClick={handleExport}
+              className="gap-2 w-full sm:w-auto bg-primary/90 hover:bg-primary backdrop-blur-sm"
+            >
               <Download className="h-4 w-4 text-white" /> Export Records
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               onClick={() => setShowClearDialog(true)}
               className="gap-2 w-full sm:w-auto backdrop-blur-sm"
             >
@@ -515,11 +561,15 @@ export default function AdminPanel() {
                     </div>
                     <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg backdrop-blur-sm border border-green-500/20">
                       <span>On Time</span>
-                      <span className="font-bold text-lg text-green-500">{stats?.onTime || 0}</span>
+                      <span className="font-bold text-lg text-green-500">
+                        {stats?.onTime || 0}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-red-500/10 rounded-lg backdrop-blur-sm border border-red-500/20">
                       <span>Late</span>
-                      <span className="font-bold text-lg text-red-500">{stats?.late || 0}</span>
+                      <span className="font-bold text-lg text-red-500">
+                        {stats?.late || 0}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -535,16 +585,22 @@ export default function AdminPanel() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {stats && Object.entries(stats.byRole)
-                      .filter(([_, count]) => count > 0)
-                      .map(([role, count]) => (
-                        <div key={role} className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg backdrop-blur-sm">
-                          <span>{role}</span>
-                          <span className="font-bold">{count}</span>
-                        </div>
-                      ))
-                    }
-                    {(!stats || Object.values(stats.byRole).every(count => count === 0)) && (
+                    {stats &&
+                      Object.entries(stats.byRole)
+                        .filter(([_, count]) => count > 0)
+                        .map(([role, count]) => (
+                          <div
+                            key={role}
+                            className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg backdrop-blur-sm"
+                          >
+                            <span>{role}</span>
+                            <span className="font-bold">{count}</span>
+                          </div>
+                        ))}
+                    {(!stats ||
+                      Object.values(stats.byRole).every(
+                        count => count === 0
+                      )) && (
                       <p className="text-muted-foreground text-sm text-center py-4">
                         No role distribution data available
                       </p>
@@ -564,24 +620,35 @@ export default function AdminPanel() {
                 <CardContent>
                   <div className="space-y-3">
                     {filteredRecords
-                      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
-                      .map((record, index) => {
+                      .sort(
+                        (a, b) =>
+                          new Date(a.timestamp).getTime() -
+                          new Date(b.timestamp).getTime()
+                      )
+                      .map((record) => {
                         const time = new Date(record.timestamp);
-                        const isLate = time.getHours() >= 7 && time.getMinutes() > 0;
+                        const isLate =
+                          time.getHours() >= 7 && time.getMinutes() > 0;
                         return (
                           <div
                             key={record.id}
                             className={`p-3 rounded-lg backdrop-blur-sm border ${
-                              isLate ? 'bg-red-500/10 border-red-500/20' : 'bg-green-500/10 border-green-500/20'
+                              isLate
+                                ? 'bg-red-500/10 border-red-500/20'
+                                : 'bg-green-500/10 border-green-500/20'
                             }`}
                           >
                             <div className="flex justify-between items-center">
                               <span className="text-sm font-medium">
                                 {time.toLocaleTimeString()}
                               </span>
-                              <span className={`text-sm ${
-                                isLate ? 'text-red-500' : 'text-green-500'
-                              }`}>
+                              <span
+                                className={`text-sm ${
+                                  isLate
+                                    ? 'text-red-500'
+                                    : 'text-green-500'
+                                }`}
+                              >
                                 {isLate ? 'Late' : 'On Time'}
                               </span>
                             </div>
@@ -590,8 +657,7 @@ export default function AdminPanel() {
                             </div>
                           </div>
                         );
-                      })
-                    }
+                      })}
                     {filteredRecords.length === 0 && (
                       <p className="text-muted-foreground text-sm text-center py-4">
                         No attendance records for this date
@@ -630,20 +696,33 @@ export default function AdminPanel() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                  {filteredRecords.map(record => (
-                    <div key={record.id} className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg backdrop-blur-sm border border-white/10">
+                  {filteredRecords.map((record) => (
+                    <div
+                      key={record.id}
+                      className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg backdrop-blur-sm border border-white/10"
+                    >
                       {editingRecord === record.id ? (
                         <div className="w-full space-y-3">
                           <div className="flex gap-3">
                             <Input
                               value={editForm.prefectNumber}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, prefectNumber: e.target.value }))}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  prefectNumber: e.target.value,
+                                }))
+                              }
                               placeholder="Prefect Number"
                               className="bg-background/50 border-white/20 backdrop-blur-sm"
                             />
                             <Select
                               value={editForm.role}
-                              onValueChange={(value) => setEditForm(prev => ({ ...prev, role: value as PrefectRole }))}
+                              onValueChange={(value) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  role: value as PrefectRole,
+                                }))
+                              }
                             >
                               <SelectTrigger className="bg-background/50 border-white/20 backdrop-blur-sm">
                                 <SelectValue placeholder="Role" />
@@ -661,13 +740,23 @@ export default function AdminPanel() {
                             <Input
                               type="date"
                               value={editForm.date}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, date: e.target.value }))}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  date: e.target.value,
+                                }))
+                              }
                               className="bg-background/50 border-white/20 backdrop-blur-sm"
                             />
                             <Input
                               type="time"
                               value={editForm.time}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, time: e.target.value }))}
+                              onChange={(e) =>
+                                setEditForm((prev) => ({
+                                  ...prev,
+                                  time: e.target.value,
+                                }))
+                              }
                               className="bg-background/50 border-white/20 backdrop-blur-sm"
                             />
                           </div>
@@ -692,20 +781,30 @@ export default function AdminPanel() {
                       ) : (
                         <>
                           <div className="flex flex-col">
-                            <span className="font-medium">{record.prefectNumber}</span>
-                            <span className="text-sm text-muted-foreground">{record.role}</span>
+                            <span className="font-medium">
+                              {record.prefectNumber}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              {record.role}
+                            </span>
                           </div>
                           <div className="flex items-center gap-4">
                             <div className="text-right">
-                              <span className="text-sm">{new Date(record.timestamp).toLocaleTimeString()}</span>
-                              <span className={`block text-xs ${
-                                new Date(record.timestamp).getHours() >= 7 && 
+                              <span className="text-sm">
+                                {new Date(record.timestamp).toLocaleTimeString()}
+                              </span>
+                              <span
+                                className={`block text-xs ${
+                                  new Date(record.timestamp).getHours() >= 7 &&
+                                  new Date(record.timestamp).getMinutes() > 0
+                                    ? 'text-red-500'
+                                    : 'text-green-500'
+                                }`}
+                              >
+                                {new Date(record.timestamp).getHours() >= 7 &&
                                 new Date(record.timestamp).getMinutes() > 0
-                                  ? 'text-red-500'
-                                  : 'text-green-500'
-                              }`}>
-                                {new Date(record.timestamp).getHours() >= 7 && 
-                                 new Date(record.timestamp).getMinutes() > 0 ? 'Late' : 'On Time'}
+                                  ? 'Late'
+                                  : 'On Time'}
                               </span>
                             </div>
                             <Button
@@ -738,7 +837,9 @@ export default function AdminPanel() {
                   <Clock className="h-5 w-5 text-white" />
                   Previous Records
                 </CardTitle>
-                <CardDescription>View and export past attendance data</CardDescription>
+                <CardDescription>
+                  View and export past attendance data
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -758,11 +859,15 @@ export default function AdminPanel() {
                           </p>
                           <p className="flex justify-between">
                             <span>On Time:</span>
-                            <span className="text-green-500">{dateStats.onTime}</span>
+                            <span className="text-green-500">
+                              {dateStats.onTime}
+                            </span>
                           </p>
                           <p className="flex justify-between">
                             <span>Late:</span>
-                            <span className="text-red-500">{dateStats.late}</span>
+                            <span className="text-red-500">
+                              {dateStats.late}
+                            </span>
                           </p>
                         </div>
                       </div>
@@ -789,8 +894,13 @@ export default function AdminPanel() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="backdrop-blur-sm">Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleClearData} className="bg-destructive text-destructive-foreground backdrop-blur-sm">
+            <AlertDialogCancel className="backdrop-blur-sm">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleClearData}
+              className="bg-destructive text-destructive-foreground backdrop-blur-sm"
+            >
               Clear Data
             </AlertDialogAction>
           </AlertDialogFooter>
