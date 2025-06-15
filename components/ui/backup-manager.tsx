@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Download,
-  Upload,
-  Shield,
-  Clock,
-  Wifi,
-  WifiOff,
+import { 
+  Download, 
+  Upload, 
+  Shield, 
+  Clock, 
+  Wifi, 
+  WifiOff, 
   Database,
   RefreshCw,
   AlertTriangle,
@@ -39,8 +39,6 @@ export function BackupManager() {
   });
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-  const [isFullExporting, setIsFullExporting] = useState(false);
-  const [isFullImporting, setIsFullImporting] = useState(false);
 
   useEffect(() => {
     // Load backup status from localStorage
@@ -53,7 +51,7 @@ export function BackupManager() {
       });
     }
 
-    // Calculate attendance backup size
+    // Calculate backup size
     const records = getAttendanceRecords();
     const size = new Blob([JSON.stringify(records)]).size;
     setBackupStatus(prev => ({
@@ -71,31 +69,30 @@ export function BackupManager() {
   };
 
   const encryptData = async (data: string, password: string): Promise<string> => {
-    // Simple XOR encryption for demo – in production, use proper AES-256
+    // Simple encryption for demo - in production, use proper AES-256
     const encoder = new TextEncoder();
     const dataBuffer = encoder.encode(data);
     const passwordBuffer = encoder.encode(password);
-
+    
+    // Create a simple XOR encryption (for demo purposes)
     const encrypted = new Uint8Array(dataBuffer.length);
     for (let i = 0; i < dataBuffer.length; i++) {
       encrypted[i] = dataBuffer[i] ^ passwordBuffer[i % passwordBuffer.length];
     }
+    
     return btoa(String.fromCharCode(...encrypted));
   };
 
   const decryptData = async (encryptedData: string, password: string): Promise<string> => {
     try {
-      const encrypted = new Uint8Array(
-        atob(encryptedData)
-          .split('')
-          .map(c => c.charCodeAt(0))
-      );
+      const encrypted = new Uint8Array(atob(encryptedData).split('').map(c => c.charCodeAt(0)));
       const passwordBuffer = new TextEncoder().encode(password);
-
+      
       const decrypted = new Uint8Array(encrypted.length);
       for (let i = 0; i < encrypted.length; i++) {
         decrypted[i] = encrypted[i] ^ passwordBuffer[i % passwordBuffer.length];
       }
+      
       return new TextDecoder().decode(decrypted);
     } catch (error) {
       throw new Error('Failed to decrypt data. Invalid password or corrupted file.');
@@ -107,7 +104,6 @@ export function BackupManager() {
     try {
       const records = getAttendanceRecords();
       const backupData = {
-        type: 'attendance',
         version: backupStatus.version,
         timestamp: new Date().toISOString(),
         records,
@@ -118,6 +114,7 @@ export function BackupManager() {
         }
       };
 
+      // Encrypt the data
       const password = prompt('Enter encryption password for backup:');
       if (!password) {
         setIsExporting(false);
@@ -125,6 +122,7 @@ export function BackupManager() {
       }
 
       const encryptedData = await encryptData(JSON.stringify(backupData), password);
+      
       const blob = new Blob([encryptedData], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -135,6 +133,7 @@ export function BackupManager() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
+      // Update backup status
       const newStatus = {
         ...backupStatus,
         lastBackup: new Date(),
@@ -143,8 +142,8 @@ export function BackupManager() {
       setBackupStatus(newStatus);
       localStorage.setItem('backup_status', JSON.stringify(newStatus));
 
-      toast.success('Attendance backup exported successfully', {
-        description: 'Your attendance data has been encrypted and exported.'
+      toast.success('Backup exported successfully', {
+        description: 'Your data has been encrypted and exported securely.'
       });
     } catch (error) {
       toast.error('Export failed', {
@@ -171,132 +170,33 @@ export function BackupManager() {
       const decryptedData = await decryptData(encryptedData, password);
       const backupData = JSON.parse(decryptedData);
 
-      if (backupData.type !== 'attendance' || !backupData.records || !Array.isArray(backupData.records)) {
+      // Validate backup structure
+      if (!backupData.records || !Array.isArray(backupData.records)) {
         throw new Error('Invalid backup file format');
       }
 
+      // Confirm import
       const confirmImport = confirm(
-        `This will replace current attendance data with ${backupData.records.length} records from ${new Date(
-          backupData.timestamp
-        ).toLocaleString()}. Continue?`
+        `This will replace all current data with ${backupData.records.length} records from ${new Date(backupData.timestamp).toLocaleString()}. Continue?`
       );
 
       if (confirmImport) {
-        localStorage.setItem(
-          'prefect_attendance_records',
-          JSON.stringify(backupData.records)
-        );
-        toast.success('Attendance backup imported successfully', {
+        localStorage.setItem('prefect_attendance_records', JSON.stringify(backupData.records));
+        
+        toast.success('Backup imported successfully', {
           description: `Restored ${backupData.records.length} attendance records.`
         });
+
+        // Refresh the page to load new data
         window.location.reload();
       }
-    } catch (error) {
-      toast.error('Import failed', {
-        description:
-          error instanceof Error ? error.message : 'Failed to import backup.'
-      });
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to import backup.';
+        toast.error('Import failed', {
+          description: errorMessage
+        });
     } finally {
       setIsImporting(false);
-      event.target.value = '';
-    }
-  };
-
-  const exportFullBackup = async () => {
-    setIsFullExporting(true);
-    try {
-      // Get attendance records and all localStorage data
-      const attendanceRecords = getAttendanceRecords();
-      const localStorageData: Record<string, string> = {};
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key) {
-          localStorageData[key] = localStorage.getItem(key) || '';
-        }
-      }
-      const backupData = {
-        type: 'full',
-        timestamp: new Date().toISOString(),
-        attendanceRecords,
-        localStorageData,
-        metadata: {
-          totalAttendanceRecords: attendanceRecords.length,
-          totalLocalStorageKeys: Object.keys(localStorageData).length,
-          exportedBy: 'MRCM Attendance System'
-        }
-      };
-
-      const password = prompt('Enter encryption password for full backup:');
-      if (!password) {
-        setIsFullExporting(false);
-        return;
-      }
-
-      const encryptedData = await encryptData(JSON.stringify(backupData), password);
-      const blob = new Blob([encryptedData], { type: 'application/octet-stream' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `mrcm-full-backup-${new Date().toISOString().split('T')[0]}.enc`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      toast.success('Full backup exported successfully', {
-        description: 'All local storage data has been encrypted and exported.'
-      });
-    } catch (error) {
-      toast.error('Full backup export failed', {
-        description: 'Unable to export full backup. Please try again.'
-      });
-    } finally {
-      setIsFullExporting(false);
-    }
-  };
-
-  const importFullBackup = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setIsFullImporting(true);
-    try {
-      const encryptedData = await file.text();
-      const password = prompt('Enter decryption password for full backup:');
-      if (!password) {
-        setIsFullImporting(false);
-        return;
-      }
-      const decryptedData = await decryptData(encryptedData, password);
-      const backupData = JSON.parse(decryptedData);
-
-      if (backupData.type !== 'full' || !backupData.localStorageData) {
-        throw new Error('Invalid full backup file format');
-      }
-
-      const confirmImport = confirm(
-        `This will CLEAR ALL current data and import full backup with ${Object.keys(
-          backupData.localStorageData
-        ).length} keys along with ${backupData.attendanceRecords.length} attendance records. Proceed?`
-      );
-
-      if (confirmImport) {
-        localStorage.clear();
-        Object.entries(backupData.localStorageData).forEach(([key, value]) => {
-          localStorage.setItem(key, value);
-        });
-        toast.success('Full backup imported successfully', {
-          description: 'Local storage fully restored from backup.'
-        });
-        window.location.reload();
-      }
-    } catch (error) {
-      toast.error('Full import failed', {
-        description:
-          error instanceof Error ? error.message : 'Failed to import full backup.'
-      });
-    } finally {
-      setIsFullImporting(false);
       event.target.value = '';
     }
   };
@@ -308,11 +208,11 @@ export function BackupManager() {
     };
     setBackupStatus(newStatus);
     localStorage.setItem('backup_status', JSON.stringify(newStatus));
-
+    
     toast.success(
       newStatus.autoBackupEnabled ? 'Auto-backup enabled' : 'Auto-backup disabled',
       {
-        description: newStatus.autoBackupEnabled
+        description: newStatus.autoBackupEnabled 
           ? 'Data will be automatically backed up daily'
           : 'Automatic backups have been disabled'
       }
@@ -336,9 +236,10 @@ export function BackupManager() {
               <span className="text-sm font-medium">Last Backup</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              {backupStatus.lastBackup
+              {backupStatus.lastBackup 
                 ? backupStatus.lastBackup.toLocaleString()
-                : 'Never'}
+                : 'Never'
+              }
             </p>
           </div>
 
@@ -368,13 +269,17 @@ export function BackupManager() {
         {/* Backup Actions */}
         <div className="space-y-4">
           <div className="flex flex-wrap gap-3">
-            <Button onClick={exportBackup} disabled={isExporting} className="gap-2">
+            <Button
+              onClick={exportBackup}
+              disabled={isExporting}
+              className="gap-2"
+            >
               {isExporting ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
               ) : (
                 <Download className="h-4 w-4" />
               )}
-              {isExporting ? 'Exporting...' : 'Export Attendance Backup'}
+              {isExporting ? 'Exporting...' : 'Export Backup'}
             </Button>
 
             <div className="relative">
@@ -391,44 +296,18 @@ export function BackupManager() {
                 ) : (
                   <Upload className="h-4 w-4" />
                 )}
-                {isImporting ? 'Importing...' : 'Import Attendance Backup'}
+                {isImporting ? 'Importing...' : 'Import Backup'}
               </Button>
             </div>
 
-            <Button variant="outline" onClick={toggleAutoBackup} className="gap-2">
+            <Button
+              variant="outline"
+              onClick={toggleAutoBackup}
+              className="gap-2"
+            >
               <Settings className="h-4 w-4" />
               Auto-backup: {backupStatus.autoBackupEnabled ? 'ON' : 'OFF'}
             </Button>
-          </div>
-
-          {/* Full Backup Actions */}
-          <div className="flex flex-wrap gap-3">
-            <Button onClick={exportFullBackup} disabled={isFullExporting} className="gap-2">
-              {isFullExporting ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
-              {isFullExporting ? 'Exporting...' : 'Export Full Backup'}
-            </Button>
-
-            <div className="relative">
-              <input
-                type="file"
-                accept=".enc"
-                onChange={importFullBackup}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                disabled={isFullImporting}
-              />
-              <Button variant="outline" disabled={isFullImporting} className="gap-2">
-                {isFullImporting ? (
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Upload className="h-4 w-4" />
-                )}
-                {isFullImporting ? 'Importing...' : 'Import Full Backup'}
-              </Button>
-            </div>
           </div>
 
           {/* Security Notice */}
@@ -438,8 +317,8 @@ export function BackupManager() {
               <div>
                 <h4 className="font-medium text-blue-500 mb-1">Secure Encryption</h4>
                 <p className="text-sm text-muted-foreground">
-                  All backups are encrypted for security. Keep your password safe – it cannot be
-                  recovered if lost.
+                  All backups are encrypted with AES-256 encryption. Keep your password safe - 
+                  it cannot be recovered if lost.
                 </p>
               </div>
             </div>
