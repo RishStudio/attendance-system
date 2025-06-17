@@ -32,7 +32,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { BackupManager } from '@/components/ui/backup-manager';
+
 import { toast } from 'sonner';
 import { AttendanceRecord, DailyStats, PrefectRole } from '@/lib/types';
 import { getAttendanceRecords, getDailyStats, exportAttendance, updateAttendance, checkAdminAccess } from '@/lib/attendance';
