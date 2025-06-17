@@ -7,7 +7,6 @@ An advanced web-based attendance management system built for the **Mahinda Rajap
 🔗 [Try it here](https://sys.imrishmika.site)
 
 ---
-
 ## 🚀 Features
 
 - 📲 **QR Code Scanning** for instant attendance marking
