@@ -28,12 +28,10 @@ export default function ManualAttendance() {
   const [prefectNumber, setPrefectNumber] = useState('');
   const [dateTime, setDateTime] = useState('');
 
-  // Initialize with current date-time if no custom value is provided.
+  // Initialize with current date-time only on mount.
   useEffect(() => {
-    if (!dateTime) {
-      setDateTime(new Date().toISOString().slice(0, 16));
-    }
-  }, [dateTime]);
+    setDateTime(new Date().toISOString().slice(0, 16));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +66,7 @@ export default function ManualAttendance() {
         });
       }
 
-      // Only clear role and prefect number; keep custom Date/Time intact.
+      // Clear only role and prefect number to allow reuse of custom date/time.
       setRole('');
       setPrefectNumber('');
     } catch (error) {
@@ -102,9 +100,9 @@ export default function ManualAttendance() {
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
-                  {roles.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
+                  {roles.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {r}
                     </SelectItem>
                   ))}
                 </SelectContent>
