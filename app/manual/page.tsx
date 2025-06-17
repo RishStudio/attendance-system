@@ -45,7 +45,6 @@ export default function ManualAttendance() {
     }
 
     try {
-      // Convert the local datetime string to a Date object.
       const timestamp = new Date(dateTime);
       if (isNaN(timestamp.getTime())) {
         throw new Error('Invalid date/time format');
@@ -77,9 +76,9 @@ export default function ManualAttendance() {
     }
   };
 
+  // Only resets the time/date input field.
   const handleResetDateTime = () => {
-    const currentDateTime = new Date().toISOString().slice(0, 16);
-    setDateTime(currentDateTime);
+    setDateTime(new Date().toISOString().slice(0, 16));
   };
 
   return (
@@ -137,7 +136,7 @@ export default function ManualAttendance() {
               onClick={handleResetDateTime}
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Reset to Current Date/Time
+              Reset Time & Date
             </Button>
           </form>
         </CardContent>
