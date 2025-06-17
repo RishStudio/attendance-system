@@ -28,9 +28,9 @@ export default function ManualAttendance() {
   const [prefectNumber, setPrefectNumber] = useState('');
   const [dateTime, setDateTime] = useState('');
 
-  // Initialize with current date-time only on mount.
   useEffect(() => {
-    setDateTime(new Date().toISOString().slice(0, 16));
+    const currentDateTime = new Date().toISOString().slice(0, 16);
+    setDateTime(currentDateTime);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,7 +50,7 @@ export default function ManualAttendance() {
         throw new Error('Invalid date/time format');
       }
 
-      await saveManualAttendance(prefectNumber, role, timestamp);
+      const record = await saveManualAttendance(prefectNumber, role, timestamp);
       const isLate = timestamp.getHours() >= 7 && timestamp.getMinutes() > 0;
 
       toast.success('Manual Attendance Marked', {
@@ -65,9 +65,9 @@ export default function ManualAttendance() {
         });
       }
 
-      // Clear only role and prefect number to allow reuse of custom date/time.
       setRole('');
       setPrefectNumber('');
+      setDateTime(new Date().toISOString().slice(0, 16));
     } catch (error) {
       toast.error('Invalid Date/Time', {
         description: 'Please enter a valid date and time.',
@@ -76,9 +76,9 @@ export default function ManualAttendance() {
     }
   };
 
-  // Only resets the time/date input field.
   const handleResetDateTime = () => {
-    setDateTime(new Date().toISOString().slice(0, 16));
+    const currentDateTime = new Date().toISOString().slice(0, 16);
+    setDateTime(currentDateTime);
   };
 
   return (
@@ -99,15 +99,15 @@ export default function ManualAttendance() {
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
-                  {roles.map((r) => (
-                    <SelectItem key={r} value={r}>
-                      {r}
+                  {roles.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
+            
             <div className="space-y-2">
               <Input
                 type="text"
@@ -132,11 +132,11 @@ export default function ManualAttendance() {
             </Button>
             <Button 
               type="button" 
-              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-secondary/90 hover:bg-secondary backdrop-blur-sm"
+              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-secondary/90 hover:bg-secondary backdrop-blur-sm" 
               onClick={handleResetDateTime}
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Reset Time & Date
+              Reset to Current Date/Time
             </Button>
           </form>
         </CardContent>
