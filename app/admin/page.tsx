@@ -615,9 +615,7 @@ export default function AdminPanel() {
             <AnalyticsSection records={allRecords} />
           </TabsContent>
 
-          <TabsContent value="backup">
-            <BackupManager />
-          </TabsContent>
+         
 
           <TabsContent value="records">
             <Card className="backdrop-blur-sm bg-background/80 border border-white/10">
