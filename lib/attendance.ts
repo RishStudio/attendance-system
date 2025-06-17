@@ -3,7 +3,7 @@
 import { AttendanceRecord, DailyStats, PrefectRole } from './types';
 
 const STORAGE_KEY = 'prefect_attendance_records';
-const MAX_DAYS = 999999999; // Maximum days to keep records, set to a very high number
+const MAX_DAYS = 365; // Maximum days to keep records, set to a very high number
 const FAILED_ATTEMPTS_KEY = 'admin_failed_attempts';
 const LOCKOUT_TIME_KEY = 'admin_lockout_time';
 const MAX_FAILED_ATTEMPTS = 10;
