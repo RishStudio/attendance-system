@@ -28,10 +28,12 @@ export default function ManualAttendance() {
   const [prefectNumber, setPrefectNumber] = useState('');
   const [dateTime, setDateTime] = useState('');
 
+  // Initialize with current date-time if no custom value is provided.
   useEffect(() => {
-    const currentDateTime = new Date().toISOString().slice(0, 16);
-    setDateTime(currentDateTime);
-  }, []);
+    if (!dateTime) {
+      setDateTime(new Date().toISOString().slice(0, 16));
+    }
+  }, [dateTime]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,12 +47,13 @@ export default function ManualAttendance() {
     }
 
     try {
+      // Convert the local datetime string to a Date object.
       const timestamp = new Date(dateTime);
       if (isNaN(timestamp.getTime())) {
         throw new Error('Invalid date/time format');
       }
 
-      const record = await saveManualAttendance(prefectNumber, role, timestamp);
+      await saveManualAttendance(prefectNumber, role, timestamp);
       const isLate = timestamp.getHours() >= 7 && timestamp.getMinutes() > 0;
 
       toast.success('Manual Attendance Marked', {
@@ -65,9 +68,9 @@ export default function ManualAttendance() {
         });
       }
 
+      // Only clear role and prefect number; keep custom Date/Time intact.
       setRole('');
       setPrefectNumber('');
-      setDateTime(new Date().toISOString().slice(0, 16));
     } catch (error) {
       toast.error('Invalid Date/Time', {
         description: 'Please enter a valid date and time.',
@@ -107,7 +110,7 @@ export default function ManualAttendance() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Input
                 type="text"
@@ -132,7 +135,7 @@ export default function ManualAttendance() {
             </Button>
             <Button 
               type="button" 
-              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-secondary/90 hover:bg-secondary backdrop-blur-sm" 
+              className="w-full text-base font-medium mt-2 flex items-center justify-center bg-secondary/90 hover:bg-secondary backdrop-blur-sm"
               onClick={handleResetDateTime}
             >
               <RefreshCw className="w-4 h-4 mr-2" />
