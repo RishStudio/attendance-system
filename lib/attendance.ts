@@ -57,7 +57,7 @@ export function saveManualAttendance(
   role: PrefectRole,
   timestamp: Date
 ): AttendanceRecord {
-  const date = timestamp.toLocaleDateString();
+  const date = timestamp.toISOString().split('T')[0];
   
   if (checkDuplicateAttendance(prefectNumber, role, date)) {
     throw new Error(`A prefect with number ${prefectNumber} has already registered for role ${role} today.`);
